@@ -52,7 +52,6 @@ public class PostDetail extends AppCompatActivity {
     ImageView pdp, pImg;
     TextView uName, pTime, pTitle, pDescription, pLike, likeBtn, commentBtn, shareBtn, groupName, moreBtn;
 
-
     EditText comment;
     ImageButton sendbtn;
     ImageView mAvatar;
@@ -180,9 +179,7 @@ public class PostDetail extends AppCompatActivity {
                 shareWimage(likes,uid,uEmail,pId,groupId,groupIcon,grName,groupTime,pTime,pTitle,pDesc,uDp,pImage,Name);
             }
         });
-
     }
-
     private void shareWimage(String likes, String uid, String uEmail, String pId, String groupId, String groupIcon, String grName, String groupTime, String pTime, String pTitle, String pDesc, String uDp, String pImage, String name) {
         Intent intent =new Intent(this, SharePost.class);
         intent.putExtra("likes", likes);
@@ -226,7 +223,6 @@ public class PostDetail extends AppCompatActivity {
             }
         });
     }
-
     private void moreOption(TextView moreBtn, String pUid, String uid, String groupId, String postId, String pImage) {
         PopupMenu menu = new PopupMenu(this, moreBtn, Gravity.END);
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
@@ -260,7 +256,6 @@ public class PostDetail extends AppCompatActivity {
         });
         menu.show();
     }
-
     private void deletePosts(String postId, String groupId, String pImage) {
         if (pImage.equals("noImage")) {
             deletePost(postId, groupId);
@@ -268,7 +263,6 @@ public class PostDetail extends AppCompatActivity {
             deletePostWithImage(postId, groupId, pImage);
         }
     }
-
     private void deletePostWithImage(String postId, String groupId, String pImg) {
         StorageReference imgRef = FirebaseStorage.getInstance().getReferenceFromUrl(pImg);
         imgRef.delete().addOnSuccessListener(new OnSuccessListener<Void>() {
@@ -291,7 +285,6 @@ public class PostDetail extends AppCompatActivity {
             }
         });
     }
-
     private void deletePost(String postId, String groupId) {
         DatabaseReference ref = FirebaseDatabase.getInstance().getReference("Groups")
                 .child(groupId).child("Posts");
@@ -303,7 +296,6 @@ public class PostDetail extends AppCompatActivity {
             }
         });
     }
-
     private void LoadComment() {
         reference = database.getReference("Groups");
         reference.addValueEventListener(new ValueEventListener() {
@@ -333,7 +325,6 @@ public class PostDetail extends AppCompatActivity {
             }
         });
     }
-
     private void postComment() {
         progress = new ProgressDialog(this);
         progress.setMessage("Uploading comment..");
@@ -376,7 +367,6 @@ public class PostDetail extends AppCompatActivity {
 
 
     }
-
     private void LoaduserInfo() {
         DatabaseReference ref = FirebaseDatabase.getInstance().getReference("Users");
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
@@ -410,7 +400,6 @@ public class PostDetail extends AppCompatActivity {
             }
         });
     }
-
     private void PostInfo() {
 
         DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Groups");
@@ -499,5 +488,4 @@ public class PostDetail extends AppCompatActivity {
             }
         });
     }
-
 }

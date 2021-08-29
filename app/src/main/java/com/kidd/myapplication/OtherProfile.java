@@ -13,7 +13,6 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -120,7 +119,6 @@ public class OtherProfile extends AppCompatActivity {
         });
     }
     private void loadPost() {
-        FirebaseUser user1 = FirebaseAuth.getInstance().getCurrentUser();
         DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Groups");
         reference.addValueEventListener(new ValueEventListener() {
             @Override
@@ -129,7 +127,7 @@ public class OtherProfile extends AppCompatActivity {
                 for (DataSnapshot gr : snapshot.getChildren()) {
                     DataSnapshot post = gr.child("Posts");
                     for (DataSnapshot posts : post.getChildren()) {
-                        if (posts.child("uid").getValue().equals(user1.getUid())) {
+                        if (posts.child("uEmail").getValue().equals(umail)) {
                             ModelPost modelPost = posts.getValue(ModelPost.class);
                             modelPostList.add(modelPost);
                             Collections.sort(modelPostList, new Comparator<ModelPost>() {
