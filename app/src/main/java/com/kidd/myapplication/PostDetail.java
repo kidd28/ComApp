@@ -128,7 +128,6 @@ public class PostDetail extends AppCompatActivity {
         String pImage = getIntent().getStringExtra("pImage");
         String Name = getIntent().getStringExtra("uName");
 
-
         commentBtn.setVisibility(View.GONE);
         PostInfo();
         LoaduserInfo();
