@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <item
+        android:id="@+id/Settings"
+        android:title="Settings"
+        android:icon="@drawable/ic_baseline_settings_24"
+        app:showAsAction="always"
+        />
+    <item
+        android:id="@+id/actionSearch"
+        android:title="Search Group"
+        android:icon="@drawable/ic_baseline_search_24"
+        app:actionViewClass="android.widget.SearchView"
+        app:showAsAction="always"/>
+    <item
+         android:id="@+id/creategroup"
+        android:title="Create Group"
+        android:icon="@drawable/ic_baseline_add_circle_outline_24"
+        app:showAsAction="always" />
+</menu>

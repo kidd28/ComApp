@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item android:title="My Group"
+        android:id="@+id/Group"
+        android:icon="@drawable/ic_baseline_home_24"/>
+    <item
+        android:id="@+id/ListGroup"
+        android:icon="@drawable/ic_baseline_group_24"
+        android:title="Join Group" />
+</menu>
