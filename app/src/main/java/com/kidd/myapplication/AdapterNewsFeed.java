@@ -113,15 +113,8 @@ public class AdapterNewsFeed extends RecyclerView.Adapter<AdapterNewsFeed.MyHold
                 intent.putExtra("grName", postList.get(i).getGroupTitle());
                 intent.putExtra("uid", uid);
                 intent.putExtra("grIcon", grIcon);
-                intent.putExtra("grTime", groupTime);
                 intent.putExtra("pImage", pImage);
-                intent.putExtra("uDp", uDp);
-
-                intent.putExtra("likes", likes);
-                intent.putExtra("uid", uid);
                 intent.putExtra("uEmail", uEmail);
-                intent.putExtra("pId", pId);
-                intent.putExtra("groupId", groupId);
                 intent.putExtra("grIcon", grIcon);
                 intent.putExtra("groupTitle", groupTitle);
                 intent.putExtra("groupTime", groupTime);

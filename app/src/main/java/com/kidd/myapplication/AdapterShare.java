@@ -142,8 +142,6 @@ public class AdapterShare extends RecyclerView.Adapter<AdapterShare.HolderGroupL
             super(itemView);
             groupIcon = itemView.findViewById(R.id.groupIcon);
             groupName = itemView.findViewById(R.id.mgroupName);
-
-
         }
     }
 }
