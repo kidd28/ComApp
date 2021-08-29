@@ -108,7 +108,7 @@ public class AdapterNewsFeed extends RecyclerView.Adapter<AdapterNewsFeed.MyHold
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(context, PostDetail.class);
-                intent.putExtra("postID", pId);
+                intent.putExtra("pId", pId);
                 intent.putExtra("groupID", groupId);
                 intent.putExtra("likes", likes);
                 intent.putExtra("grName", postList.get(i).getGroupTitle());
@@ -144,7 +144,7 @@ public class AdapterNewsFeed extends RecyclerView.Adapter<AdapterNewsFeed.MyHold
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(context, PostDetail.class);
-                intent.putExtra("postID", pId);
+                intent.putExtra("pId", pId);
                 intent.putExtra("groupID", groupId);
                 intent.putExtra("likes", likes);
                 intent.putExtra("grName", postList.get(i).getGroupTitle());

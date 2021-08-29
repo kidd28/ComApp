@@ -47,7 +47,7 @@ import java.util.Locale;
 public class PostDetail extends AppCompatActivity {
 
 
-    String myUid, myEmail, myName, myDp, postId, hisDp, hisName, groupId, likes, grName, pUid, pImage,uEmail,groupIcon, groupTime,udp;
+    String myUid, myEmail, myName, myDp, pId, hisDp, hisName, groupId, likes, grName, pUid, pImage,uEmail,groupIcon, groupTime,udp;
 
     ImageView pdp, pImg;
     TextView uName, pTime, pTitle, pDescription, pLike, likeBtn, commentBtn, shareBtn, groupName, moreBtn;
@@ -107,7 +107,7 @@ public class PostDetail extends AppCompatActivity {
         user = FirebaseAuth.getInstance().getCurrentUser();
         reference = FirebaseDatabase.getInstance().getReference();
 
-        postId = getIntent().getStringExtra("postID");
+        pId = getIntent().getStringExtra("pId");
         groupId = getIntent().getStringExtra("groupID");
         grName = getIntent().getStringExtra("grName");
         pUid = getIntent().getStringExtra("uid");
@@ -116,10 +116,8 @@ public class PostDetail extends AppCompatActivity {
         groupIcon = getIntent().getStringExtra("grIcon");
         udp = getIntent().getStringExtra("uDp");
 
-        String likes = getIntent().getStringExtra("likes");
         String uid = getIntent().getStringExtra("uid");
         String uEmail = getIntent().getStringExtra("uEmail");
-        String pId = getIntent().getStringExtra("pId");
         String pTime = getIntent().getStringExtra("pTime");
         String pTitle = getIntent().getStringExtra("pTitle");
         String pDesc = getIntent().getStringExtra("pDesc");
@@ -144,13 +142,13 @@ public class PostDetail extends AppCompatActivity {
         likeBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                PostLike(likes,groupId,postId);
+                PostLike(likes,groupId,pId);
             }
         });
         moreBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                moreOption(moreBtn, pUid, user.getUid(), groupId, postId, pImage);
+                moreOption(moreBtn, pUid, user.getUid(), groupId, pId, pImage);
             }
         });
         uName.setOnClickListener(new View.OnClickListener() {
@@ -303,7 +301,7 @@ public class PostDetail extends AppCompatActivity {
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 modelComments.clear();
                 for (DataSnapshot gr : snapshot.getChildren()) {
-                    DataSnapshot post = gr.child("Posts").child(postId);
+                    DataSnapshot post = gr.child("Posts").child(pId);
                     DataSnapshot comment = post.child("Comment");
                     for (DataSnapshot comments : comment.getChildren()) {
                         ModelComment modelComment = comments.getValue(ModelComment.class);
@@ -340,7 +338,7 @@ public class PostDetail extends AppCompatActivity {
         } else {
             String timestamp = String.valueOf(System.currentTimeMillis());
             DatabaseReference ref = FirebaseDatabase.getInstance().getReference("Groups")
-                    .child(groupId).child("Posts").child(postId).child("Comment");
+                    .child(groupId).child("Posts").child(pId).child("Comment");
             HashMap<String, Object> hashMap = new HashMap<>();
             hashMap.put("cId", timestamp);
             hashMap.put("comment", up_comment);
@@ -374,7 +372,6 @@ public class PostDetail extends AppCompatActivity {
         query.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
-
                 for (DataSnapshot ds : snapshot.getChildren()) {
                     myName = "" + ds.child("name").getValue();
                     myEmail = "" + ds.child("email").getValue();
@@ -393,7 +390,6 @@ public class PostDetail extends AppCompatActivity {
                 }
 
             }
-
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
 
@@ -401,7 +397,6 @@ public class PostDetail extends AppCompatActivity {
         });
     }
     private void PostInfo() {
-
         DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Groups");
         reference.addValueEventListener(new ValueEventListener() {
             @Override
@@ -409,14 +404,14 @@ public class PostDetail extends AppCompatActivity {
                 for (DataSnapshot gr : snapshot.getChildren()) {
                     DataSnapshot post = gr.child("Posts");
                     for (DataSnapshot postinfo : post.getChildren()) {
-                        if (postinfo.child("pId").getValue().equals(postId)) {
+                        if (postinfo.child("pId").getValue().equals(pId)) {
                             String p_Title = "" + postinfo.child("pTitle").getValue();
                             String pDesc = "" + postinfo.child("pDescription").getValue();
                             String pTimestamp = "" + postinfo.child("pTime").getValue();
                             String pImge = "" + postinfo.child("pImage").getValue();
                             hisDp = "" + postinfo.child("uDp").getValue();
                             String uid = "" + postinfo.child("uid").getValue();
-                             uEmail = "" + postinfo.child("uEmail").getValue();
+                            uEmail = "" + postinfo.child("uEmail").getValue();
                             hisName = "" + postinfo.child("uName").getValue();
                             likes = "" + postinfo.child("pLike").getValue();
 
@@ -428,6 +423,7 @@ public class PostDetail extends AppCompatActivity {
                                 ex.printStackTrace();
                             }
                             String p_Time = android.text.format.DateFormat.format("dd/MM/yyyy", calendar).toString();
+
                             pLike.setText(likes + " Likes");
                             pTitle.setText(p_Title);
                             pDescription.setText(pDesc);
@@ -436,7 +432,7 @@ public class PostDetail extends AppCompatActivity {
                             groupName.setText(grName);
                             likeBtn.setText("Like");
                             ref = FirebaseDatabase.getInstance().getReference("Groups")
-                                    .child(groupId).child("Posts").child(postId).child("Likes");
+                                    .child(groupId).child("Posts").child(pId).child("Likes");
                             ref.addValueEventListener(new ValueEventListener() {
                                 @Override
                                 public void onDataChange(@NonNull DataSnapshot snapshot) {

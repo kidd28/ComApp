@@ -80,12 +80,13 @@ public class AdapterShare extends RecyclerView.Adapter<AdapterShare.HolderGroupL
         });
     }
     private void sharePostwImage(String groupId, String groupIcon, String groupTitle, String groupTime, String likes, String uid, String uEmail, String pId, String pTime, String pTitle, String pDesc, String uDp, String pImage, String uName) {
+        String postId = String.valueOf(System.currentTimeMillis());
         HashMap<Object, String> hashMap = new HashMap<>();
         hashMap.put("uid", uid);
         hashMap.put("uName", uName);
         hashMap.put("uEmail", uEmail);
         hashMap.put("uDp", uDp);
-        hashMap.put("pId", pId);
+        hashMap.put("pId", postId);
         hashMap.put("pTitle", pTitle);
         hashMap.put("pLike", "0");
         hashMap.put("pDescription", pDesc);
@@ -94,7 +95,7 @@ public class AdapterShare extends RecyclerView.Adapter<AdapterShare.HolderGroupL
         hashMap.put("groupId", groupId);
         hashMap.put("groupTitle", groupTitle);
         DatabaseReference reference1 = FirebaseDatabase.getInstance().getReference("Groups");
-        reference1.child(groupId).child("Posts").child(pId).setValue(hashMap)
+        reference1.child(groupId).child("Posts").child(postId).setValue(hashMap)
                 .addOnSuccessListener(new OnSuccessListener<Void>() {
                     @Override
                     public void onSuccess(Void aVoid) {
@@ -104,12 +105,13 @@ public class AdapterShare extends RecyclerView.Adapter<AdapterShare.HolderGroupL
                 });
     }
     private void sharePost(String groupId, String groupIcon, String groupTitle, String groupTime, String likes, String uid, String uEmail, String pId, String pTime, String pTitle, String pDesc, String uDp, String uName) {
+        String postId = String.valueOf(System.currentTimeMillis());
         HashMap<Object, String> hashMap = new HashMap<>();
         hashMap.put("uid", uid);
         hashMap.put("uName", uName);
         hashMap.put("uEmail", uEmail);
         hashMap.put("uDp", uDp);
-        hashMap.put("pId", pId);
+        hashMap.put("pId", postId);
         hashMap.put("pTitle", pTitle);
         hashMap.put("pLike", "0");
         hashMap.put("pDescription", pDesc);
@@ -118,7 +120,7 @@ public class AdapterShare extends RecyclerView.Adapter<AdapterShare.HolderGroupL
         hashMap.put("groupId", groupId);
         hashMap.put("groupTitle", groupTitle);
         DatabaseReference reference1 = FirebaseDatabase.getInstance().getReference("Groups");
-        reference1.child(groupId).child("Posts").child(pId).setValue(hashMap)
+        reference1.child(groupId).child("Posts").child(postId).setValue(hashMap)
                 .addOnSuccessListener(new OnSuccessListener<Void>() {
                     @Override
                     public void onSuccess(Void aVoid) {
