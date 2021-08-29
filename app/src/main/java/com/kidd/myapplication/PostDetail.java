@@ -203,24 +203,20 @@ public class PostDetail extends AppCompatActivity {
         startActivity(intent);
     }
     private void PostLike(String likes, String groupId, String postId) {
-        ref = FirebaseDatabase.getInstance().getReference("Groups")
-                .child(groupId).child("Posts").child(postId).child("Likes");
-        ref1 = FirebaseDatabase.getInstance().getReference("Groups")
-                .child(groupId).child("Posts").child(postId);
         postLike = true;
-        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-        ref.addValueEventListener(new ValueEventListener() {
+        ref = FirebaseDatabase.getInstance().getReference("Groups")
+                .child(groupId).child("Posts").child(postId);
+        ref.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 if (postLike) {
-                    if (snapshot.hasChild(user.getUid())) {
-                        ref.child(user.getUid()).removeValue();
-                        ref1.child("pLike").setValue("" + (Integer.parseInt(likes) - 1));
+                    if (snapshot.child("Likes").hasChild(user.getUid())) {
+                        ref.child("Likes").child(user.getUid()).removeValue();
+                        ref.child("pLike").setValue("" + (Integer.parseInt(likes) - 1));
                         postLike = false;
-
                     } else {
-                        ref.child(user.getUid()).setValue(user.getEmail());
-                        ref1.child("pLike").setValue("" + (Integer.parseInt(likes) + 1));
+                        ref.child("Likes").child(user.getUid()).setValue("liked");
+                        ref.child("pLike").setValue("" + (Integer.parseInt(likes) + 1));
                         postLike = false;
                     }
                 }

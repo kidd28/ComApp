@@ -45,7 +45,7 @@ public class AdapterNewsFeed extends RecyclerView.Adapter<AdapterNewsFeed.MyHold
     public AdapterNewsFeed(Context context, List<ModelPost> postList) {
         this.postList = postList;
         this.context = context;
-        user = FirebaseAuth.getInstance().getCurrentUser();
+
     }
     @NonNull
     @Override
@@ -70,6 +70,7 @@ public class AdapterNewsFeed extends RecyclerView.Adapter<AdapterNewsFeed.MyHold
         String uDp = postList.get(i).getuDp();
         String uName = postList.get(i).getuName();
 
+        user = FirebaseAuth.getInstance().getCurrentUser();
         Calendar calendar = Calendar.getInstance(Locale.getDefault());
         try {
             calendar.setTimeInMillis(Long.parseLong(postList.get(i).getpTime()));
