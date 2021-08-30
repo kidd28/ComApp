@@ -69,6 +69,11 @@ public class AdapterNewsFeed extends RecyclerView.Adapter<AdapterNewsFeed.MyHold
         String pDesc = postList.get(i).getpDescription();
         String uDp = postList.get(i).getuDp();
         String uName = postList.get(i).getuName();
+        String Shared = postList.get(i).getShared();
+        String ShareTo = postList.get(i).getShareTo();
+        String ShareName = postList.get(i).getShareName();
+        String ShareDp = postList.get(i).getShareDp();
+
 
         user = FirebaseAuth.getInstance().getCurrentUser();
         Calendar calendar = Calendar.getInstance(Locale.getDefault());
@@ -104,6 +109,26 @@ public class AdapterNewsFeed extends RecyclerView.Adapter<AdapterNewsFeed.MyHold
                     .placeholder(R.drawable.ic_def_cover)
                     .into(holder.pImg);
         }
+
+        if(Shared.equals("false")){
+            holder.shareName.setVisibility(View.GONE);
+            holder.grShareName.setVisibility(View.GONE);
+            holder.shareTime.setVisibility(View.GONE);
+            holder.sdp.setVisibility(View.GONE);
+            holder.arrow.setVisibility(View.GONE);
+            holder.view.setVisibility(View.GONE);
+        }else if (Shared.equals("true")){
+            holder.shareName.setText(ShareName);
+            holder.grShareName.setText(ShareTo);
+            holder.shareTime.setText(pTime);
+            Glide
+                    .with(context)
+                    .load(postList.get(i).getShareDp())
+                    .centerCrop()
+                    .placeholder(R.drawable.ic_def_img)
+                    .into(holder.sdp);
+        }
+
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -125,6 +150,11 @@ public class AdapterNewsFeed extends RecyclerView.Adapter<AdapterNewsFeed.MyHold
                 intent.putExtra("uDp", uDp);
                 intent.putExtra("pImage", pImage);
                 intent.putExtra("uName", uName);
+                intent.putExtra("Shared", Shared);
+                intent.putExtra("ShareTo", ShareTo);
+                intent.putExtra("ShareName", ShareName);
+                intent.putExtra("ShareDp", ShareDp);
+
                 context.startActivity(intent);
             }
         });
@@ -150,6 +180,10 @@ public class AdapterNewsFeed extends RecyclerView.Adapter<AdapterNewsFeed.MyHold
                 intent.putExtra("grName", postList.get(i).getGroupTitle());
                 intent.putExtra("uid", uid);
                 intent.putExtra("pImage", pImage);
+                intent.putExtra("Shared", Shared);
+                intent.putExtra("ShareTo", ShareTo);
+                intent.putExtra("ShareName", ShareName);
+                intent.putExtra("ShareDp", ShareDp);
 
                 context.startActivity(intent);
             }
@@ -329,9 +363,9 @@ public class AdapterNewsFeed extends RecyclerView.Adapter<AdapterNewsFeed.MyHold
 
     class MyHolder extends RecyclerView.ViewHolder {
 
-        ImageView pdp, pImg;
-        TextView uName, pTime, pTitle, pDescription, pLike, likeBtn, commentBtn, shareBtn, groupName, moreBtn;
-
+        ImageView pdp, pImg,sdp,arrow;
+        TextView shareName,grShareName,uName, pTime, pTitle, pDescription, pLike, likeBtn, commentBtn, shareBtn, groupName, moreBtn,shareTime;
+View view;
 
         public MyHolder(@NonNull View itemView) {
             super(itemView);
@@ -347,6 +381,13 @@ public class AdapterNewsFeed extends RecyclerView.Adapter<AdapterNewsFeed.MyHold
             commentBtn = itemView.findViewById(R.id.commentbtn);
             shareBtn = itemView.findViewById(R.id.sharebtn);
             groupName = itemView.findViewById(R.id.group_Name);
+            shareName = itemView.findViewById(R.id.shareName);
+            grShareName = itemView.findViewById(R.id.grShareName);
+            shareTime = itemView.findViewById(R.id.shareTime);
+            sdp = itemView.findViewById(R.id.sdp);
+            arrow = itemView.findViewById(R.id.arrow);
+            view = itemView.findViewById(R.id.view);
+
         }
     }
 }

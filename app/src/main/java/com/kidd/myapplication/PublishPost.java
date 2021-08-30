@@ -231,6 +231,8 @@ public class PublishPost extends AppCompatActivity {
                                 hashMap.put("pTime",timeStamp);
                                 hashMap.put("groupId",groupId);
                                 hashMap.put("groupTitle",groupTitle);
+                                hashMap.put("Shared","false");
+
                                 DatabaseReference reference1 = FirebaseDatabase.getInstance().getReference("Groups");
                                 reference1.child(groupId).child("Posts").child(timeStamp).setValue(hashMap)
                                         .addOnSuccessListener(new OnSuccessListener<Void>() {
@@ -273,6 +275,7 @@ public class PublishPost extends AppCompatActivity {
             hashMap.put("pTime",timeStamp);
             hashMap.put("groupId",groupId);
             hashMap.put("groupTitle",groupTitle);
+            hashMap.put("Shared","false");
             DatabaseReference reference1 = FirebaseDatabase.getInstance().getReference("Groups");
             reference1.child(groupId).child("Posts").child(timeStamp).setValue(hashMap)
                     .addOnSuccessListener(new OnSuccessListener<Void>() {

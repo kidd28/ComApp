@@ -2,12 +2,15 @@ package com.kidd.myapplication;
 
 public class ModelPost {
 
-String pId, pTitle,pDescription,pTime, uid, uName,uEmail,pImage,uDp,groupId,groupTitle,groupIcon,pLike;
+String pId, pTitle,pDescription,pTime, uid, uName,uEmail,pImage,uDp,groupId,groupTitle,groupIcon,pLike,Shared,ShareTo,ShareName,ShareDp;
 
     public ModelPost() {
     }
 
-    public ModelPost(String pId, String pTitle, String pDescription, String pTime, String uid, String uName, String uEmail, String pImage, String uDp, String groupId, String groupTitle, String groupIcon,String pLike) {
+    public ModelPost(String pId, String pTitle, String pDescription, String pTime,
+                     String uid, String uName, String uEmail, String pImage, String uDp,
+                     String groupId, String groupTitle, String groupIcon,String pLike,String Shared,
+                     String ShareTo, String ShareName,String ShareDp) {
         this.pId = pId;
         this.pTitle = pTitle;
         this.pDescription = pDescription;
@@ -20,6 +23,42 @@ String pId, pTitle,pDescription,pTime, uid, uName,uEmail,pImage,uDp,groupId,grou
         this.groupId = groupId;
         this.groupTitle = groupTitle;
         this.groupIcon = groupIcon;
+        this.Shared = Shared;
+        this.ShareTo = ShareTo;
+        this.ShareName = ShareName;
+        this.ShareDp = ShareDp;
+    }
+
+    public String getShareName() {
+        return ShareName;
+    }
+
+    public void setShareName(String shareName) {
+        ShareName = shareName;
+    }
+
+    public String getShareDp() {
+        return ShareDp;
+    }
+
+    public void setShareDp(String shareDp) {
+        ShareDp = shareDp;
+    }
+
+    public String getShareTo() {
+        return ShareTo;
+    }
+
+    public void setShareTo(String shareTo) {
+        ShareTo = shareTo;
+    }
+
+    public String getShared() {
+        return Shared;
+    }
+
+    public void setShared(String shared) {
+        Shared = shared;
     }
 
     public String getpLike() {

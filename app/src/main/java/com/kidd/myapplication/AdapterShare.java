@@ -15,8 +15,14 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
+import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -46,20 +52,23 @@ public class AdapterShare extends RecyclerView.Adapter<AdapterShare.HolderGroupL
         ModelGroup model = groupList.get(position);
         String groupId = model.getGroupId();
         String groupIcon = model.getGroupIcon();
-        String groupTitle = model.getGroupTitle();
+        String shareTogroupTitle = model.getGroupTitle();
         String groupTime = model.getTimestamp();
+
+
         String likes = intent.getStringExtra("likes");
         String uid = intent.getStringExtra("uid");
         String uEmail = intent.getStringExtra("uEmail");
         String pId = intent.getStringExtra("pId");
         String pTime = intent.getStringExtra("pTime");
         String pTitle = intent.getStringExtra("pTitle");
+        String grTitle = intent.getStringExtra("groupTitle");
         String pDesc = intent.getStringExtra("pDesc");
         String uDp = intent.getStringExtra("uDp");
         String pImage = intent.getStringExtra("pImage");
         String uName = intent.getStringExtra("uName");
 
-        holder.groupName.setText(groupTitle);
+        holder.groupName.setText(shareTogroupTitle);
         if (context != null) {
             Glide
                     .with(context)
@@ -72,62 +81,107 @@ public class AdapterShare extends RecyclerView.Adapter<AdapterShare.HolderGroupL
             @Override
             public void onClick(View v) {
                 if (pImage.equals("noImage")) {
-                    sharePost(groupId, groupIcon, groupTitle, groupTime, likes, uid, uEmail, pId, pTime, pTitle, pDesc, uDp, uName);
+                    sharePost(groupId, groupIcon, grTitle,shareTogroupTitle, groupTime, likes, uid, uEmail, pId, pTime, pTitle, pDesc, uDp, uName);
                 } else {
-                    sharePostwImage(groupId, groupIcon, groupTitle, groupTime, likes, uid, uEmail, pId, pTime, pTitle, pDesc, uDp, pImage, uName);
+                    sharePostwImage(groupId, groupIcon, grTitle,shareTogroupTitle, groupTime, likes, uid, uEmail, pId, pTime, pTitle, pDesc, uDp, pImage, uName);
                 }
             }
         });
     }
-    private void sharePostwImage(String groupId, String groupIcon, String groupTitle, String groupTime, String likes, String uid, String uEmail, String pId, String pTime, String pTitle, String pDesc, String uDp, String pImage, String uName) {
+    private void sharePostwImage(String groupId, String groupIcon, String groupTitle,String shareTogroupTitle, String groupTime, String likes, String uid, String uEmail, String pId, String pTime, String pTitle, String pDesc, String uDp, String pImage, String uName) {
         String postId = String.valueOf(System.currentTimeMillis());
-        HashMap<Object, String> hashMap = new HashMap<>();
-        hashMap.put("uid", uid);
-        hashMap.put("uName", uName);
-        hashMap.put("uEmail", uEmail);
-        hashMap.put("uDp", uDp);
-        hashMap.put("pId", postId);
-        hashMap.put("pTitle", pTitle);
-        hashMap.put("pLike", "0");
-        hashMap.put("pDescription", pDesc);
-        hashMap.put("pImage", pImage);
-        hashMap.put("pTime", pTime);
-        hashMap.put("groupId", groupId);
-        hashMap.put("groupTitle", groupTitle);
-        DatabaseReference reference1 = FirebaseDatabase.getInstance().getReference("Groups");
-        reference1.child(groupId).child("Posts").child(postId).setValue(hashMap)
-                .addOnSuccessListener(new OnSuccessListener<Void>() {
-                    @Override
-                    public void onSuccess(Void aVoid) {
-                        Toast.makeText(context, "Shared Post Successfully", Toast.LENGTH_SHORT).show();
-                        context.startActivity(new Intent(context, Home.class));
-                    }
-                });
+        DatabaseReference ref = FirebaseDatabase.getInstance().getReference("Users");
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        Query query = ref.orderByChild("email").equalTo(user.getEmail());
+        query.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                for (DataSnapshot ds : snapshot.getChildren()) {
+                    String myName = "" + ds.child("name").getValue();
+                    String myDp = "" + ds.child("image").getValue();
+
+                    HashMap<Object, String> hashMap = new HashMap<>();
+                    hashMap.put("uid", user.getUid());
+                    hashMap.put("uName", uName);
+                    hashMap.put("uEmail", uEmail);
+                    hashMap.put("uDp", uDp);
+                    hashMap.put("pId", postId);
+                    hashMap.put("pTitle", pTitle);
+                    hashMap.put("pLike", "0");
+                    hashMap.put("pDescription", pDesc);
+                    hashMap.put("pImage", pImage);
+                    hashMap.put("pTime", pTime);
+                    hashMap.put("groupId", groupId);
+                    hashMap.put("groupTitle", groupTitle);
+                    hashMap.put("ShareTo", shareTogroupTitle);
+                    hashMap.put("Shared","true");
+                    hashMap.put("ShareName",myName);
+                    hashMap.put("ShareDp",myDp);
+
+                    DatabaseReference reference1 = FirebaseDatabase.getInstance().getReference("Groups");
+                    reference1.child(groupId).child("Posts").child(postId).setValue(hashMap)
+                            .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                @Override
+                                public void onSuccess(Void aVoid) {
+                                    Toast.makeText(context, "Shared Post Successfully", Toast.LENGTH_SHORT).show();
+                                    context.startActivity(new Intent(context, Home.class));
+                                }
+                            });
+                }
+            }
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+            }
+        });
+
+
+
     }
-    private void sharePost(String groupId, String groupIcon, String groupTitle, String groupTime, String likes, String uid, String uEmail, String pId, String pTime, String pTitle, String pDesc, String uDp, String uName) {
+    private void sharePost(String groupId, String groupIcon, String groupTitle,String shareTogroupTitle, String groupTime, String likes, String uid, String uEmail, String pId, String pTime, String pTitle, String pDesc, String uDp, String uName) {
         String postId = String.valueOf(System.currentTimeMillis());
-        HashMap<Object, String> hashMap = new HashMap<>();
-        hashMap.put("uid", uid);
-        hashMap.put("uName", uName);
-        hashMap.put("uEmail", uEmail);
-        hashMap.put("uDp", uDp);
-        hashMap.put("pId", postId);
-        hashMap.put("pTitle", pTitle);
-        hashMap.put("pLike", "0");
-        hashMap.put("pDescription", pDesc);
-        hashMap.put("pImage", "noImage");
-        hashMap.put("pTime", pTime);
-        hashMap.put("groupId", groupId);
-        hashMap.put("groupTitle", groupTitle);
-        DatabaseReference reference1 = FirebaseDatabase.getInstance().getReference("Groups");
-        reference1.child(groupId).child("Posts").child(postId).setValue(hashMap)
-                .addOnSuccessListener(new OnSuccessListener<Void>() {
-                    @Override
-                    public void onSuccess(Void aVoid) {
-                        Toast.makeText(context, "Shared Post Successfully", Toast.LENGTH_SHORT).show();
-                        context.startActivity(new Intent(context, Home.class));
-                    }
-                });
+        DatabaseReference ref = FirebaseDatabase.getInstance().getReference("Users");
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        Query query = ref.orderByChild("email").equalTo(user.getEmail());
+        query.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                for (DataSnapshot ds : snapshot.getChildren()) {
+                    String myName = "" + ds.child("name").getValue();
+                    String myDp = "" + ds.child("image").getValue();
+
+                    HashMap<Object, String> hashMap = new HashMap<>();
+                    hashMap.put("uid", user.getUid());
+                    hashMap.put("uName", uName);
+                    hashMap.put("uEmail", uEmail);
+                    hashMap.put("uDp", uDp);
+                    hashMap.put("pId", postId);
+                    hashMap.put("pTitle", pTitle);
+                    hashMap.put("pLike", "0");
+                    hashMap.put("pDescription", pDesc);
+                    hashMap.put("pImage", "noImage");
+                    hashMap.put("pTime", pTime);
+                    hashMap.put("groupId", groupId);
+                    hashMap.put("groupTitle", groupTitle);
+                    hashMap.put("ShareTo", shareTogroupTitle);
+                    hashMap.put("Shared","true");
+                    hashMap.put("ShareName",myName);
+                    hashMap.put("ShareDp",myDp);
+
+                    DatabaseReference reference1 = FirebaseDatabase.getInstance().getReference("Groups");
+                    reference1.child(groupId).child("Posts").child(postId).setValue(hashMap)
+                            .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                @Override
+                                public void onSuccess(Void aVoid) {
+                                    Toast.makeText(context, "Shared Post Successfully", Toast.LENGTH_SHORT).show();
+                                    context.startActivity(new Intent(context, Home.class));
+                                }
+                            });
+                }
+            }
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+            }
+        });
     }
 
     @Override

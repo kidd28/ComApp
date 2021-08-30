@@ -48,10 +48,10 @@ public class PostDetail extends AppCompatActivity {
 
 
     String myUid, myEmail, myName, myDp, pId, hisDp, hisName, groupId, likes, grName, pUid, pImage,uEmail,groupIcon, groupTime,udp;
-
-    ImageView pdp, pImg;
-    TextView uName, pTime, pTitle, pDescription, pLike, likeBtn, commentBtn, shareBtn, groupName, moreBtn;
-
+String Shared,ShareTo,ShareName,ShareDp;
+    ImageView pdp, pImg,arrow,sdp;
+    TextView uName, pTime, pTitle, pDescription, pLike, likeBtn, commentBtn, shareBtn, groupName, moreBtn,shareName, grShareName,shareTime;
+View view;
     EditText comment;
     ImageButton sendbtn;
     ImageView mAvatar;
@@ -93,6 +93,15 @@ public class PostDetail extends AppCompatActivity {
         shareBtn = findViewById(R.id.sharebtn);
         groupName = findViewById(R.id.group_Name);
 
+
+
+        shareName = findViewById(R.id.shareName);
+        grShareName = findViewById(R.id.grShareName);
+        shareTime = findViewById(R.id.shareTime);
+        sdp = findViewById(R.id.sdp);
+        arrow = findViewById(R.id.arrow);
+        view = findViewById(R.id.view);
+
         comment = findViewById(R.id.comment);
         sendbtn = findViewById(R.id.send);
         mAvatar = findViewById(R.id.my_dp);
@@ -115,6 +124,12 @@ public class PostDetail extends AppCompatActivity {
         groupTime = getIntent().getStringExtra("grTime");
         groupIcon = getIntent().getStringExtra("grIcon");
         udp = getIntent().getStringExtra("uDp");
+
+
+        Shared = getIntent().getStringExtra("Shared");
+        ShareTo = getIntent().getStringExtra("ShareTo");
+        ShareName = getIntent().getStringExtra("ShareName");
+        ShareDp = getIntent().getStringExtra("ShareDp");
 
         String uid = getIntent().getStringExtra("uid");
         String uEmail = getIntent().getStringExtra("uEmail");
@@ -327,11 +342,8 @@ public class PostDetail extends AppCompatActivity {
         progress = new ProgressDialog(this);
         progress.setMessage("Uploading comment..");
         progress.show();
-
         String up_comment = comment.getText().toString().trim();
-
         if (TextUtils.isEmpty(up_comment)) {
-
             Toast.makeText(this, "Please add comment", Toast.LENGTH_SHORT).show();
             progress.dismiss();
             return;
@@ -405,6 +417,7 @@ public class PostDetail extends AppCompatActivity {
                     DataSnapshot post = gr.child("Posts");
                     for (DataSnapshot postinfo : post.getChildren()) {
                         if (postinfo.child("pId").getValue().equals(pId)) {
+
                             String p_Title = "" + postinfo.child("pTitle").getValue();
                             String pDesc = "" + postinfo.child("pDescription").getValue();
                             String pTimestamp = "" + postinfo.child("pTime").getValue();
@@ -465,13 +478,35 @@ public class PostDetail extends AppCompatActivity {
                                             .centerCrop()
                                             .placeholder(R.drawable.ic_def_cover)
                                             .into(pImg);
+                                }
+                            } catch (Exception e) { }
+
+                            if(Shared.equals("false")){
+                                shareName.setVisibility(View.GONE);
+                                grShareName.setVisibility(View.GONE);
+                                shareTime.setVisibility(View.GONE);
+                                sdp.setVisibility(View.GONE);
+                                arrow.setVisibility(View.GONE);
+                                view.setVisibility(View.GONE);
+                            }else if (Shared.equals("true")) {
+                                shareName.setText(ShareName);
+                                grShareName.setText(ShareTo);
+                                shareTime.setText(p_Time);
+
+                                try {
+                                    Glide
+                                            .with(PostDetail.this)
+                                            .load(ShareDp)
+                                            .centerCrop()
+                                            .placeholder(R.drawable.ic_def_img)
+                                            .into(sdp);
+
+                                } catch (Exception e){
 
                                 }
-                            } catch (Exception e) {
+
 
                             }
-
-
                         }
                     }
                 }
