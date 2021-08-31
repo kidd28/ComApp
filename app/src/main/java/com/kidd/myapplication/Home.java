@@ -6,13 +6,14 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.viewpager.widget.ViewPager;
 
-import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.gauravk.bubblenavigation.BubbleNavigationLinearView;
+import com.gauravk.bubblenavigation.listener.BubbleNavigationChangeListener;
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -23,7 +24,6 @@ import com.google.firebase.storage.StorageReference;
 
 public class Home extends AppCompatActivity {
 
-    BottomNavigationView bottomNavigationView;
     FirebaseAuth mAuth;
     FirebaseUser user;
     FirebaseDatabase database;
@@ -53,28 +53,26 @@ public class Home extends AppCompatActivity {
         setSupportActionBar(toolbar);
         this.setTitle("Newsfeed");
 
+        final BubbleNavigationLinearView bubbleNavigationLinearView = findViewById(R.id.bottom_navigation_view_linear);
+
         ViewPagerAdapter adapter = new ViewPagerAdapter(getSupportFragmentManager());
         viewPager.setAdapter(adapter);
-        bottomNavigationView = findViewById(R.id.BottomNav);
 
-        bottomNavigationView.setOnNavigationItemSelectedListener(selectedListener);
         viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
             public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
             }
             @Override
             public void onPageSelected(int position) {
+                    bubbleNavigationLinearView.setCurrentActiveItem(position);
                 switch (position) {
                     case 0:
-                        bottomNavigationView.getMenu().findItem(R.id.NF).setChecked(true);
                         toolbar.setTitle("Newsfeed");
                         break;
                     case 1:
-                        bottomNavigationView.getMenu().findItem(R.id.groupF).setChecked(true);
                         toolbar.setTitle("Groups");
                         break;
                     case 2:
-                        bottomNavigationView.getMenu().findItem(R.id.profileF).setChecked(true);
                         toolbar.setTitle("Profile");
                         break;
                 }
@@ -85,31 +83,18 @@ public class Home extends AppCompatActivity {
 
             }
         });
+        bubbleNavigationLinearView.setNavigationChangeListener(new BubbleNavigationChangeListener() {
+            @Override
+            public void onNavigationChanged(View view, int position) {
+                viewPager.setCurrentItem(position, true);
+            }
+        });
 
     }
-    private BottomNavigationView.OnNavigationItemSelectedListener selectedListener =
-            new BottomNavigationView.OnNavigationItemSelectedListener() {
-                @Override
-                public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-                    switch (item.getItemId()){
-                        case R.id.NF:
-                            viewPager.setCurrentItem(0);
-                            break;
-                        case R.id.groupF:
-                            viewPager.setCurrentItem(1);
-                            break;
-                        case R.id.profileF:
-                            viewPager.setCurrentItem(2);
-                            break;
-                    }
-                    return true;
-                }
-            };
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu)
     {
-
         return super.onCreateOptionsMenu(menu);
     }
 

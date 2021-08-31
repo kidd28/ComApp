@@ -4,6 +4,9 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.EditText;
+import android.widget.ImageView;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
@@ -11,12 +14,14 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
+import com.bumptech.glide.Glide;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
@@ -32,10 +37,14 @@ public class NF extends Fragment {
     RecyclerView recyclerView;
     FirebaseAuth firebaseAuth;
     ArrayList<ModelPost> modelPostList;
-     AdapterNewsFeed adapterNewsFeed;
+    AdapterNewsFeed adapterNewsFeed;
     FirebaseUser user;
     FirebaseDatabase database;
     DatabaseReference reference;
+
+    TextView uname;
+    EditText writePost;
+    ImageView udp;
 
 
     SwipeRefreshLayout pullToRefresh;
@@ -93,23 +102,57 @@ public class NF extends Fragment {
         recyclerView = v.findViewById(R.id.postRv);
         user = FirebaseAuth.getInstance().getCurrentUser();
         database = FirebaseDatabase.getInstance();
+        uname = v.findViewById(R.id.U_name);
+        writePost = v.findViewById(R.id.writePost);
+        udp = v.findViewById(R.id.U_dp);
+
+        DatabaseReference ref1 = database.getReference("Users");
+        Query query = ref1.orderByChild("email").equalTo(user.getEmail());
+        query.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                for (DataSnapshot ds : snapshot.getChildren()) {
+                    String dname = "" + ds.child("name").getValue();
+                    String dp = "" + ds.child("image").getValue();
+                    uname.setText(dname);
+
+                    try {
+                        Glide
+                                .with(getActivity())
+                                .load(dp)
+                                .centerCrop()
+                                .placeholder(R.drawable.ic_def_img)
+                                .into(udp);
+                    } catch (Exception e) {
+                    }
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+            }
+        });
+
 
         modelPostList = new ArrayList<>();
-        LinearLayoutManager layoutManager = new LinearLayoutManager(getContext());
+        LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity());
         recyclerView.setLayoutManager(layoutManager);
 
-
         loadPost();
-        checkuser();
 
         pullToRefresh = v.findViewById(R.id.pullToRefresh);
         pullToRefresh.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
                 loadPost();
-                checkuser();
-                user.reload();
                 pullToRefresh.setRefreshing(false);
+            }
+        });
+
+        writePost.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
             }
         });
         return v;
@@ -124,20 +167,19 @@ public class NF extends Fragment {
                 modelPostList.clear();
                 for (DataSnapshot gr : snapshot.getChildren()) {
                     DataSnapshot post = gr.child("Posts");
-                    if (gr.child("Members").child(user1.getUid()).exists()) {
-                        for (DataSnapshot posts : post.getChildren()) {
+                    for (DataSnapshot posts : post.getChildren()) {
+                        if (gr.child("Members").child(user1.getUid()).exists()) {
                             ModelPost modelPost = posts.getValue(ModelPost.class);
                             modelPostList.add(modelPost);
                             Collections.sort(modelPostList, new Comparator<ModelPost>() {
                                 @Override
                                 public int compare(ModelPost o1, ModelPost o2) {
-                                    return Float.compare(Float.parseFloat(o2.getpId()),Float.parseFloat(o1.getpId()));
+                                    return Float.compare(Float.parseFloat(o2.getpId()), Float.parseFloat(o1.getpId()));
                                 }
                             });
                         }
                         adapterNewsFeed = new AdapterNewsFeed(getActivity(), modelPostList);
                         recyclerView.setAdapter(adapterNewsFeed);
-                        pullToRefresh.setRefreshing(false);
                     }
                 }
             }
@@ -147,20 +189,6 @@ public class NF extends Fragment {
             }
         });
     }
-
-    public void checkuser() {
-        if (user != null) {
-            user.reload();
-            user.getEmail();
-        }
-    }
-
-    @Override
-    public void onStart() {
-        super.onStart();
-
-    }
-
 }
 
 

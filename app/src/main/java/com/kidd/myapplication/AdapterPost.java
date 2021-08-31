@@ -79,9 +79,11 @@ public class AdapterPost extends RecyclerView.Adapter<AdapterPost.MyHolder> {
         String ShareTo = postList.get(i).getShareTo();
         String ShareName = postList.get(i).getShareName();
         String ShareDp = postList.get(i).getShareDp();
+        String pComment = postList.get(i).getpComment();
 
 
         holder.pLike.setText(likes + " Likes");
+        holder.CommentCount.setText(pComment+ " Comments");
         String grIcon = postList.get(i).getGroupIcon();
         setLikes(holder, pId, groupId);
 
@@ -139,6 +141,7 @@ public class AdapterPost extends RecyclerView.Adapter<AdapterPost.MyHolder> {
                 intent.putExtra("pId", pId);
                 intent.putExtra("groupID", groupId);
                 intent.putExtra("likes", likes);
+                intent.putExtra("pComment", pComment);
                 intent.putExtra("grName", postList.get(i).getGroupTitle());
                 intent.putExtra("uid", uid);
                 intent.putExtra("grIcon", grIcon);
@@ -149,6 +152,7 @@ public class AdapterPost extends RecyclerView.Adapter<AdapterPost.MyHolder> {
                 intent.putExtra("groupTime", groupTime);
                 intent.putExtra("pTime", pTime);
                 intent.putExtra("pTitle", pTitle);
+                intent.putExtra("pComment", pComment);
                 intent.putExtra("pDesc", pDesc);
                 intent.putExtra("uDp", uDp);
                 intent.putExtra("pImage", pImage);
@@ -179,6 +183,7 @@ public class AdapterPost extends RecyclerView.Adapter<AdapterPost.MyHolder> {
                 intent.putExtra("pId", pId);
                 intent.putExtra("groupID", groupId);
                 intent.putExtra("likes", likes);
+                intent.putExtra("pComment", pComment);
                 intent.putExtra("grName", postList.get(i).getGroupTitle());
                 intent.putExtra("uid", uid);
                 intent.putExtra("pImage", pImage);
@@ -351,7 +356,7 @@ public class AdapterPost extends RecyclerView.Adapter<AdapterPost.MyHolder> {
     class MyHolder  extends RecyclerView.ViewHolder{
 
         ImageView pdp, pImg,sdp,arrow;
-        TextView shareName,grShareName,uName, pTime, pTitle, pDescription, pLike, likeBtn, commentBtn, shareBtn, groupName, moreBtn,shareTime;
+        TextView CommentCount,shareName,grShareName,uName, pTime, pTitle, pDescription, pLike, likeBtn, commentBtn, shareBtn, groupName, moreBtn,shareTime;
         View view;
         public MyHolder(@NonNull View itemView) {
             super(itemView);
@@ -373,6 +378,7 @@ public class AdapterPost extends RecyclerView.Adapter<AdapterPost.MyHolder> {
             sdp = itemView.findViewById(R.id.sdp);
             arrow = itemView.findViewById(R.id.arrow);
             view = itemView.findViewById(R.id.view);
+            CommentCount = itemView.findViewById(R.id.commenCount);
         }
     }
 }

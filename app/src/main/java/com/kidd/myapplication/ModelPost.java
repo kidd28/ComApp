@@ -2,7 +2,7 @@ package com.kidd.myapplication;
 
 public class ModelPost {
 
-String pId, pTitle,pDescription,pTime, uid, uName,uEmail,pImage,uDp,groupId,groupTitle,groupIcon,pLike,Shared,ShareTo,ShareName,ShareDp;
+String ShareTime,pComment,pId, pTitle,pDescription,pTime, uid, uName,uEmail,pImage,uDp,groupId,groupTitle,groupIcon,pLike,Shared,ShareTo,ShareName,ShareDp;
 
     public ModelPost() {
     }
@@ -10,7 +10,7 @@ String pId, pTitle,pDescription,pTime, uid, uName,uEmail,pImage,uDp,groupId,grou
     public ModelPost(String pId, String pTitle, String pDescription, String pTime,
                      String uid, String uName, String uEmail, String pImage, String uDp,
                      String groupId, String groupTitle, String groupIcon,String pLike,String Shared,
-                     String ShareTo, String ShareName,String ShareDp) {
+                     String ShareTo, String ShareName,String ShareDp,String pComment,String ShareTime) {
         this.pId = pId;
         this.pTitle = pTitle;
         this.pDescription = pDescription;
@@ -27,6 +27,24 @@ String pId, pTitle,pDescription,pTime, uid, uName,uEmail,pImage,uDp,groupId,grou
         this.ShareTo = ShareTo;
         this.ShareName = ShareName;
         this.ShareDp = ShareDp;
+        this.pComment = pComment;
+        this.ShareTime = ShareTime;
+    }
+
+    public String getShareTime() {
+        return ShareTime;
+    }
+
+    public void setShareTime(String shareTime) {
+        ShareTime = shareTime;
+    }
+
+    public String getpComment() {
+        return pComment;
+    }
+
+    public void setpComment(String pComment) {
+        this.pComment = pComment;
     }
 
     public String getShareName() {

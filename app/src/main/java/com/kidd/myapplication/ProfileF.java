@@ -166,7 +166,6 @@ public class ProfileF extends Fragment {
 
         pullToRefresh = v.findViewById(R.id.pullToRefresh);
 
-
         pullToRefresh.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
@@ -518,7 +517,7 @@ public class ProfileF extends Fragment {
 
     private void loadPost() {
         FirebaseUser user1 = FirebaseAuth.getInstance().getCurrentUser();
-        DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Groups");
+         reference = FirebaseDatabase.getInstance().getReference("Groups");
         reference.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {

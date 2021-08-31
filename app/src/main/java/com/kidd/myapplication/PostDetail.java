@@ -47,11 +47,11 @@ import java.util.Locale;
 public class PostDetail extends AppCompatActivity {
 
 
-    String myUid, myEmail, myName, myDp, pId, hisDp, hisName, groupId, likes, grName, pUid, pImage,uEmail,groupIcon, groupTime,udp;
-String Shared,ShareTo,ShareName,ShareDp;
-    ImageView pdp, pImg,arrow,sdp;
-    TextView uName, pTime, pTitle, pDescription, pLike, likeBtn, commentBtn, shareBtn, groupName, moreBtn,shareName, grShareName,shareTime;
-View view;
+    String myUid, myEmail, myName, myDp, pId, hisDp, hisName, groupId, likes,pComment, grName, pUid, pImage, uEmail, groupIcon, groupTime, udp;
+    String Shared, ShareTo, ShareName, ShareDp;
+    ImageView pdp, pImg, arrow, sdp;
+    TextView uName, pTime, pTitle, pDescription, pLike, likeBtn, commentBtn, shareBtn, groupName, moreBtn, shareName, grShareName, shareTime, CommentCount;
+    View view;
     EditText comment;
     ImageButton sendbtn;
     ImageView mAvatar;
@@ -92,7 +92,7 @@ View view;
         commentBtn = findViewById(R.id.commentbtn);
         shareBtn = findViewById(R.id.sharebtn);
         groupName = findViewById(R.id.group_Name);
-
+        CommentCount = findViewById(R.id.commenCount);
 
 
         shareName = findViewById(R.id.shareName);
@@ -124,6 +124,7 @@ View view;
         groupTime = getIntent().getStringExtra("grTime");
         groupIcon = getIntent().getStringExtra("grIcon");
         udp = getIntent().getStringExtra("uDp");
+        pComment = getIntent().getStringExtra("pComment");
 
 
         Shared = getIntent().getStringExtra("Shared");
@@ -157,7 +158,7 @@ View view;
         likeBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                PostLike(likes,groupId,pId);
+                PostLike(likes, groupId, pId);
             }
         });
         moreBtn.setOnClickListener(new View.OnClickListener() {
@@ -178,7 +179,7 @@ View view;
         groupName.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent (PostDetail.this, GroupUi.class);
+                Intent intent = new Intent(PostDetail.this, GroupUi.class);
                 intent.putExtra("grName", grName);
                 intent.putExtra("grIcon", groupIcon);
                 intent.putExtra("grId", groupId);
@@ -189,12 +190,13 @@ View view;
         shareBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                shareWimage(likes,uid,uEmail,pId,groupId,groupIcon,grName,groupTime,pTime,pTitle,pDesc,uDp,pImage,Name);
+                shareWimage(likes, uid, uEmail, pId, groupId, groupIcon, grName, groupTime, pTime, pTitle, pDesc, uDp, pImage, Name);
             }
         });
     }
+
     private void shareWimage(String likes, String uid, String uEmail, String pId, String groupId, String groupIcon, String grName, String groupTime, String pTime, String pTitle, String pDesc, String uDp, String pImage, String name) {
-        Intent intent =new Intent(this, SharePost.class);
+        Intent intent = new Intent(this, SharePost.class);
         intent.putExtra("likes", likes);
         intent.putExtra("uid", uid);
         intent.putExtra("uEmail", uEmail);
@@ -211,6 +213,7 @@ View view;
         intent.putExtra("uName", name);
         startActivity(intent);
     }
+
     private void PostLike(String likes, String groupId, String postId) {
         postLike = true;
         ref = FirebaseDatabase.getInstance().getReference("Groups")
@@ -236,6 +239,7 @@ View view;
             }
         });
     }
+
     private void moreOption(TextView moreBtn, String pUid, String uid, String groupId, String postId, String pImage) {
         PopupMenu menu = new PopupMenu(this, moreBtn, Gravity.END);
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
@@ -269,6 +273,7 @@ View view;
         });
         menu.show();
     }
+
     private void deletePosts(String postId, String groupId, String pImage) {
         if (pImage.equals("noImage")) {
             deletePost(postId, groupId);
@@ -276,6 +281,7 @@ View view;
             deletePostWithImage(postId, groupId, pImage);
         }
     }
+
     private void deletePostWithImage(String postId, String groupId, String pImg) {
         StorageReference imgRef = FirebaseStorage.getInstance().getReferenceFromUrl(pImg);
         imgRef.delete().addOnSuccessListener(new OnSuccessListener<Void>() {
@@ -298,6 +304,7 @@ View view;
             }
         });
     }
+
     private void deletePost(String postId, String groupId) {
         DatabaseReference ref = FirebaseDatabase.getInstance().getReference("Groups")
                 .child(groupId).child("Posts");
@@ -309,6 +316,7 @@ View view;
             }
         });
     }
+
     private void LoadComment() {
         reference = database.getReference("Groups");
         reference.addValueEventListener(new ValueEventListener() {
@@ -338,6 +346,7 @@ View view;
             }
         });
     }
+
     private void postComment() {
         progress = new ProgressDialog(this);
         progress.setMessage("Uploading comment..");
@@ -359,11 +368,23 @@ View view;
             hashMap.put("uEmail", myEmail);
             hashMap.put("uDp", myDp);
             hashMap.put("uName", myName);
-
             ref.child(timestamp).setValue(hashMap)
                     .addOnSuccessListener(new OnSuccessListener<Void>() {
                         @Override
                         public void onSuccess(Void aVoid) {
+                            DatabaseReference ref1 = FirebaseDatabase.getInstance().getReference("Groups")
+                                    .child(groupId).child("Posts").child(pId);
+                            ref1.addListenerForSingleValueEvent(new ValueEventListener() {
+                                @Override
+                                public void onDataChange(@NonNull DataSnapshot snapshot) {
+                                    ref1.child("pComment").setValue("" + (Integer.parseInt(pComment) + 1));
+                                }
+
+                                @Override
+                                public void onCancelled(@NonNull DatabaseError error) {
+
+                                }
+                            });
                             progress.dismiss();
                             comment.setText("");
                         }
@@ -377,6 +398,7 @@ View view;
 
 
     }
+
     private void LoaduserInfo() {
         DatabaseReference ref = FirebaseDatabase.getInstance().getReference("Users");
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
@@ -402,12 +424,14 @@ View view;
                 }
 
             }
+
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
 
             }
         });
     }
+
     private void PostInfo() {
         DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Groups");
         reference.addValueEventListener(new ValueEventListener() {
@@ -427,6 +451,7 @@ View view;
                             uEmail = "" + postinfo.child("uEmail").getValue();
                             hisName = "" + postinfo.child("uName").getValue();
                             likes = "" + postinfo.child("pLike").getValue();
+                            pComment = "" + postinfo.child("pComment").getValue();
 
 
                             Calendar calendar = Calendar.getInstance(Locale.getDefault());
@@ -438,6 +463,7 @@ View view;
                             String p_Time = android.text.format.DateFormat.format("dd/MM/yyyy", calendar).toString();
 
                             pLike.setText(likes + " Likes");
+                            CommentCount.setText(pComment + " Comments");
                             pTitle.setText(p_Title);
                             pDescription.setText(pDesc);
                             pTime.setText(p_Time);
@@ -479,16 +505,17 @@ View view;
                                             .placeholder(R.drawable.ic_def_cover)
                                             .into(pImg);
                                 }
-                            } catch (Exception e) { }
+                            } catch (Exception e) {
+                            }
 
-                            if(Shared.equals("false")){
+                            if (Shared.equals("false")) {
                                 shareName.setVisibility(View.GONE);
                                 grShareName.setVisibility(View.GONE);
                                 shareTime.setVisibility(View.GONE);
                                 sdp.setVisibility(View.GONE);
                                 arrow.setVisibility(View.GONE);
                                 view.setVisibility(View.GONE);
-                            }else if (Shared.equals("true")) {
+                            } else if (Shared.equals("true")) {
                                 shareName.setText(ShareName);
                                 grShareName.setText(ShareTo);
                                 shareTime.setText(p_Time);
@@ -501,7 +528,7 @@ View view;
                                             .placeholder(R.drawable.ic_def_img)
                                             .into(sdp);
 
-                                } catch (Exception e){
+                                } catch (Exception e) {
 
                                 }
 

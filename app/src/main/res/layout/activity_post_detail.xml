@@ -38,7 +38,7 @@
                         <com.blogspot.atifsoftwares.circularimageview.CircularImageView
                             android:id="@+id/sdp"
                             android:layout_width="50dp"
-                            android:layout_height="match_parent"
+                            android:layout_height="50dp"
                             android:scaleType="centerCrop"
                             android:src="@drawable/ic_def_img" />
 
@@ -156,11 +156,23 @@
                         android:layout_height="200dp"
                         android:src="@drawable/ic_def_cover" />
 
-                    <TextView
-                        android:id="@+id/pLike"
+                    <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="0 Likes" />
+                        android:orientation="horizontal">
+                        <TextView
+                            android:id="@+id/pLike"
+                            android:layout_width="wrap_content"
+                            android:layout_weight="1"
+                            android:layout_height="wrap_content"
+                            android:text="0 Likes" />
+                        <TextView
+                            android:layout_gravity="right"
+                            android:id="@+id/commenCount"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="0 Comments" />
+                    </LinearLayout>
 
                     <View
                         android:layout_width="match_parent"

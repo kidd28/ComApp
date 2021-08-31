@@ -2,14 +2,14 @@ package com.kidd.myapplication;
 
 import android.os.Bundle;
 import android.view.LayoutInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
-import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.viewpager.widget.ViewPager;
 
+import com.gauravk.bubblenavigation.BubbleNavigationLinearView;
+import com.gauravk.bubblenavigation.listener.BubbleNavigationChangeListener;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 /**
@@ -69,12 +69,12 @@ public class MyGroup extends Fragment {
         View v=  inflater.inflate(R.layout.fragment_my_group, container, false);
 
         viewPager= v.findViewById(R.id.grouppage);
-        tabLayout = v.findViewById(R.id.TopNav);
+        final BubbleNavigationLinearView bubbleNavigationLinearView = v.findViewById(R.id.bottom_navigation_view_linear);
+
 
         GroupPageAdapter adapter = new GroupPageAdapter(getChildFragmentManager());
         viewPager.setAdapter(adapter);
 
-        tabLayout.setOnNavigationItemSelectedListener(selectedListener);
 
         viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
@@ -82,14 +82,10 @@ public class MyGroup extends Fragment {
             }
             @Override
             public void onPageSelected(int position) {
-                switch (position) {
-                    case 0:
-                        tabLayout.getMenu().findItem(R.id.Group).setChecked(true);
-                        break;
-                    case 1:
-                        tabLayout.getMenu().findItem(R.id.ListGroup).setChecked(true);
-                        break;
-                }
+
+                    bubbleNavigationLinearView.setCurrentActiveItem(position);
+
+
             }
 
             @Override
@@ -98,22 +94,16 @@ public class MyGroup extends Fragment {
             }
         });
 
+        bubbleNavigationLinearView.setNavigationChangeListener(new BubbleNavigationChangeListener() {
+            @Override
+            public void onNavigationChanged(View view, int position) {
+                viewPager.setCurrentItem(position, true);
+            }
+        });
+
         return  v;
     }
-    private BottomNavigationView.OnNavigationItemSelectedListener selectedListener =
-            new BottomNavigationView.OnNavigationItemSelectedListener() {
-                @Override
-                public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-                    switch (item.getItemId()){
-                        case R.id.Group:
-                            viewPager.setCurrentItem(0);
-                            break;
-                        case R.id.ListGroup:
-                            viewPager.setCurrentItem(1);
-                            break;
-                    }
-                    return true;
-                }
-            };
+
+
 
 }

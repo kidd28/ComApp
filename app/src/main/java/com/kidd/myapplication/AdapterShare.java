@@ -25,7 +25,9 @@ import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.HashMap;
+import java.util.Locale;
 
 public class AdapterShare extends RecyclerView.Adapter<AdapterShare.HolderGroupList> {
     private Context context;
@@ -54,8 +56,6 @@ public class AdapterShare extends RecyclerView.Adapter<AdapterShare.HolderGroupL
         String groupIcon = model.getGroupIcon();
         String shareTogroupTitle = model.getGroupTitle();
         String groupTime = model.getTimestamp();
-
-
         String likes = intent.getStringExtra("likes");
         String uid = intent.getStringExtra("uid");
         String uEmail = intent.getStringExtra("uEmail");
@@ -90,6 +90,13 @@ public class AdapterShare extends RecyclerView.Adapter<AdapterShare.HolderGroupL
     }
     private void sharePostwImage(String groupId, String groupIcon, String groupTitle,String shareTogroupTitle, String groupTime, String likes, String uid, String uEmail, String pId, String pTime, String pTitle, String pDesc, String uDp, String pImage, String uName) {
         String postId = String.valueOf(System.currentTimeMillis());
+        Calendar calendar = Calendar.getInstance(Locale.getDefault());
+        try {
+            calendar.setTimeInMillis(Long.parseLong(postId));
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+        String ShareTime = android.text.format.DateFormat.format("dd/MM/yyyy", calendar).toString();
         DatabaseReference ref = FirebaseDatabase.getInstance().getReference("Users");
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
         Query query = ref.orderByChild("email").equalTo(user.getEmail());
@@ -108,6 +115,7 @@ public class AdapterShare extends RecyclerView.Adapter<AdapterShare.HolderGroupL
                     hashMap.put("pId", postId);
                     hashMap.put("pTitle", pTitle);
                     hashMap.put("pLike", "0");
+                    hashMap.put("pComment", "0");
                     hashMap.put("pDescription", pDesc);
                     hashMap.put("pImage", pImage);
                     hashMap.put("pTime", pTime);
@@ -117,6 +125,8 @@ public class AdapterShare extends RecyclerView.Adapter<AdapterShare.HolderGroupL
                     hashMap.put("Shared","true");
                     hashMap.put("ShareName",myName);
                     hashMap.put("ShareDp",myDp);
+                    hashMap.put("ShareTime",ShareTime);
+
 
                     DatabaseReference reference1 = FirebaseDatabase.getInstance().getReference("Groups");
                     reference1.child(groupId).child("Posts").child(postId).setValue(hashMap)
@@ -134,11 +144,16 @@ public class AdapterShare extends RecyclerView.Adapter<AdapterShare.HolderGroupL
             }
         });
 
-
-
     }
     private void sharePost(String groupId, String groupIcon, String groupTitle,String shareTogroupTitle, String groupTime, String likes, String uid, String uEmail, String pId, String pTime, String pTitle, String pDesc, String uDp, String uName) {
         String postId = String.valueOf(System.currentTimeMillis());
+        Calendar calendar = Calendar.getInstance(Locale.getDefault());
+        try {
+            calendar.setTimeInMillis(Long.parseLong(postId));
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+        String ShareTime = android.text.format.DateFormat.format("dd/MM/yyyy", calendar).toString();
         DatabaseReference ref = FirebaseDatabase.getInstance().getReference("Users");
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
         Query query = ref.orderByChild("email").equalTo(user.getEmail());
@@ -157,6 +172,7 @@ public class AdapterShare extends RecyclerView.Adapter<AdapterShare.HolderGroupL
                     hashMap.put("pId", postId);
                     hashMap.put("pTitle", pTitle);
                     hashMap.put("pLike", "0");
+                    hashMap.put("pComment", "0");
                     hashMap.put("pDescription", pDesc);
                     hashMap.put("pImage", "noImage");
                     hashMap.put("pTime", pTime);
@@ -166,6 +182,7 @@ public class AdapterShare extends RecyclerView.Adapter<AdapterShare.HolderGroupL
                     hashMap.put("Shared","true");
                     hashMap.put("ShareName",myName);
                     hashMap.put("ShareDp",myDp);
+                    hashMap.put("ShareTime",ShareTime);
 
                     DatabaseReference reference1 = FirebaseDatabase.getInstance().getReference("Groups");
                     reference1.child(groupId).child("Posts").child(postId).setValue(hashMap)

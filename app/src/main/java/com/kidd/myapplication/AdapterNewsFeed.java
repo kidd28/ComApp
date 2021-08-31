@@ -31,9 +31,7 @@ import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
-import java.util.Calendar;
 import java.util.List;
-import java.util.Locale;
 
 public class AdapterNewsFeed extends RecyclerView.Adapter<AdapterNewsFeed.MyHolder> {
 
@@ -73,26 +71,22 @@ public class AdapterNewsFeed extends RecyclerView.Adapter<AdapterNewsFeed.MyHold
         String ShareTo = postList.get(i).getShareTo();
         String ShareName = postList.get(i).getShareName();
         String ShareDp = postList.get(i).getShareDp();
-
+        String ShareTime = postList.get(i).getShareTime();
+        String pComment = postList.get(i).getpComment();
+        String pTime = postList.get(i).getpTime();
 
         user = FirebaseAuth.getInstance().getCurrentUser();
-        Calendar calendar = Calendar.getInstance(Locale.getDefault());
-        try {
-            calendar.setTimeInMillis(Long.parseLong(postList.get(i).getpTime()));
-        } catch (Exception ex) {
-            ex.printStackTrace();
-        }
-        String pTime = android.text.format.DateFormat.format("dd/MM/yyyy", calendar).toString();
+
 
         holder.uName.setText(postList.get(i).getuName());
         holder.pDescription.setText(postList.get(i).getpDescription());
         holder.pTitle.setText(postList.get(i).getpTitle());
-        holder.pTime.setText(pTime);
+        holder.pTime.setText(postList.get(i).getpTime());
         holder.groupName.setText(postList.get(i).getGroupTitle());
         holder.pLike.setText(likes + " Likes");
         holder.likeBtn.setText("Like");
         setLikes(holder, pId, groupId);
-
+        holder.CommentCount.setText(pComment+ " Comments");
         Glide
                 .with(context)
                 .load(postList.get(i).getuDp())
@@ -120,7 +114,7 @@ public class AdapterNewsFeed extends RecyclerView.Adapter<AdapterNewsFeed.MyHold
         }else if (Shared.equals("true")){
             holder.shareName.setText(ShareName);
             holder.grShareName.setText(ShareTo);
-            holder.shareTime.setText(pTime);
+            holder.shareTime.setText(ShareTime);
             Glide
                     .with(context)
                     .load(postList.get(i).getShareDp())
@@ -136,6 +130,7 @@ public class AdapterNewsFeed extends RecyclerView.Adapter<AdapterNewsFeed.MyHold
                 intent.putExtra("pId", pId);
                 intent.putExtra("groupID", groupId);
                 intent.putExtra("likes", likes);
+                intent.putExtra("pComment", pComment);
                 intent.putExtra("grName", postList.get(i).getGroupTitle());
                 intent.putExtra("uid", uid);
                 intent.putExtra("grIcon", grIcon);
@@ -146,6 +141,7 @@ public class AdapterNewsFeed extends RecyclerView.Adapter<AdapterNewsFeed.MyHold
                 intent.putExtra("groupTime", groupTime);
                 intent.putExtra("pTime", pTime);
                 intent.putExtra("pTitle", pTitle);
+                intent.putExtra("pComment", pComment);
                 intent.putExtra("pDesc", pDesc);
                 intent.putExtra("uDp", uDp);
                 intent.putExtra("pImage", pImage);
@@ -177,6 +173,7 @@ public class AdapterNewsFeed extends RecyclerView.Adapter<AdapterNewsFeed.MyHold
                 intent.putExtra("pId", pId);
                 intent.putExtra("groupID", groupId);
                 intent.putExtra("likes", likes);
+                intent.putExtra("pComment", pComment);
                 intent.putExtra("grName", postList.get(i).getGroupTitle());
                 intent.putExtra("uid", uid);
                 intent.putExtra("pImage", pImage);
@@ -364,9 +361,8 @@ public class AdapterNewsFeed extends RecyclerView.Adapter<AdapterNewsFeed.MyHold
     class MyHolder extends RecyclerView.ViewHolder {
 
         ImageView pdp, pImg,sdp,arrow;
-        TextView shareName,grShareName,uName, pTime, pTitle, pDescription, pLike, likeBtn, commentBtn, shareBtn, groupName, moreBtn,shareTime;
-View view;
-
+        TextView CommentCount,shareName,grShareName,uName, pTime, pTitle, pDescription, pLike, likeBtn, commentBtn, shareBtn, groupName, moreBtn,shareTime;
+        View view;
         public MyHolder(@NonNull View itemView) {
             super(itemView);
             pdp = itemView.findViewById(R.id.dp);
@@ -387,7 +383,7 @@ View view;
             sdp = itemView.findViewById(R.id.sdp);
             arrow = itemView.findViewById(R.id.arrow);
             view = itemView.findViewById(R.id.view);
-
+            CommentCount = itemView.findViewById(R.id.commenCount);
         }
     }
 }

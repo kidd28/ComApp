@@ -95,6 +95,8 @@ public class Group extends Fragment {
         modelGroups = new ArrayList<>();
 
 
+
+
         FirebaseUser user =FirebaseAuth.getInstance().getCurrentUser();
         loadGroup();
         pullToRefresh = v.findViewById(R.id.pullToRefresh);

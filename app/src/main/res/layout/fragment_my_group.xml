@@ -9,16 +9,47 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
   android:orientation="vertical">
-  <com.google.android.material.bottomnavigation.BottomNavigationView
-      android:id="@+id/TopNav"
-      android:layout_width="match_parent"
-      android:layout_height="wrap_content"
-      app:layout_constraintBottom_toBottomOf="parent"
-      app:layout_constraintEnd_toEndOf="parent"
-      app:layout_constraintStart_toStartOf="parent"
-      app:menu="@menu/groupmenu">
-  </com.google.android.material.bottomnavigation.BottomNavigationView>
-    <androidx.viewpager.widget.ViewPager
+
+    <com.gauravk.bubblenavigation.BubbleNavigationLinearView
+        android:id="@+id/bottom_navigation_view_linear"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:elevation="8dp"
+        android:orientation="horizontal"
+        android:padding="8dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent">
+
+      <com.gauravk.bubblenavigation.BubbleToggleView
+          android:id="@+id/Item_MyGroup"
+          app:bt_active="true"
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          app:bt_colorActive="@color/green_active"
+          app:bt_colorInactive="@color/green_inactive"
+          app:bt_icon="@drawable/ic_baseline_group_24"
+          app:bt_shape="@drawable/transition_background_drawable_list"
+          app:bt_title="My Groups"
+          app:bt_titleSize="12sp"
+          android:layout_marginStart="20dp"
+          android:layout_marginEnd="20dp"/>
+      <com.gauravk.bubblenavigation.BubbleToggleView
+          android:id="@+id/Item_JoinGroup"
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          app:bt_colorActive="@color/purple_active"
+          app:bt_colorInactive="@color/purple_inactive"
+          app:bt_icon="@drawable/ic_baseline_group_add_24"
+          app:bt_shape="@drawable/transition_background_drawable_person"
+          app:bt_title="Join Group"
+          app:bt_titleSize="12sp"
+          android:layout_marginStart="20dp"
+          android:layout_marginEnd="20dp"/>
+    </com.gauravk.bubblenavigation.BubbleNavigationLinearView>
+
+
+  <androidx.viewpager.widget.ViewPager
         android:id="@+id/grouppage"
         android:layout_width="match_parent"
         android:layout_height="match_parent"/>

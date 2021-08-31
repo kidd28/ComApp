@@ -206,6 +206,13 @@ public class PublishPost extends AppCompatActivity {
         String timeStamp = String.valueOf(System.currentTimeMillis());
         String filePathAndName = "Post/" + "post_" +timeStamp;
 
+        Calendar calendar = Calendar.getInstance(Locale.getDefault());
+        try {
+            calendar.setTimeInMillis(Long.parseLong(timeStamp));
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+        String pTime = android.text.format.DateFormat.format("dd/MM/yyyy", calendar).toString();
         if (!uri.equals("noImage")){
             StorageReference ref = FirebaseStorage.getInstance().getReference().child(filePathAndName);
             ref.putFile(Uri.parse(uri))
@@ -226,9 +233,10 @@ public class PublishPost extends AppCompatActivity {
                                 hashMap.put("pId",timeStamp);
                                 hashMap.put("pTitle",mtitle);
                                 hashMap.put("pLike","0");
+                                hashMap.put("pComment","0");
                                 hashMap.put("pDescription",mdesc);
                                 hashMap.put("pImage",downloadUri);
-                                hashMap.put("pTime",timeStamp);
+                                hashMap.put("pTime",pTime);
                                 hashMap.put("groupId",groupId);
                                 hashMap.put("groupTitle",groupTitle);
                                 hashMap.put("Shared","false");
@@ -270,9 +278,10 @@ public class PublishPost extends AppCompatActivity {
             hashMap.put("pId",timeStamp);
             hashMap.put("pTitle",mtitle);
             hashMap.put("pLike","0");
+            hashMap.put("pComment","0");
             hashMap.put("pDescription",mdesc);
             hashMap.put("pImage","noImage");
-            hashMap.put("pTime",timeStamp);
+            hashMap.put("pTime",pTime);
             hashMap.put("groupId",groupId);
             hashMap.put("groupTitle",groupTitle);
             hashMap.put("Shared","false");
@@ -341,6 +350,9 @@ public class PublishPost extends AppCompatActivity {
     }
     private void requestStoragePermission(){
         ActivityCompat.requestPermissions(this,storagePermission, STORAGE_REQUEST_CODE);
+        if (checkCameraPermission()) {
+            pickFromGallery();
+        }
     }
     private boolean checkCameraPermission(){
         boolean result = ContextCompat.checkSelfPermission(this,Manifest.permission.CAMERA)
