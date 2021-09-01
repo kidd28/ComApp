@@ -55,7 +55,7 @@ public class PublishPost extends AppCompatActivity {
 
     DatabaseReference reference;
 
-    EditText title, desc;
+    EditText Caption;
     ImageView postImg;
     Button upBtn;
     Uri image_uri = null;
@@ -70,7 +70,7 @@ public class PublishPost extends AppCompatActivity {
     private static final int IMAGE_CAMERA_PICK_CODE = 400;
     String[] cameraPermission;
     String[] storagePermission;
-    String name, email, uid,dp;
+    String name, email, uid, dp;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -78,9 +78,9 @@ public class PublishPost extends AppCompatActivity {
         setContentView(R.layout.activity_publish_post);
 
 
-        title = findViewById(R.id.Title);
-        desc = findViewById(R.id.Description);
-        upBtn= findViewById(R.id.uploadbtn);
+        Caption = findViewById(R.id.Caption);
+
+        upBtn = findViewById(R.id.uploadbtn);
         postImg = findViewById(R.id.ImageV);
 
         uName = findViewById(R.id.name);
@@ -93,7 +93,7 @@ public class PublishPost extends AppCompatActivity {
 
 
         firebaseAuth = FirebaseAuth.getInstance();
-        user= firebaseAuth.getCurrentUser();
+        user = firebaseAuth.getCurrentUser();
         checkUser();
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -102,21 +102,22 @@ public class PublishPost extends AppCompatActivity {
 
 
         cameraPermission = new String[]{Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE};
-        storagePermission= new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE};
+        storagePermission = new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE};
 
         progressDialog = new ProgressDialog(this);
 
         reference = FirebaseDatabase.getInstance().getReference("Users");
-        Query query =   reference.orderByChild("email").equalTo(email);
+        Query query = reference.orderByChild("email").equalTo(email);
         query.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
-                for (DataSnapshot ds : snapshot.getChildren()){
-                    name = ""+ds.child("name").getValue();
-                    email = ""+ds.child("email").getValue();
-                    dp = ""+ds.child("image").getValue();
+                for (DataSnapshot ds : snapshot.getChildren()) {
+                    name = "" + ds.child("name").getValue();
+                    email = "" + ds.child("email").getValue();
+                    dp = "" + ds.child("image").getValue();
                 }
             }
+
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
 
@@ -129,31 +130,22 @@ public class PublishPost extends AppCompatActivity {
                 showImgDialog();
             }
         });
-
         upBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String mtitle= title.getText().toString().trim();
-                String mdesc= desc.getText().toString().trim();
-
-                if(TextUtils.isEmpty(mtitle)){
-                    Toast.makeText(PublishPost.this, "Plase Enter Title..", Toast.LENGTH_SHORT).show();
-                    return;
+                String caption = Caption.getText().toString().trim();
+                if (TextUtils.isEmpty(caption)) {
+                    Toast.makeText(PublishPost.this, "Please Enter Caption", Toast.LENGTH_SHORT).show();
+                return;
                 }
-
-                if(TextUtils.isEmpty(mdesc)){
-                    Toast.makeText(PublishPost.this, "Plase Enter description..", Toast.LENGTH_SHORT).show();
-                    return;
-                }
-                if (image_uri == null){
-                    uploadData(mtitle, mdesc , "noImage");
-                }else{
-                    uploadData(mtitle, mdesc , String.valueOf(image_uri));
+               if (image_uri == null) {
+                    uploadData(caption, "noImage");
+                } else {
+                    uploadData(caption, String.valueOf(image_uri));
                 }
             }
         });
     }
-
     private void loadUserInfo() {
         String ptime = String.valueOf(System.currentTimeMillis());
         DatabaseReference ref = FirebaseDatabase.getInstance().getReference("Users");
@@ -164,7 +156,7 @@ public class PublishPost extends AppCompatActivity {
             public void onDataChange(@NonNull DataSnapshot snapshot) {
 
                 for (DataSnapshot ds : snapshot.getChildren()) {
-                   String myName = "" + ds.child("name").getValue();
+                    String myName = "" + ds.child("name").getValue();
                     String myDp = "" + ds.child("image").getValue();
 
                     Calendar calendar = Calendar.getInstance(Locale.getDefault());
@@ -197,14 +189,12 @@ public class PublishPost extends AppCompatActivity {
             }
         });
     }
-
-
-    private void uploadData(String mtitle, String mdesc, String uri) {
+    private void uploadData(String caption, String uri) {
         progressDialog.setMessage("Publishing Post...");
         progressDialog.show();
 
         String timeStamp = String.valueOf(System.currentTimeMillis());
-        String filePathAndName = "Post/" + "post_" +timeStamp;
+        String filePathAndName = "Post/" + "post_" + timeStamp;
 
         Calendar calendar = Calendar.getInstance(Locale.getDefault());
         try {
@@ -213,33 +203,32 @@ public class PublishPost extends AppCompatActivity {
             ex.printStackTrace();
         }
         String pTime = android.text.format.DateFormat.format("dd/MM/yyyy", calendar).toString();
-        if (!uri.equals("noImage")){
+        if (!uri.equals("noImage")) {
             StorageReference ref = FirebaseStorage.getInstance().getReference().child(filePathAndName);
             ref.putFile(Uri.parse(uri))
                     .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
                         @Override
                         public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
                             Task<Uri> uriTask = taskSnapshot.getStorage().getDownloadUrl();
-                            while (!uriTask.isSuccessful());
+                            while (!uriTask.isSuccessful()) ;
 
                             String downloadUri = uriTask.getResult().toString();
 
-                            if(uriTask.isSuccessful()){
+                            if (uriTask.isSuccessful()) {
                                 HashMap<Object, String> hashMap = new HashMap<>();
-                                hashMap.put("uid",uid);
-                                hashMap.put("uName",name);
-                                hashMap.put("uEmail",email);
-                                hashMap.put("uDp",dp);
-                                hashMap.put("pId",timeStamp);
-                                hashMap.put("pTitle",mtitle);
-                                hashMap.put("pLike","0");
-                                hashMap.put("pComment","0");
-                                hashMap.put("pDescription",mdesc);
-                                hashMap.put("pImage",downloadUri);
-                                hashMap.put("pTime",pTime);
-                                hashMap.put("groupId",groupId);
-                                hashMap.put("groupTitle",groupTitle);
-                                hashMap.put("Shared","false");
+                                hashMap.put("uid", uid);
+                                hashMap.put("uName", name);
+                                hashMap.put("uEmail", email);
+                                hashMap.put("uDp", dp);
+                                hashMap.put("pId", timeStamp);
+                                hashMap.put("pCaption", caption);
+                                hashMap.put("pLike", "0");
+                                hashMap.put("pComment", "0");
+                                hashMap.put("pImage", downloadUri);
+                                hashMap.put("pTime", pTime);
+                                hashMap.put("groupId", groupId);
+                                hashMap.put("groupTitle", groupTitle);
+                                hashMap.put("Shared", "false");
 
                                 DatabaseReference reference1 = FirebaseDatabase.getInstance().getReference("Groups");
                                 reference1.child(groupId).child("Posts").child(timeStamp).setValue(hashMap)
@@ -248,16 +237,15 @@ public class PublishPost extends AppCompatActivity {
                                             public void onSuccess(Void aVoid) {
                                                 progressDialog.dismiss();
                                                 Toast.makeText(PublishPost.this, "Post published", Toast.LENGTH_SHORT).show();
-                                                 title.setText("");
-                                                 desc.setText("");
-                                                 postImg.setImageURI(null);
-                                                 image_uri = null;
+                                                Caption.setText("");
+                                                postImg.setImageURI(null);
+                                                image_uri = null;
                                             }
                                         }).addOnFailureListener(new OnFailureListener() {
                                     @Override
                                     public void onFailure(@NonNull Exception e) {
                                         progressDialog.dismiss();
-                                        Toast.makeText(PublishPost.this, "Publish Failed.."+ e.getMessage(), Toast.LENGTH_SHORT).show();
+                                        Toast.makeText(PublishPost.this, "Publish Failed.." + e.getMessage(), Toast.LENGTH_SHORT).show();
                                     }
                                 });
                             }
@@ -266,25 +254,24 @@ public class PublishPost extends AppCompatActivity {
                 @Override
                 public void onFailure(@NonNull Exception e) {
                     progressDialog.dismiss();
-                    Toast.makeText(PublishPost.this, ""+ e.getMessage(), Toast.LENGTH_SHORT).show();
+                    Toast.makeText(PublishPost.this, "" + e.getMessage(), Toast.LENGTH_SHORT).show();
                 }
             });
         }else{
             HashMap<Object, String> hashMap = new HashMap<>();
-            hashMap.put("uid",uid);
-            hashMap.put("uName",name);
-            hashMap.put("uEmail",email);
-            hashMap.put("uDp",dp);
-            hashMap.put("pId",timeStamp);
-            hashMap.put("pTitle",mtitle);
-            hashMap.put("pLike","0");
-            hashMap.put("pComment","0");
-            hashMap.put("pDescription",mdesc);
-            hashMap.put("pImage","noImage");
-            hashMap.put("pTime",pTime);
-            hashMap.put("groupId",groupId);
-            hashMap.put("groupTitle",groupTitle);
-            hashMap.put("Shared","false");
+            hashMap.put("uid", uid);
+            hashMap.put("uName", name);
+            hashMap.put("uEmail", email);
+            hashMap.put("uDp", dp);
+            hashMap.put("pId", timeStamp);
+            hashMap.put("pCaption", caption);
+            hashMap.put("pLike", "0");
+            hashMap.put("pComment", "0");
+            hashMap.put("pImage", "noImage");
+            hashMap.put("pTime", pTime);
+            hashMap.put("groupId", groupId);
+            hashMap.put("groupTitle", groupTitle);
+            hashMap.put("Shared", "false");
             DatabaseReference reference1 = FirebaseDatabase.getInstance().getReference("Groups");
             reference1.child(groupId).child("Posts").child(timeStamp).setValue(hashMap)
                     .addOnSuccessListener(new OnSuccessListener<Void>() {
@@ -292,8 +279,7 @@ public class PublishPost extends AppCompatActivity {
                         public void onSuccess(Void aVoid) {
                             progressDialog.dismiss();
                             Toast.makeText(PublishPost.this, "Post published", Toast.LENGTH_SHORT).show();
-                            title.setText("");
-                            desc.setText("");
+                            Caption.setText("");
                             postImg.setImageURI(null);
                             image_uri = null;
                             startActivity(new Intent(PublishPost.this, Home.class));
@@ -302,40 +288,41 @@ public class PublishPost extends AppCompatActivity {
                 @Override
                 public void onFailure(@NonNull Exception e) {
                     progressDialog.dismiss();
-                    Toast.makeText(PublishPost.this, "Publish Failed.."+ e.getMessage(), Toast.LENGTH_SHORT).show();
+                    Toast.makeText(PublishPost.this, "Publish Failed.." + e.getMessage(), Toast.LENGTH_SHORT).show();
                 }
             });
         }
     }
-    private void checkUser()
-    {
-        if (user!=null){
+
+    private void checkUser() {
+        if (user != null) {
             email = user.getEmail();
             uid = user.getUid();
-        }else{
-            startActivity(new Intent(this , MainActivity.class));
+        } else {
+            startActivity(new Intent(this, MainActivity.class));
             finish();
 
         }
     }
+
     private void showImgDialog() {
-        String option[] = {"Camera","Gallery"};
-        AlertDialog.Builder builder=new AlertDialog.Builder(this);
+        String option[] = {"Camera", "Gallery"};
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle("Choose Action");
         builder.setItems(option, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                if(which==0){
-                    if(!checkCameraPermission()){
+                if (which == 0) {
+                    if (!checkCameraPermission()) {
                         requestCameraPermission();
-                    }else{
+                    } else {
                         pickFromCamera();
                     }
 
-                }else if(which==1){
-                    if(!checkStoragePermission()){
+                } else if (which == 1) {
+                    if (!checkStoragePermission()) {
                         requestStoragePermission();
-                    }else{
+                    } else {
                         pickFromGallery();
                     }
                 }
@@ -343,26 +330,30 @@ public class PublishPost extends AppCompatActivity {
         });
         builder.create().show();
     }
-    private boolean checkStoragePermission(){
+
+    private boolean checkStoragePermission() {
         boolean result = ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)
                 == (PackageManager.PERMISSION_GRANTED);
         return result;
     }
-    private void requestStoragePermission(){
-        ActivityCompat.requestPermissions(this,storagePermission, STORAGE_REQUEST_CODE);
+
+    private void requestStoragePermission() {
+        ActivityCompat.requestPermissions(this, storagePermission, STORAGE_REQUEST_CODE);
         if (checkCameraPermission()) {
             pickFromGallery();
         }
     }
-    private boolean checkCameraPermission(){
-        boolean result = ContextCompat.checkSelfPermission(this,Manifest.permission.CAMERA)
+
+    private boolean checkCameraPermission() {
+        boolean result = ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA)
                 == (PackageManager.PERMISSION_GRANTED);
-        boolean result1 = ContextCompat.checkSelfPermission(this,Manifest.permission.WRITE_EXTERNAL_STORAGE)
+        boolean result1 = ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)
                 == (PackageManager.PERMISSION_GRANTED);
-        return result && result1 ;
+        return result && result1;
     }
-    private void requestCameraPermission(){
-        ActivityCompat.requestPermissions(this,cameraPermission, CAMERA_REQUEST_CODE);
+
+    private void requestCameraPermission() {
+        ActivityCompat.requestPermissions(this, cameraPermission, CAMERA_REQUEST_CODE);
     }
 
     @Override
@@ -370,17 +361,19 @@ public class PublishPost extends AppCompatActivity {
         onBackPressed();
         return super.onSupportNavigateUp();
     }
+
     private void pickFromCamera() {
-        ContentValues values =new ContentValues();
+        ContentValues values = new ContentValues();
         values.put(MediaStore.Images.Media.TITLE, "Temp Pic");
         values.put(MediaStore.Images.Media.DESCRIPTION, "Temp Description");
 
-        image_uri =this.getContentResolver().insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values);
+        image_uri = this.getContentResolver().insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values);
 
         Intent cameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         cameraIntent.putExtra(MediaStore.EXTRA_OUTPUT, image_uri);
         startActivityForResult(cameraIntent, IMAGE_CAMERA_PICK_CODE);
     }
+
     private void pickFromGallery() {
         Intent galleryIntent = new Intent(Intent.ACTION_PICK);
         galleryIntent.setType("image/*");
@@ -389,41 +382,42 @@ public class PublishPost extends AppCompatActivity {
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        switch (requestCode){
-            case CAMERA_REQUEST_CODE:{
-                if (grantResults.length > 0){
-                    boolean cameraAccepted = grantResults[0]==PackageManager.PERMISSION_GRANTED;
-                    boolean writeStorageAccepted = grantResults[1]==PackageManager.PERMISSION_GRANTED;
-                    if (cameraAccepted && writeStorageAccepted){
+        switch (requestCode) {
+            case CAMERA_REQUEST_CODE: {
+                if (grantResults.length > 0) {
+                    boolean cameraAccepted = grantResults[0] == PackageManager.PERMISSION_GRANTED;
+                    boolean writeStorageAccepted = grantResults[1] == PackageManager.PERMISSION_GRANTED;
+                    if (cameraAccepted && writeStorageAccepted) {
                         pickFromCamera();
-                    }else{
-                        Toast.makeText(this, "Please Enable Camera & Storage Permission",Toast.LENGTH_SHORT).show();
+                    } else {
+                        Toast.makeText(this, "Please Enable Camera & Storage Permission", Toast.LENGTH_SHORT).show();
                     }
 
                 }
-            }break;
-            case STORAGE_REQUEST_CODE:{
-                boolean writeStorageAccepted = grantResults[1]==PackageManager.PERMISSION_GRANTED;
-                if (writeStorageAccepted){
+            }
+            break;
+            case STORAGE_REQUEST_CODE: {
+                boolean writeStorageAccepted = grantResults[1] == PackageManager.PERMISSION_GRANTED;
+                if (writeStorageAccepted) {
                     pickFromGallery();
-                }else{
-                    Toast.makeText(this, "Please Enable Storage Permission",Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(this, "Please Enable Storage Permission", Toast.LENGTH_SHORT).show();
                 }
 
-            }break;
+            }
+            break;
         }
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
     }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-        if (resultCode == RESULT_OK){
+        if (resultCode == RESULT_OK) {
 
-            if (requestCode == IMAGE_GALLERY_PICK_CODE){
+            if (requestCode == IMAGE_GALLERY_PICK_CODE) {
                 image_uri = data.getData();
                 postImg.setImageURI(image_uri);
-            }
-            else if (requestCode == IMAGE_CAMERA_PICK_CODE){
+            } else if (requestCode == IMAGE_CAMERA_PICK_CODE) {
                 postImg.setImageURI(image_uri);
             }
         }

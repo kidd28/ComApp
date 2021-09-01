@@ -95,8 +95,6 @@ public class Group extends Fragment {
         modelGroups = new ArrayList<>();
 
 
-
-
         FirebaseUser user =FirebaseAuth.getInstance().getCurrentUser();
         loadGroup();
         pullToRefresh = v.findViewById(R.id.pullToRefresh);
@@ -110,7 +108,6 @@ public class Group extends Fragment {
         });
         return v;
     }
-
     private void loadGroup() {
         FirebaseUser user =FirebaseAuth.getInstance().getCurrentUser();
         DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Groups");

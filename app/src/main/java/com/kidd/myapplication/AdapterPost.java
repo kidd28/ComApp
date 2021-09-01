@@ -68,8 +68,7 @@ public class AdapterPost extends RecyclerView.Adapter<AdapterPost.MyHolder> {
         String uName = postList.get(i).getuName();
         String uDp = postList.get(i).getuDp();
         String pId = postList.get(i).getpId();
-        String pTitle = postList.get(i).getpTitle();
-        String pDesc = postList.get(i).getpDescription();
+        String pCaption = postList.get(i).getpCaption();
         String pImage = postList.get(i).getpImage();
         String pTimestamp = postList.get(i).getpTime();
         String groupId = postList.get(i).getGroupId();
@@ -96,8 +95,7 @@ public class AdapterPost extends RecyclerView.Adapter<AdapterPost.MyHolder> {
         String pTime = android.text.format.DateFormat.format("dd/MM/yyyy", calendar).toString();
 
         holder.uName.setText(uName);
-        holder.pDescription.setText(pDesc);
-        holder.pTitle.setText(pTitle);
+        holder.pCaption.setText(pCaption);
         holder.pTime.setText(pTime);
         Glide
                 .with(context)
@@ -151,9 +149,8 @@ public class AdapterPost extends RecyclerView.Adapter<AdapterPost.MyHolder> {
                 intent.putExtra("groupTitle", groupTitle);
                 intent.putExtra("groupTime", groupTime);
                 intent.putExtra("pTime", pTime);
-                intent.putExtra("pTitle", pTitle);
+                intent.putExtra("pCaption", pCaption);
                 intent.putExtra("pComment", pComment);
-                intent.putExtra("pDesc", pDesc);
                 intent.putExtra("uDp", uDp);
                 intent.putExtra("pImage", pImage);
                 intent.putExtra("uName", uName);
@@ -197,7 +194,7 @@ public class AdapterPost extends RecyclerView.Adapter<AdapterPost.MyHolder> {
         holder.shareBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                shareWimage(likes,uid,uEmail,pId,groupId,grIcon,groupTitle,groupTime,pTime,pTitle,pDesc,uDp,pImage,uName);
+                shareWimage(likes,uid,uEmail,pId,groupId,grIcon,groupTitle,groupTime,pTime,pCaption,uDp,pImage,uName);
             }
         });
         holder.uName.setOnClickListener(new View.OnClickListener() {
@@ -211,7 +208,7 @@ public class AdapterPost extends RecyclerView.Adapter<AdapterPost.MyHolder> {
 
 
     }
-    private void shareWimage(String likes, String uid, String uEmail, String pId, String groupId, String grIcon, String groupTitle, String groupTime, String pTime, String pTitle ,String pDesc,String uDp, String pImage,String uName) {
+    private void shareWimage(String likes, String uid, String uEmail, String pId, String groupId, String grIcon, String groupTitle, String groupTime, String pTime, String pCaption,String uDp, String pImage,String uName) {
         Intent intent =new Intent(context, SharePost.class);
         intent.putExtra("likes", likes);
         intent.putExtra("uid", uid);
@@ -222,8 +219,7 @@ public class AdapterPost extends RecyclerView.Adapter<AdapterPost.MyHolder> {
         intent.putExtra("groupTitle", groupTitle);
         intent.putExtra("groupTime", groupTime);
         intent.putExtra("pTime", pTime);
-        intent.putExtra("pTitle", pTitle);
-        intent.putExtra("pDesc", pDesc);
+        intent.putExtra("pTitle", pCaption);
         intent.putExtra("uDp", uDp);
         intent.putExtra("pImage", pImage);
         intent.putExtra("uName", uName);
@@ -356,7 +352,7 @@ public class AdapterPost extends RecyclerView.Adapter<AdapterPost.MyHolder> {
     class MyHolder  extends RecyclerView.ViewHolder{
 
         ImageView pdp, pImg,sdp,arrow;
-        TextView CommentCount,shareName,grShareName,uName, pTime, pTitle, pDescription, pLike, likeBtn, commentBtn, shareBtn, groupName, moreBtn,shareTime;
+        TextView CommentCount,shareName,grShareName,uName, pTime, pCaption, pLike, likeBtn, commentBtn, shareBtn, groupName, moreBtn,shareTime;
         View view;
         public MyHolder(@NonNull View itemView) {
             super(itemView);
@@ -365,8 +361,7 @@ public class AdapterPost extends RecyclerView.Adapter<AdapterPost.MyHolder> {
             pImg= itemView.findViewById(R.id.ImageV);
             uName= itemView.findViewById(R.id.name);
             pTime= itemView.findViewById(R.id.time);
-            pTitle= itemView.findViewById(R.id.pTitle);
-            pDescription= itemView.findViewById(R.id.pDescription);
+            pCaption= itemView.findViewById(R.id.pCaption);
             pLike= itemView.findViewById(R.id.pLike);
             moreBtn= itemView.findViewById(R.id.more);
             likeBtn= itemView.findViewById(R.id.likebtn);

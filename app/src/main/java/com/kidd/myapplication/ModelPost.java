@@ -2,18 +2,17 @@ package com.kidd.myapplication;
 
 public class ModelPost {
 
-String ShareTime,pComment,pId, pTitle,pDescription,pTime, uid, uName,uEmail,pImage,uDp,groupId,groupTitle,groupIcon,pLike,Shared,ShareTo,ShareName,ShareDp;
+String ShareTime,pComment,pId, pCaption,pTime, uid, uName,uEmail,pImage,uDp,groupId,groupTitle,groupIcon,pLike,Shared,ShareTo,ShareName,ShareDp;
 
     public ModelPost() {
     }
 
-    public ModelPost(String pId, String pTitle, String pDescription, String pTime,
+    public ModelPost(String pId, String pCaption, String pTime,
                      String uid, String uName, String uEmail, String pImage, String uDp,
                      String groupId, String groupTitle, String groupIcon,String pLike,String Shared,
                      String ShareTo, String ShareName,String ShareDp,String pComment,String ShareTime) {
         this.pId = pId;
-        this.pTitle = pTitle;
-        this.pDescription = pDescription;
+        this.pCaption = pCaption;
         this.pTime = pTime;
         this.uid = uid;
         this.uName = uName;
@@ -29,6 +28,14 @@ String ShareTime,pComment,pId, pTitle,pDescription,pTime, uid, uName,uEmail,pIma
         this.ShareDp = ShareDp;
         this.pComment = pComment;
         this.ShareTime = ShareTime;
+    }
+
+    public String getpCaption() {
+        return pCaption;
+    }
+
+    public void setpCaption(String pCaption) {
+        this.pCaption = pCaption;
     }
 
     public String getShareTime() {
@@ -93,22 +100,6 @@ String ShareTime,pComment,pId, pTitle,pDescription,pTime, uid, uName,uEmail,pIma
 
     public void setpId(String pId) {
         this.pId = pId;
-    }
-
-    public String getpTitle() {
-        return pTitle;
-    }
-
-    public void setpTitle(String pTitle) {
-        this.pTitle = pTitle;
-    }
-
-    public String getpDescription() {
-        return pDescription;
-    }
-
-    public void setpDescription(String pDescription) {
-        this.pDescription = pDescription;
     }
 
     public String getpTime() {

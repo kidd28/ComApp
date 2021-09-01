@@ -43,7 +43,6 @@ public class AdapterNewsFeed extends RecyclerView.Adapter<AdapterNewsFeed.MyHold
     public AdapterNewsFeed(Context context, List<ModelPost> postList) {
         this.postList = postList;
         this.context = context;
-
     }
     @NonNull
     @Override
@@ -63,8 +62,7 @@ public class AdapterNewsFeed extends RecyclerView.Adapter<AdapterNewsFeed.MyHold
         String pImage = postList.get(i).getpImage();
         String groupTitle = postList.get(i).getGroupTitle();
         String groupTime = postList.get(i).getGroupId();
-        String pTitle = postList.get(i).getpTitle();
-        String pDesc = postList.get(i).getpDescription();
+        String pCaption = postList.get(i).getpCaption();
         String uDp = postList.get(i).getuDp();
         String uName = postList.get(i).getuName();
         String Shared = postList.get(i).getShared();
@@ -79,8 +77,7 @@ public class AdapterNewsFeed extends RecyclerView.Adapter<AdapterNewsFeed.MyHold
 
 
         holder.uName.setText(postList.get(i).getuName());
-        holder.pDescription.setText(postList.get(i).getpDescription());
-        holder.pTitle.setText(postList.get(i).getpTitle());
+        holder.pCaption.setText(postList.get(i).getpCaption());
         holder.pTime.setText(postList.get(i).getpTime());
         holder.groupName.setText(postList.get(i).getGroupTitle());
         holder.pLike.setText(likes + " Likes");
@@ -140,9 +137,8 @@ public class AdapterNewsFeed extends RecyclerView.Adapter<AdapterNewsFeed.MyHold
                 intent.putExtra("groupTitle", groupTitle);
                 intent.putExtra("groupTime", groupTime);
                 intent.putExtra("pTime", pTime);
-                intent.putExtra("pTitle", pTitle);
+                intent.putExtra("pCaption", pCaption);
                 intent.putExtra("pComment", pComment);
-                intent.putExtra("pDesc", pDesc);
                 intent.putExtra("uDp", uDp);
                 intent.putExtra("pImage", pImage);
                 intent.putExtra("uName", uName);
@@ -150,7 +146,6 @@ public class AdapterNewsFeed extends RecyclerView.Adapter<AdapterNewsFeed.MyHold
                 intent.putExtra("ShareTo", ShareTo);
                 intent.putExtra("ShareName", ShareName);
                 intent.putExtra("ShareDp", ShareDp);
-
                 context.startActivity(intent);
             }
         });
@@ -181,7 +176,6 @@ public class AdapterNewsFeed extends RecyclerView.Adapter<AdapterNewsFeed.MyHold
                 intent.putExtra("ShareTo", ShareTo);
                 intent.putExtra("ShareName", ShareName);
                 intent.putExtra("ShareDp", ShareDp);
-
                 context.startActivity(intent);
             }
         });
@@ -208,11 +202,11 @@ public class AdapterNewsFeed extends RecyclerView.Adapter<AdapterNewsFeed.MyHold
         holder.shareBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                    shareWimage(likes,uid,uEmail,pId,groupId,grIcon,groupTitle,groupTime,pTime,pTitle,pDesc,uDp,pImage,uName);
+                    shareWimage(likes,uid,uEmail,pId,groupId,grIcon,groupTitle,groupTime,pTime,pCaption,uDp,pImage,uName);
             }
         });
     }
-    private void shareWimage(String likes, String uid, String uEmail, String pId, String groupId, String grIcon, String groupTitle, String groupTime, String pTime, String pTitle ,String pDesc,String uDp, String pImage,String uName) {
+    private void shareWimage(String likes, String uid, String uEmail, String pId, String groupId, String grIcon, String groupTitle, String groupTime, String pTime, String pCaption,String uDp, String pImage,String uName) {
     Intent intent =new Intent(context, SharePost.class);
     intent.putExtra("likes", likes);
     intent.putExtra("uid", uid);
@@ -223,8 +217,7 @@ public class AdapterNewsFeed extends RecyclerView.Adapter<AdapterNewsFeed.MyHold
     intent.putExtra("groupTitle", groupTitle);
     intent.putExtra("groupTime", groupTime);
     intent.putExtra("pTime", pTime);
-    intent.putExtra("pTitle", pTitle);
-    intent.putExtra("pDesc", pDesc);
+    intent.putExtra("pCaption", pCaption);
     intent.putExtra("uDp", uDp);
     intent.putExtra("pImage", pImage);
     intent.putExtra("uName", uName);
@@ -361,7 +354,7 @@ public class AdapterNewsFeed extends RecyclerView.Adapter<AdapterNewsFeed.MyHold
     class MyHolder extends RecyclerView.ViewHolder {
 
         ImageView pdp, pImg,sdp,arrow;
-        TextView CommentCount,shareName,grShareName,uName, pTime, pTitle, pDescription, pLike, likeBtn, commentBtn, shareBtn, groupName, moreBtn,shareTime;
+        TextView CommentCount,shareName,grShareName,uName, pTime, pCaption, pLike, likeBtn, commentBtn, shareBtn, groupName, moreBtn,shareTime;
         View view;
         public MyHolder(@NonNull View itemView) {
             super(itemView);
@@ -369,8 +362,7 @@ public class AdapterNewsFeed extends RecyclerView.Adapter<AdapterNewsFeed.MyHold
             pImg = itemView.findViewById(R.id.ImageV);
             uName = itemView.findViewById(R.id.name);
             pTime = itemView.findViewById(R.id.time);
-            pTitle = itemView.findViewById(R.id.pTitle);
-            pDescription = itemView.findViewById(R.id.pDescription);
+            pCaption = itemView.findViewById(R.id.pCaption);
             pLike = itemView.findViewById(R.id.pLike);
             moreBtn = itemView.findViewById(R.id.more);
             likeBtn = itemView.findViewById(R.id.likebtn);

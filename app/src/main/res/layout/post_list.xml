@@ -116,17 +116,12 @@
         </LinearLayout>
         <TextView
             android:layout_marginTop="5dp"
-            android:id="@+id/pTitle"
+            android:id="@+id/pCaption"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:textSize="20sp"
             android:textStyle="bold"
             android:text="Title" />
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:id="@+id/pDescription"
-            android:text="Description" />
         <ImageView
             android:id="@+id/ImageV"
             android:layout_width="match_parent"

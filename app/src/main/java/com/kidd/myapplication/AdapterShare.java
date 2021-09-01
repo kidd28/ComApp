@@ -61,9 +61,8 @@ public class AdapterShare extends RecyclerView.Adapter<AdapterShare.HolderGroupL
         String uEmail = intent.getStringExtra("uEmail");
         String pId = intent.getStringExtra("pId");
         String pTime = intent.getStringExtra("pTime");
-        String pTitle = intent.getStringExtra("pTitle");
+        String pCaption = intent.getStringExtra("pCaption");
         String grTitle = intent.getStringExtra("groupTitle");
-        String pDesc = intent.getStringExtra("pDesc");
         String uDp = intent.getStringExtra("uDp");
         String pImage = intent.getStringExtra("pImage");
         String uName = intent.getStringExtra("uName");
@@ -81,14 +80,14 @@ public class AdapterShare extends RecyclerView.Adapter<AdapterShare.HolderGroupL
             @Override
             public void onClick(View v) {
                 if (pImage.equals("noImage")) {
-                    sharePost(groupId, groupIcon, grTitle,shareTogroupTitle, groupTime, likes, uid, uEmail, pId, pTime, pTitle, pDesc, uDp, uName);
+                    sharePost(groupId, groupIcon, grTitle,shareTogroupTitle, groupTime, likes, uid, uEmail, pId, pTime, pCaption, uDp, uName);
                 } else {
-                    sharePostwImage(groupId, groupIcon, grTitle,shareTogroupTitle, groupTime, likes, uid, uEmail, pId, pTime, pTitle, pDesc, uDp, pImage, uName);
+                    sharePostwImage(groupId, groupIcon, grTitle,shareTogroupTitle, groupTime, likes, uid, uEmail, pId, pTime, pCaption, uDp, pImage, uName);
                 }
             }
         });
     }
-    private void sharePostwImage(String groupId, String groupIcon, String groupTitle,String shareTogroupTitle, String groupTime, String likes, String uid, String uEmail, String pId, String pTime, String pTitle, String pDesc, String uDp, String pImage, String uName) {
+    private void sharePostwImage(String groupId, String groupIcon, String groupTitle,String shareTogroupTitle, String groupTime, String likes, String uid, String uEmail, String pId, String pTime, String pCaption, String uDp, String pImage, String uName) {
         String postId = String.valueOf(System.currentTimeMillis());
         Calendar calendar = Calendar.getInstance(Locale.getDefault());
         try {
@@ -113,10 +112,9 @@ public class AdapterShare extends RecyclerView.Adapter<AdapterShare.HolderGroupL
                     hashMap.put("uEmail", uEmail);
                     hashMap.put("uDp", uDp);
                     hashMap.put("pId", postId);
-                    hashMap.put("pTitle", pTitle);
+                    hashMap.put("pCaption", pCaption);
                     hashMap.put("pLike", "0");
                     hashMap.put("pComment", "0");
-                    hashMap.put("pDescription", pDesc);
                     hashMap.put("pImage", pImage);
                     hashMap.put("pTime", pTime);
                     hashMap.put("groupId", groupId);
@@ -145,7 +143,7 @@ public class AdapterShare extends RecyclerView.Adapter<AdapterShare.HolderGroupL
         });
 
     }
-    private void sharePost(String groupId, String groupIcon, String groupTitle,String shareTogroupTitle, String groupTime, String likes, String uid, String uEmail, String pId, String pTime, String pTitle, String pDesc, String uDp, String uName) {
+    private void sharePost(String groupId, String groupIcon, String groupTitle,String shareTogroupTitle, String groupTime, String likes, String uid, String uEmail, String pId, String pTime, String pCaption, String uDp, String uName) {
         String postId = String.valueOf(System.currentTimeMillis());
         Calendar calendar = Calendar.getInstance(Locale.getDefault());
         try {
@@ -170,10 +168,9 @@ public class AdapterShare extends RecyclerView.Adapter<AdapterShare.HolderGroupL
                     hashMap.put("uEmail", uEmail);
                     hashMap.put("uDp", uDp);
                     hashMap.put("pId", postId);
-                    hashMap.put("pTitle", pTitle);
+                    hashMap.put("pCaption", pCaption);
                     hashMap.put("pLike", "0");
                     hashMap.put("pComment", "0");
-                    hashMap.put("pDescription", pDesc);
                     hashMap.put("pImage", "noImage");
                     hashMap.put("pTime", pTime);
                     hashMap.put("groupId", groupId);

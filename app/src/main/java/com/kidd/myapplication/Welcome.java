@@ -24,6 +24,13 @@ public class Welcome extends AppCompatActivity {
                 finish();
             }
         });
+        join.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(Welcome.this,JoinGroup.class));
+                finish();
+            }
+        });
     }
     public void onBackPressed(){
         finish();

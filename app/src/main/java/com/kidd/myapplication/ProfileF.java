@@ -1,3 +1,4 @@
+
 package com.kidd.myapplication;
 
 import android.Manifest;
@@ -517,8 +518,8 @@ public class ProfileF extends Fragment {
 
     private void loadPost() {
         FirebaseUser user1 = FirebaseAuth.getInstance().getCurrentUser();
-         reference = FirebaseDatabase.getInstance().getReference("Groups");
-        reference.addValueEventListener(new ValueEventListener() {
+        DatabaseReference reference1 = FirebaseDatabase.getInstance().getReference("Groups");
+        reference1.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 modelPostList.clear();

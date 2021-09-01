@@ -1,5 +1,6 @@
 package com.kidd.myapplication;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -152,7 +153,7 @@ public class NF extends Fragment {
         writePost.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                startActivity(new Intent(getActivity(), WritePost.class));
             }
         });
         return v;
