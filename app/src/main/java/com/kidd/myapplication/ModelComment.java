@@ -1,12 +1,12 @@
 package com.kidd.myapplication;
 
 public class ModelComment {
-    String cId, comment,timestamp,uDp,uEmail,uName,uid;
+    String cId, comment,timestamp,uDp,uEmail,uName,uid,pId;
 
     public ModelComment() {
     }
 
-    public ModelComment(String cId, String comment, String timestamp, String uDp, String uEmail, String uName, String uid) {
+    public ModelComment(String pId,String cId, String comment, String timestamp, String uDp, String uEmail, String uName, String uid) {
         this.cId = cId;
         this.comment = comment;
         this.timestamp = timestamp;
@@ -14,6 +14,16 @@ public class ModelComment {
         this.uEmail = uEmail;
         this.uName = uName;
         this.uid = uid;
+        this.pId = pId;
+
+    }
+
+    public String getpId() {
+        return pId;
+    }
+
+    public void setpId(String pId) {
+        this.pId = pId;
     }
 
     public String getcId() {

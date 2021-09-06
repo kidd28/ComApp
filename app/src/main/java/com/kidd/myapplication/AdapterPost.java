@@ -4,6 +4,7 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Color;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -19,6 +20,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
+import com.ceylonlabs.imageviewpopup.ImagePopup;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
@@ -40,7 +42,7 @@ public class AdapterPost extends RecyclerView.Adapter<AdapterPost.MyHolder> {
     Context context;
     List<ModelPost> postList;
     Boolean likeProcess = false;
-
+    ImagePopup imagePopup;
    private DatabaseReference ref;
     private DatabaseReference ref1;
     FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
@@ -54,9 +56,7 @@ public class AdapterPost extends RecyclerView.Adapter<AdapterPost.MyHolder> {
     @NonNull
     @Override
     public MyHolder onCreateViewHolder(@NonNull ViewGroup parent, int i) {
-
         View v = LayoutInflater.from(context).inflate(R.layout.post_list, parent, false);
-
         return new MyHolder(v);
     }
 
@@ -78,6 +78,7 @@ public class AdapterPost extends RecyclerView.Adapter<AdapterPost.MyHolder> {
         String ShareTo = postList.get(i).getShareTo();
         String ShareName = postList.get(i).getShareName();
         String ShareDp = postList.get(i).getShareDp();
+        String ShareTime = postList.get(i).getShareTime();
         String pComment = postList.get(i).getpComment();
 
 
@@ -103,7 +104,13 @@ public class AdapterPost extends RecyclerView.Adapter<AdapterPost.MyHolder> {
                 .centerCrop()
                 .placeholder(R.drawable.ic_def_img)
                 .into(holder.pdp);
-
+        holder.shareName.setText(ShareName);
+        Glide
+                .with(context)
+                .load(ShareDp)
+                .centerCrop()
+                .placeholder(R.drawable.ic_def_img)
+                .into(holder.sdp);
         if (pImage.equals("noImage")) {
             holder.pImg.setVisibility(View.GONE);
         } else {
@@ -121,18 +128,32 @@ public class AdapterPost extends RecyclerView.Adapter<AdapterPost.MyHolder> {
             holder.sdp.setVisibility(View.GONE);
             holder.arrow.setVisibility(View.GONE);
             holder.view.setVisibility(View.GONE);
+            holder.ShareMore.setVisibility(View.GONE);
         }else if (Shared.equals("true")){
-            holder.shareName.setText(ShareName);
             holder.grShareName.setText(ShareTo);
-            holder.shareTime.setText(pTime);
-            Glide
-                    .with(context)
-                    .load(postList.get(i).getShareDp())
-                    .centerCrop()
-                    .placeholder(R.drawable.ic_def_img)
-                    .into(holder.sdp);
+            holder.shareTime.setText(ShareTime);
+            holder.moreBtn.setVisibility(View.GONE);
         }
-        holder.itemView.setOnClickListener(new View.OnClickListener() {
+        holder.pImg.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                imagePopup = new ImagePopup(context);
+                imagePopup.setImageOnClickClose(true);
+                imagePopup.setWindowHeight(1000);
+                imagePopup.setWindowWidth(1000);
+                imagePopup.setBackgroundColor(Color.TRANSPARENT);
+                imagePopup.setHideCloseIcon(true);
+                imagePopup.initiatePopupWithGlide(postList.get(i).getpImage());
+                imagePopup.viewPopup();
+            }
+        });
+        holder.ShareMore.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                SharemoreOption(holder.ShareMore, uid, user.getUid(), groupId, pId, pImage);
+            }
+        });
+        holder.pCaption.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(context, PostDetail.class);
@@ -202,11 +223,44 @@ public class AdapterPost extends RecyclerView.Adapter<AdapterPost.MyHolder> {
             public void onClick(View v) {
                 Intent intent = new Intent(context, OtherProfile.class);
                 intent.putExtra("email", uEmail);
+                intent.putExtra("uid", uid);
+
                 context.startActivity(intent);
             }
         });
+    }
+    private void SharemoreOption(TextView moreBtn, String uid, String uid1, String groupId, String pId, String pImage) {
+        PopupMenu menu = new PopupMenu(context, moreBtn, Gravity.END);
+        AlertDialog.Builder builder = new AlertDialog.Builder(context);
+        builder.setTitle("Delete Posts");
+        builder.setMessage("Are you sure you want to Delete this Post?");
 
-
+        if (uid.equals(user.getUid())) {
+            menu.getMenu().add(Menu.NONE, 0, 0, "Delete");
+            menu.getMenu().add(Menu.NONE, 1, 2, "Edit");
+        }
+        menu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem item) {
+                int id = item.getItemId();
+                if (id == 0) {
+                    builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            deletePost(pId, groupId);
+                        }
+                    });
+                    builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                        }
+                    });
+                    builder.create().show();
+                }
+                return false;
+            }
+        });
+        menu.show();
     }
     private void shareWimage(String likes, String uid, String uEmail, String pId, String groupId, String grIcon, String groupTitle, String groupTime, String pTime, String pCaption,String uDp, String pImage,String uName) {
         Intent intent =new Intent(context, SharePost.class);
@@ -225,7 +279,6 @@ public class AdapterPost extends RecyclerView.Adapter<AdapterPost.MyHolder> {
         intent.putExtra("uName", uName);
         context.startActivity(intent);
     }
-
     private void moreOption(TextView morebtn, String uid, String myUid, String grId,String pId,String pImage) {
         PopupMenu menu = new PopupMenu(context, morebtn, Gravity.END);
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
@@ -298,7 +351,6 @@ public class AdapterPost extends RecyclerView.Adapter<AdapterPost.MyHolder> {
             }
         });
     }
-
     private void setLikes(MyHolder holder, String pId, String grId) {
         ref = FirebaseDatabase.getInstance().getReference("Groups")
                 .child(grId).child("Posts").child(pId);
@@ -352,7 +404,7 @@ public class AdapterPost extends RecyclerView.Adapter<AdapterPost.MyHolder> {
     class MyHolder  extends RecyclerView.ViewHolder{
 
         ImageView pdp, pImg,sdp,arrow;
-        TextView CommentCount,shareName,grShareName,uName, pTime, pCaption, pLike, likeBtn, commentBtn, shareBtn, groupName, moreBtn,shareTime;
+        TextView ShareMore,CommentCount,shareName,grShareName,uName, pTime, pCaption, pLike, likeBtn, commentBtn, shareBtn, groupName, moreBtn,shareTime;
         View view;
         public MyHolder(@NonNull View itemView) {
             super(itemView);
@@ -374,6 +426,7 @@ public class AdapterPost extends RecyclerView.Adapter<AdapterPost.MyHolder> {
             arrow = itemView.findViewById(R.id.arrow);
             view = itemView.findViewById(R.id.view);
             CommentCount = itemView.findViewById(R.id.commenCount);
+            ShareMore = itemView.findViewById(R.id.ShareMore);
         }
     }
 }

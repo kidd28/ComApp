@@ -5,4 +5,5 @@
     android:minHeight="?attr/actionBarSize"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    app:titleTextColor="@color/design_default_color_primary" />
+    app:titleTextColor="@color/white"
+    android:background= "@color/green_inactive"/>

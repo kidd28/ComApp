@@ -38,17 +38,18 @@ public class AdapterUser extends RecyclerView.Adapter<AdapterUser.MyHolder> {
         String userImage = userList.get(position).getImage();
         String userName = userList.get(position).getName();
         String userEmail = userList.get(position).getEmail();
+        String userUid= userList.get(position).getUid();
 
         holder.P_name.setText(userName);
-        holder.P_mail.setText(userEmail);
-
-
-            Glide
+        holder.role.setText(userList.get(position).getRole());
+        
+        Glide
                     .with(context)
                     .load(userImage)
                     .centerCrop()
                     .placeholder(R.drawable.ic_def_img)
                     .into(holder.P_avatar);
+
 
 
 
@@ -58,6 +59,7 @@ public class AdapterUser extends RecyclerView.Adapter<AdapterUser.MyHolder> {
                 Intent intent = new Intent (context, OtherProfile.class);
                 intent.putExtra("email", userEmail);
                 intent.putExtra("name", userName);
+                intent.putExtra("uid", userUid);
                 context.startActivity(intent);
             }
         });
@@ -70,12 +72,12 @@ public class AdapterUser extends RecyclerView.Adapter<AdapterUser.MyHolder> {
     class MyHolder extends RecyclerView.ViewHolder{
 
         ImageView P_avatar;
-        TextView P_name,P_mail;
+        TextView P_name,role;
         public MyHolder(@NonNull View itemView) {
             super(itemView);
             P_avatar = itemView.findViewById(R.id.Pavatar);
             P_name=itemView.findViewById(R.id.Pname);
-            P_mail=itemView.findViewById(R.id.Pemail);
+            role=itemView.findViewById(R.id.position);
 
         }
     }

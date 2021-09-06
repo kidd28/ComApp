@@ -76,6 +76,8 @@ public class AdapterShare extends RecyclerView.Adapter<AdapterShare.HolderGroupL
                     .placeholder(R.drawable.ic_def_img)
                     .into(holder.groupIcon);
         }
+
+
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -107,7 +109,7 @@ public class AdapterShare extends RecyclerView.Adapter<AdapterShare.HolderGroupL
                     String myDp = "" + ds.child("image").getValue();
 
                     HashMap<Object, String> hashMap = new HashMap<>();
-                    hashMap.put("uid", user.getUid());
+                    hashMap.put("uid",uid);
                     hashMap.put("uName", uName);
                     hashMap.put("uEmail", uEmail);
                     hashMap.put("uDp", uDp);
@@ -124,6 +126,8 @@ public class AdapterShare extends RecyclerView.Adapter<AdapterShare.HolderGroupL
                     hashMap.put("ShareName",myName);
                     hashMap.put("ShareDp",myDp);
                     hashMap.put("ShareTime",ShareTime);
+                    hashMap.put("ShareEmail",user.getEmail());
+                    hashMap.put("ShareUid",user.getUid());
 
 
                     DatabaseReference reference1 = FirebaseDatabase.getInstance().getReference("Groups");
@@ -163,16 +167,16 @@ public class AdapterShare extends RecyclerView.Adapter<AdapterShare.HolderGroupL
                     String myDp = "" + ds.child("image").getValue();
 
                     HashMap<Object, String> hashMap = new HashMap<>();
-                    hashMap.put("uid", user.getUid());
+                    hashMap.put("uid",uid);
                     hashMap.put("uName", uName);
                     hashMap.put("uEmail", uEmail);
                     hashMap.put("uDp", uDp);
                     hashMap.put("pId", postId);
-                    hashMap.put("pCaption", pCaption);
                     hashMap.put("pLike", "0");
                     hashMap.put("pComment", "0");
                     hashMap.put("pImage", "noImage");
                     hashMap.put("pTime", pTime);
+                    hashMap.put("pCaption", pCaption);
                     hashMap.put("groupId", groupId);
                     hashMap.put("groupTitle", groupTitle);
                     hashMap.put("ShareTo", shareTogroupTitle);
@@ -180,6 +184,8 @@ public class AdapterShare extends RecyclerView.Adapter<AdapterShare.HolderGroupL
                     hashMap.put("ShareName",myName);
                     hashMap.put("ShareDp",myDp);
                     hashMap.put("ShareTime",ShareTime);
+                    hashMap.put("ShareEmail",user.getEmail());
+                    hashMap.put("ShareUid",user.getUid());
 
                     DatabaseReference reference1 = FirebaseDatabase.getInstance().getReference("Groups");
                     reference1.child(groupId).child("Posts").child(postId).setValue(hashMap)

@@ -11,6 +11,7 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.app.AppCompatDelegate;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -33,6 +34,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
         FirebaseApp.initializeApp(this);
         login = findViewById(R.id.login);
         Signup = findViewById(R.id.signup);
@@ -43,14 +45,10 @@ public class MainActivity extends AppCompatActivity {
         progressDialog.setMessage("Wait for a second..");
 
         FirebaseApp.initializeApp(this);
-
-
-
         Signup.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 startActivity(new Intent(MainActivity.this, sign_up.class));
-
             }
         });
 

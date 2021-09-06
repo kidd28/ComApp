@@ -36,8 +36,7 @@ public class Members extends AppCompatActivity {
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         userList = new ArrayList<>();
-        adapterUser = new AdapterUser(this, userList);
-        recyclerView.setAdapter(adapterUser);
+
         this.setTitle("Members");
 
          grId = getIntent().getStringExtra("grId");
@@ -65,7 +64,9 @@ public class Members extends AppCompatActivity {
                             ModelUser modelUser = gr.getValue(ModelUser.class);
                             userList.add(modelUser);
                     }
-                    adapterUser.notifyDataSetChanged();
+                adapterUser = new AdapterUser(Members.this, userList);
+                recyclerView.setAdapter(adapterUser);
+                adapterUser.notifyDataSetChanged();
                 }
             @Override
             public void onCancelled(@NonNull DatabaseError error) {

@@ -59,6 +59,7 @@ public class AdapterComment extends RecyclerView.Adapter<AdapterComment.Myholder
                 .centerCrop()
                 .placeholder(R.drawable.ic_def_img)
                 .into(holder.dp);
+
     }
 
     @Override

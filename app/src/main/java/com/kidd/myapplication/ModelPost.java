@@ -2,7 +2,7 @@ package com.kidd.myapplication;
 
 public class ModelPost {
 
-String ShareTime,pComment,pId, pCaption,pTime, uid, uName,uEmail,pImage,uDp,groupId,groupTitle,groupIcon,pLike,Shared,ShareTo,ShareName,ShareDp;
+String ShareUid,ShareEmail,ShareTime,pComment,pId, pCaption,pTime, uid, uName,uEmail,pImage,uDp,groupId,groupTitle,groupIcon,pLike,Shared,ShareTo,ShareName,ShareDp;
 
     public ModelPost() {
     }
@@ -10,7 +10,7 @@ String ShareTime,pComment,pId, pCaption,pTime, uid, uName,uEmail,pImage,uDp,grou
     public ModelPost(String pId, String pCaption, String pTime,
                      String uid, String uName, String uEmail, String pImage, String uDp,
                      String groupId, String groupTitle, String groupIcon,String pLike,String Shared,
-                     String ShareTo, String ShareName,String ShareDp,String pComment,String ShareTime) {
+                     String ShareTo, String ShareName,String ShareDp,String pComment,String ShareTime,String ShareEmail,String ShareUid) {
         this.pId = pId;
         this.pCaption = pCaption;
         this.pTime = pTime;
@@ -28,6 +28,24 @@ String ShareTime,pComment,pId, pCaption,pTime, uid, uName,uEmail,pImage,uDp,grou
         this.ShareDp = ShareDp;
         this.pComment = pComment;
         this.ShareTime = ShareTime;
+        this.ShareEmail = ShareEmail;
+        this.ShareUid = ShareUid;
+    }
+
+    public String getShareUid() {
+        return ShareUid;
+    }
+
+    public void setShareUid(String shareUid) {
+        ShareUid = shareUid;
+    }
+
+    public String getShareEmail() {
+        return ShareEmail;
+    }
+
+    public void setShareEmail(String shareEmail) {
+        ShareEmail = shareEmail;
     }
 
     public String getpCaption() {

@@ -4,6 +4,7 @@ import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.Gravity;
@@ -24,6 +25,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
+import com.ceylonlabs.imageviewpopup.ImagePopup;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
@@ -50,12 +52,12 @@ public class PostDetail extends AppCompatActivity {
     String myUid, myEmail, myName, myDp, pId, hisDp, hisName, groupId, likes,pComment, grName, pUid, pImage, uEmail, groupIcon, groupTime, udp;
     String Shared, ShareTo, ShareName, ShareDp;
     ImageView pdp, pImg, arrow, sdp;
-    TextView uName, pTime, pTitle, pDescription, pLike, likeBtn, commentBtn, shareBtn, groupName, moreBtn, shareName, grShareName, shareTime, CommentCount;
+    TextView ShareMore,uName, pTime, pTitle, pLike, likeBtn, commentBtn, shareBtn, groupName, moreBtn, shareName, grShareName, shareTime, CommentCount;
     View view;
     EditText comment;
     ImageButton sendbtn;
     ImageView mAvatar;
-
+    ImagePopup imagePopup;
     ProgressDialog progress;
 
     RecyclerView recyclerView;
@@ -85,7 +87,6 @@ public class PostDetail extends AppCompatActivity {
         uName = findViewById(R.id.name);
         pTime = findViewById(R.id.time);
         pTitle = findViewById(R.id.pTitle);
-        pDescription = findViewById(R.id.pDescription);
         pLike = findViewById(R.id.pLike);
         moreBtn = findViewById(R.id.more);
         likeBtn = findViewById(R.id.likebtn);
@@ -93,6 +94,7 @@ public class PostDetail extends AppCompatActivity {
         shareBtn = findViewById(R.id.sharebtn);
         groupName = findViewById(R.id.group_Name);
         CommentCount = findViewById(R.id.commenCount);
+        ShareMore = findViewById(R.id.ShareMore);
 
 
         shareName = findViewById(R.id.shareName);
@@ -126,6 +128,12 @@ public class PostDetail extends AppCompatActivity {
         udp = getIntent().getStringExtra("uDp");
         pComment = getIntent().getStringExtra("pComment");
 
+        imagePopup = new ImagePopup(this);
+        imagePopup.setWindowHeight(1000);
+        imagePopup.setWindowWidth(1000);
+        imagePopup.setBackgroundColor(Color.TRANSPARENT);
+        imagePopup.setHideCloseIcon(true);
+        imagePopup.setImageOnClickClose(true);
 
         Shared = getIntent().getStringExtra("Shared");
         ShareTo = getIntent().getStringExtra("ShareTo");
@@ -135,8 +143,7 @@ public class PostDetail extends AppCompatActivity {
         String uid = getIntent().getStringExtra("uid");
         String uEmail = getIntent().getStringExtra("uEmail");
         String pTime = getIntent().getStringExtra("pTime");
-        String pTitle = getIntent().getStringExtra("pTitle");
-        String pDesc = getIntent().getStringExtra("pDesc");
+        String pTitle = getIntent().getStringExtra("pCaption");
         String uDp = getIntent().getStringExtra("uDp");
         String pImage = getIntent().getStringExtra("pImage");
         String Name = getIntent().getStringExtra("uName");
@@ -190,12 +197,56 @@ public class PostDetail extends AppCompatActivity {
         shareBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                shareWimage(likes, uid, uEmail, pId, groupId, groupIcon, grName, groupTime, pTime, pTitle, pDesc, uDp, pImage, Name);
+                shareWimage(likes, uid, uEmail, pId, groupId, groupIcon, grName, groupTime, pTime, pTitle, uDp, pImage, Name);
+            }
+        });
+        pImg.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                imagePopup.viewPopup();
+            }
+        });
+        ShareMore.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                SharemoreOption(ShareMore, uid, user.getUid(), groupId, pId, pImage);
             }
         });
     }
+    private void SharemoreOption(TextView moreBtn, String uid, String uid1, String groupId, String pId, String pImage) {
+        PopupMenu menu = new PopupMenu(this, moreBtn, Gravity.END);
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("Delete Posts");
+        builder.setMessage("Are you sure you want to Delete this Post?");
 
-    private void shareWimage(String likes, String uid, String uEmail, String pId, String groupId, String groupIcon, String grName, String groupTime, String pTime, String pTitle, String pDesc, String uDp, String pImage, String name) {
+        if (uid.equals(user.getUid())) {
+            menu.getMenu().add(Menu.NONE, 0, 0, "Delete");
+            menu.getMenu().add(Menu.NONE, 1, 2, "Edit");
+        }
+        menu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem item) {
+                int id = item.getItemId();
+                if (id == 0) {
+                    builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            deletePost(pId, groupId);
+                        }
+                    });
+                    builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                        }
+                    });
+                    builder.create().show();
+                }
+                return false;
+            }
+        });
+        menu.show();
+    }
+    private void shareWimage(String likes, String uid, String uEmail, String pId, String groupId, String groupIcon, String grName, String groupTime, String pTime, String pTitle, String uDp, String pImage, String name) {
         Intent intent = new Intent(this, SharePost.class);
         intent.putExtra("likes", likes);
         intent.putExtra("uid", uid);
@@ -206,8 +257,7 @@ public class PostDetail extends AppCompatActivity {
         intent.putExtra("groupTitle", grName);
         intent.putExtra("groupTime", groupTime);
         intent.putExtra("pTime", pTime);
-        intent.putExtra("pTitle", pTitle);
-        intent.putExtra("pDesc", pDesc);
+        intent.putExtra("pCaption", pTitle);
         intent.putExtra("uDp", uDp);
         intent.putExtra("pImage", pImage);
         intent.putExtra("uName", name);
@@ -368,6 +418,7 @@ public class PostDetail extends AppCompatActivity {
             hashMap.put("uEmail", myEmail);
             hashMap.put("uDp", myDp);
             hashMap.put("uName", myName);
+            hashMap.put("pId", pId);
             ref.child(timestamp).setValue(hashMap)
                     .addOnSuccessListener(new OnSuccessListener<Void>() {
                         @Override
@@ -441,9 +492,7 @@ public class PostDetail extends AppCompatActivity {
                     DataSnapshot post = gr.child("Posts");
                     for (DataSnapshot postinfo : post.getChildren()) {
                         if (postinfo.child("pId").getValue().equals(pId)) {
-
-                            String p_Title = "" + postinfo.child("pTitle").getValue();
-                            String pDesc = "" + postinfo.child("pDescription").getValue();
+                            String p_Title = "" + postinfo.child("pCaption").getValue();
                             String pTimestamp = "" + postinfo.child("pTime").getValue();
                             String pImge = "" + postinfo.child("pImage").getValue();
                             hisDp = "" + postinfo.child("uDp").getValue();
@@ -452,8 +501,7 @@ public class PostDetail extends AppCompatActivity {
                             hisName = "" + postinfo.child("uName").getValue();
                             likes = "" + postinfo.child("pLike").getValue();
                             pComment = "" + postinfo.child("pComment").getValue();
-
-
+                            imagePopup.initiatePopupWithGlide(pImge);
                             Calendar calendar = Calendar.getInstance(Locale.getDefault());
                             try {
                                 calendar.setTimeInMillis(Long.parseLong(pTimestamp));
@@ -465,7 +513,6 @@ public class PostDetail extends AppCompatActivity {
                             pLike.setText(likes + " Likes");
                             CommentCount.setText(pComment + " Comments");
                             pTitle.setText(p_Title);
-                            pDescription.setText(pDesc);
                             pTime.setText(p_Time);
                             uName.setText(hisName);
                             groupName.setText(grName);
@@ -515,10 +562,12 @@ public class PostDetail extends AppCompatActivity {
                                 sdp.setVisibility(View.GONE);
                                 arrow.setVisibility(View.GONE);
                                 view.setVisibility(View.GONE);
+                                ShareMore.setVisibility(View.GONE);
                             } else if (Shared.equals("true")) {
                                 shareName.setText(ShareName);
                                 grShareName.setText(ShareTo);
                                 shareTime.setText(p_Time);
+                                moreBtn.setVisibility(View.GONE);
 
                                 try {
                                     Glide

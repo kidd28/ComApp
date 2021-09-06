@@ -2,12 +2,12 @@ package com.kidd.myapplication;
 
 public class ModelUser {
 
-    String name, email, search, phone,image,cover, uid;
+    String name, email, search, phone,image,cover, uid, role;
 
     public ModelUser() {
     }
 
-    public ModelUser(String name, String email, String search, String phone, String image, String cover, String uid) {
+    public ModelUser(String name, String email, String search, String phone, String image, String cover, String uid,String role) {
         this.name = name;
         this.email = email;
         this.search = search;
@@ -15,6 +15,15 @@ public class ModelUser {
         this.image = image;
         this.cover = cover;
         this.uid = uid;
+        this.role = role;
+    }
+
+    public String getRole() {
+        return role;
+    }
+
+    public void setRole(String role) {
+        this.role = role;
     }
 
     public String getName() {

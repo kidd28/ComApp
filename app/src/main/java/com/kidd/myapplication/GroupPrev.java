@@ -44,7 +44,7 @@ public class GroupPrev extends AppCompatActivity {
     ArrayList<ModelPost> modelPostList;
     AdapterPost adapterPost;
     Button join;
-    String grId, grtime,email,name;
+    String grId, grtime,email,name, image;
     DatabaseReference reference;
 
     @Override
@@ -109,6 +109,7 @@ public class GroupPrev extends AppCompatActivity {
                 for (DataSnapshot ds : snapshot.getChildren()){
                     name = ""+ds.child("name").getValue();
                     email = ""+ds.child("email").getValue();
+                    image = ""+ds.child("image").getValue();
                 }
             }
             @Override
@@ -126,6 +127,7 @@ public class GroupPrev extends AppCompatActivity {
                                 hashMap1.put("role","member");
                                 hashMap1.put("timestamp",userTime);
                                 hashMap1.put("name",name);
+                                hashMap1.put("image",image);
                                 DatabaseReference reference1 = FirebaseDatabase.getInstance().getReference("Groups");
                                 reference1.child(grId).child("Members").child(firebaseAuth.getUid()).setValue(hashMap1)
                                         .addOnSuccessListener(new OnSuccessListener<Void>() {

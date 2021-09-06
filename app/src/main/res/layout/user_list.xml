@@ -1,31 +1,28 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     app:cardUseCompatPadding="true"
-    app:cardCornerRadius="15dp"
-    app:cardElevation="2dp"
-    app:contentPadding="3dp"
     android:layout_marginLeft="10dp"
-    android:layout_marginRight="10dp" >
+    android:layout_marginRight="10dp"
+    android:layout_margin="5dp">
     <LinearLayout
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:padding="10dp">
+        android:orientation="horizontal">
         <com.blogspot.atifsoftwares.circularimageview.CircularImageView
             android:id="@+id/Pavatar"
-            android:layout_width="70dp"
-            android:layout_height="70dp"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
             android:src="@drawable/ic_def_img"/>
         <LinearLayout
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="match_parent"
+            android:layout_weight="1"
             android:orientation="vertical"
             android:gravity="center"
             android:layout_marginStart="10dp">
-
             <TextView
                 android:id="@+id/Pname"
                 android:layout_width="match_parent"
@@ -33,12 +30,18 @@
                 android:text="Person Name"
                 android:textSize="18sp" />
             <TextView
-                android:id="@+id/Pemail"
+                android:id="@+id/position"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="Person Email" />
 
         </LinearLayout>
+        <TextView
+            android:id="@+id/more"
+            android:layout_gravity="center"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:drawableRight="@drawable/ic_baseline_more_horiz_24" />
     </LinearLayout>
 
-</androidx.cardview.widget.CardView>
+</FrameLayout>

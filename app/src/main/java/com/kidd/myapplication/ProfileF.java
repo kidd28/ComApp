@@ -2,39 +2,26 @@
 package com.kidd.myapplication;
 
 import android.Manifest;
-import android.app.AlertDialog;
 import android.app.ProgressDialog;
-import android.content.ContentValues;
-import android.content.DialogInterface;
-import android.content.Intent;
-import android.content.pm.PackageManager;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
-import android.provider.MediaStore;
-import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
-import androidx.core.app.ActivityCompat;
-import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.bumptech.glide.Glide;
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.gms.tasks.Task;
+import com.ceylonlabs.imageviewpopup.ImagePopup;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -46,14 +33,10 @@ import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
-import com.google.firebase.storage.UploadTask;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.HashMap;
-
-import static android.app.Activity.RESULT_OK;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -155,24 +138,48 @@ public class ProfileF extends Fragment {
         email = v.findViewById(R.id.email);
         phone = v.findViewById(R.id.phone);
         address = v.findViewById(R.id.addresss);
-        fab = v.findViewById(R.id.fab);
         bio = v.findViewById(R.id.bio);
         birthdate = v.findViewById(R.id.birthday);
+
+        ImagePopup avatarPop = new ImagePopup(getContext());
+        ImagePopup coverPop = new ImagePopup(getContext());
+
+        avatarPop.setWindowHeight(1000);
+        avatarPop.setWindowWidth(1000);
+        avatarPop.setBackgroundColor(Color.TRANSPARENT);
+        avatarPop.setHideCloseIcon(true);
+        avatarPop.setImageOnClickClose(true);
+
+        coverPop.setWindowHeight(1000);
+        coverPop.setWindowWidth(1000);
+        coverPop.setBackgroundColor(Color.TRANSPARENT);
+        coverPop.setHideCloseIcon(true);
+        coverPop.setImageOnClickClose(true);
 
         recyclerView = v.findViewById(R.id.postRv);
         modelPostList = new ArrayList<>();
         LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity());
         recyclerView.setLayoutManager(layoutManager);
 
-
         pullToRefresh = v.findViewById(R.id.pullToRefresh);
-
         pullToRefresh.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
                 loadPost();
                 user.reload();
                 pullToRefresh.setRefreshing(false);
+            }
+        });
+        avatar.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                avatarPop.viewPopup();
+            }
+        });
+        cover.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                coverPop.viewPopup();
             }
         });
 
@@ -199,6 +206,9 @@ public class ProfileF extends Fragment {
                     bio.setText(dbio);
                     birthdate.setText(dbday);
 
+                    coverPop.initiatePopupWithGlide(dcover);
+                    avatarPop.initiatePopupWithGlide(dimg);
+
                     if (getActivity() != null) {
                         Glide
                                 .with(getActivity())
@@ -215,6 +225,7 @@ public class ProfileF extends Fragment {
                                 .into(cover);
                     }
                     pullToRefresh.setRefreshing(false);
+
                 }
             }
 
@@ -223,291 +234,13 @@ public class ProfileF extends Fragment {
             }
         });
 
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                showEditProfileDialog();
-            }
-        });
+
 
         loadPost();
         return v;
     }
 
 
-    private boolean checkStoragePermission() {
-        boolean result = ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.WRITE_EXTERNAL_STORAGE)
-                == (PackageManager.PERMISSION_GRANTED);
-        return result;
-    }
-
-    private void requestStoragePermission() {
-        ActivityCompat.requestPermissions(getActivity(), storagePermission, STORAGE_REQUEST_CODE);
-        checkStoragePermission();
-        if (checkCameraPermission()) {
-            pickFromGallery();
-        }
-    }
-
-    private boolean checkCameraPermission() {
-
-        boolean result = ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.CAMERA)
-                == (PackageManager.PERMISSION_GRANTED);
-        boolean result1 = ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.WRITE_EXTERNAL_STORAGE)
-                == (PackageManager.PERMISSION_GRANTED);
-        return result && result1;
-    }
-
-    private void requestCameraPermission() {
-        ActivityCompat.requestPermissions(getActivity(), cameraPermission, CAMERA_REQUEST_CODE);
-        checkCameraPermission();
-        if (!checkCameraPermission()) {
-            requestCameraPermission();
-        } else {
-            pickFromCamera();
-        }
-    }
-
-
-    private void showEditProfileDialog() {
-        String option[] = {"Edit Profile Picture", "Edit Cover", "Edit Name", "Edit Phone", "Edit Address", "Edit Bio", "Edit Birthday"};
-
-        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-        builder.setTitle("Choose Action");
-        builder.setItems(option, new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                if (which == 0) {
-                    progress.setMessage("Updating Profile Picture");
-                    showImgDialog();
-                    CoverOrProfile = "image";
-                } else if (which == 1) {
-                    progress.setMessage("Updating Cover Photo");
-                    CoverOrProfile = "cover";
-                    showImgDialog();
-                } else if (which == 2) {
-                    progress.setMessage("Updating Name");
-                    showNamePhoneUpdateDialog("name");
-                } else if (which == 3) {
-                    progress.setMessage("Updating Phone");
-                    showNamePhoneUpdateDialog("phone");
-                } else if (which == 4) {
-                    progress.setMessage("Updating Address");
-                    showNamePhoneUpdateDialog("Address");
-                } else if (which == 5) {
-                    progress.setMessage("Updating bio");
-                    showNamePhoneUpdateDialog("bio");
-                } else if (which == 6) {
-                    progress.setMessage("Updating Birthday");
-                    showNamePhoneUpdateDialog("Birthday");
-                }
-            }
-        });
-        builder.create().show();
-    }
-
-    private void showNamePhoneUpdateDialog(String key) {
-        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-        builder.setTitle("Update " + key);
-
-        LinearLayout linearLayout = new LinearLayout(getActivity());
-        linearLayout.setOrientation(LinearLayout.VERTICAL);
-        linearLayout.setPadding(10, 10, 10, 10);
-
-        EditText editText = new EditText(getActivity());
-
-        if (key == "Birthday") {
-            editText.setHint("Month/Day/Year ");
-            linearLayout.addView(editText);
-        } else {
-            editText.setHint("Enter " + key);
-            linearLayout.addView(editText);
-        }
-
-        builder.setView(linearLayout);
-        builder.setPositiveButton("Update", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                String value = editText.getText().toString().trim();
-                if (!TextUtils.isEmpty(value)) {
-                    progress.show();
-                    HashMap<String, Object> result = new HashMap<>();
-                    result.put(key, value);
-
-                    reference.child(user.getUid()).updateChildren(result)
-                            .addOnSuccessListener(new OnSuccessListener<Void>() {
-                                @Override
-                                public void onSuccess(Void aVoid) {
-                                    progress.dismiss();
-                                    Toast.makeText(getActivity(), "Updated..", Toast.LENGTH_SHORT).show();
-                                }
-                            })
-                            .addOnFailureListener(new OnFailureListener() {
-                                @Override
-                                public void onFailure(@NonNull Exception e) {
-                                    progress.dismiss();
-                                    Toast.makeText(getActivity(), "" + e.getMessage(), Toast.LENGTH_SHORT).show();
-                                }
-                            });
-                } else {
-                    Toast.makeText(getActivity(), "Please Enter " + key, Toast.LENGTH_SHORT).show();
-                }
-            }
-        });
-        builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-
-            }
-        });
-
-        builder.create().show();
-    }
-
-    private void showImgDialog() {
-        String option[] = {"Camera", "Gallery"};
-
-        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-        builder.setTitle("Choose Action");
-        builder.setItems(option, new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                if (which == 0) {
-                    if (!checkCameraPermission()) {
-                        requestCameraPermission();
-                    } else {
-                        pickFromCamera();
-                    }
-
-                } else if (which == 1) {
-                    if (!checkStoragePermission()) {
-                        requestStoragePermission();
-                    } else {
-                        pickFromGallery();
-                    }
-                }
-            }
-        });
-        builder.create().show();
-
-    }
-
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-
-        switch (requestCode) {
-            case CAMERA_REQUEST_CODE: {
-                if (grantResults.length > 0) {
-                    boolean cameraAccepted = grantResults[0] == PackageManager.PERMISSION_GRANTED;
-                    boolean writeStorageAccepted = grantResults[1] == PackageManager.PERMISSION_GRANTED;
-                    if (cameraAccepted && writeStorageAccepted) {
-                        Toast.makeText(getActivity(), "Permission Granted..", Toast.LENGTH_SHORT).show();
-                        pickFromCamera();
-                    } else {
-                        Toast.makeText(getActivity(), "Please Enable Camera & Storage Permission", Toast.LENGTH_SHORT).show();
-                    }
-                }
-            }
-            break;
-
-            case STORAGE_REQUEST_CODE: {
-                if (grantResults.length > 0) {
-                    boolean writeStorageAccepted = grantResults[1] == PackageManager.PERMISSION_GRANTED;
-                    if (writeStorageAccepted) {
-                        Toast.makeText(getActivity(), "Permission Granted..", Toast.LENGTH_SHORT).show();
-                        pickFromGallery();
-                    } else {
-                        Toast.makeText(getActivity(), "Please Enable Storage Permission", Toast.LENGTH_SHORT).show();
-                    }
-                }
-            }
-            break;
-        }
-    }
-
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-
-        if (resultCode == RESULT_OK) {
-            if (requestCode == IMAGE_GALLERY_PICK_CODE) {
-                image_uri = data.getData();
-                uploadProfileCoverPhoto(image_uri);
-            }
-            if (requestCode == IMAGE_CAMERA_PICK_CODE) {
-                uploadProfileCoverPhoto(image_uri);
-            }
-        }
-        super.onActivityResult(requestCode, resultCode, data);
-    }
-
-    private void uploadProfileCoverPhoto(Uri uri) {
-        progress.setMessage("Updating..");
-        progress.show();
-
-        String filePathAndName = storagePath + "" + CoverOrProfile + "_" + user.getUid();
-
-        StorageReference storageReference2nd = storageReference.child(filePathAndName);
-        storageReference2nd.putFile(uri)
-                .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
-                    @Override
-                    public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                        Task<Uri> uriTask = taskSnapshot.getStorage().getDownloadUrl();
-                        while (!uriTask.isSuccessful()) ;
-                        String downloadUri = uriTask.getResult().toString();
-
-
-                        if (uriTask.isSuccessful()) {
-                            HashMap<String, Object> results = new HashMap<>();
-                            results.put(CoverOrProfile, downloadUri);
-
-                            reference.child(user.getUid()).updateChildren(results)
-                                    .addOnSuccessListener(new OnSuccessListener<Void>() {
-                                        @Override
-                                        public void onSuccess(Void aVoid) {
-                                            progress.dismiss();
-                                            Toast.makeText(getActivity(), "Image Updated..", Toast.LENGTH_SHORT).show();
-                                        }
-                                    })
-                                    .addOnFailureListener(new OnFailureListener() {
-                                        @Override
-                                        public void onFailure(@NonNull Exception e) {
-                                            progress.dismiss();
-                                            Toast.makeText(getActivity(), "Error Updating image..", Toast.LENGTH_SHORT).show();
-                                        }
-                                    });
-                        } else {
-                            progress.dismiss();
-                            Toast.makeText(getActivity(), "Some error occured", Toast.LENGTH_SHORT).show();
-                        }
-                    }
-                })
-                .addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
-                        progress.dismiss();
-                        Toast.makeText(getActivity(), e.getMessage(), Toast.LENGTH_SHORT).show();
-                    }
-                });
-
-    }
-
-    private void pickFromCamera() {
-        ContentValues values = new ContentValues();
-        values.put(MediaStore.Images.Media.TITLE, "Temp Pic");
-        values.put(MediaStore.Images.Media.DESCRIPTION, "Temp Description");
-
-        image_uri = getActivity().getContentResolver().insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values);
-
-        Intent cameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-        cameraIntent.putExtra(MediaStore.EXTRA_OUTPUT, image_uri);
-        startActivityForResult(cameraIntent, IMAGE_CAMERA_PICK_CODE);
-    }
-
-    private void pickFromGallery() {
-        Intent galleryIntent = new Intent(Intent.ACTION_PICK);
-        galleryIntent.setType("image/*");
-        startActivityForResult(galleryIntent, IMAGE_GALLERY_PICK_CODE);
-    }
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {

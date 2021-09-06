@@ -29,8 +29,10 @@ public class WritePost extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_write_post);
+
         groupRv=findViewById(R.id.groupRv);
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);
+
         groupRv.setLayoutManager(layoutManager);
         modelGroups = new ArrayList<>();
         toolbar = findViewById(R.id.toolbar);

@@ -71,12 +71,18 @@
 
                         <TextView
                             android:id="@+id/grShareName"
-                            android:layout_width="120dp"
+                            android:layout_weight="1"
                             android:layout_height="wrap_content"
                             android:layout_gravity="center"
                             android:text="Name"
-                            android:textSize="20sp"
-                            android:textStyle="bold" />
+                            android:textSize="15sp"
+                            android:textStyle="bold"
+                            android:layout_width="0dp" />
+                        <TextView
+                            android:id="@+id/ShareMore"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:drawableRight="@drawable/ic_baseline_more_horiz_24" />
                     </LinearLayout>
                     <View
                         android:layout_marginTop="10dp"
@@ -143,13 +149,6 @@
                         android:text="Title"
                         android:textSize="20sp"
                         android:textStyle="bold" />
-
-                    <TextView
-                        android:id="@+id/pDescription"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="Description" />
-
                     <ImageView
                         android:id="@+id/ImageV"
                         android:layout_width="match_parent"

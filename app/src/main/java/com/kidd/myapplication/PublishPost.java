@@ -77,7 +77,6 @@ public class PublishPost extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_publish_post);
 
-
         Caption = findViewById(R.id.Caption);
 
         upBtn = findViewById(R.id.uploadbtn);
@@ -90,7 +89,6 @@ public class PublishPost extends AppCompatActivity {
 
         groupId = getIntent().getStringExtra("grId");
         groupTitle = getIntent().getStringExtra("grName");
-
 
         firebaseAuth = FirebaseAuth.getInstance();
         user = firebaseAuth.getCurrentUser();
@@ -213,7 +211,6 @@ public class PublishPost extends AppCompatActivity {
                             while (!uriTask.isSuccessful()) ;
 
                             String downloadUri = uriTask.getResult().toString();
-
                             if (uriTask.isSuccessful()) {
                                 HashMap<Object, String> hashMap = new HashMap<>();
                                 hashMap.put("uid", uid);
@@ -229,7 +226,6 @@ public class PublishPost extends AppCompatActivity {
                                 hashMap.put("groupId", groupId);
                                 hashMap.put("groupTitle", groupTitle);
                                 hashMap.put("Shared", "false");
-
                                 DatabaseReference reference1 = FirebaseDatabase.getInstance().getReference("Groups");
                                 reference1.child(groupId).child("Posts").child(timeStamp).setValue(hashMap)
                                         .addOnSuccessListener(new OnSuccessListener<Void>() {
@@ -240,6 +236,7 @@ public class PublishPost extends AppCompatActivity {
                                                 Caption.setText("");
                                                 postImg.setImageURI(null);
                                                 image_uri = null;
+                                                startActivity(new Intent(PublishPost.this, Home.class));
                                             }
                                         }).addOnFailureListener(new OnFailureListener() {
                                     @Override
@@ -318,7 +315,6 @@ public class PublishPost extends AppCompatActivity {
                     } else {
                         pickFromCamera();
                     }
-
                 } else if (which == 1) {
                     if (!checkStoragePermission()) {
                         requestStoragePermission();
@@ -392,18 +388,16 @@ public class PublishPost extends AppCompatActivity {
                     } else {
                         Toast.makeText(this, "Please Enable Camera & Storage Permission", Toast.LENGTH_SHORT).show();
                     }
-
                 }
             }
             break;
             case STORAGE_REQUEST_CODE: {
-                boolean writeStorageAccepted = grantResults[1] == PackageManager.PERMISSION_GRANTED;
+                boolean writeStorageAccepted = grantResults[0] == PackageManager.PERMISSION_GRANTED;
                 if (writeStorageAccepted) {
                     pickFromGallery();
                 } else {
                     Toast.makeText(this, "Please Enable Storage Permission", Toast.LENGTH_SHORT).show();
                 }
-
             }
             break;
         }

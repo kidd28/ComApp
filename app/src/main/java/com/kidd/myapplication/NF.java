@@ -107,6 +107,7 @@ public class NF extends Fragment {
         writePost = v.findViewById(R.id.writePost);
         udp = v.findViewById(R.id.U_dp);
 
+
         DatabaseReference ref1 = database.getReference("Users");
         Query query = ref1.orderByChild("email").equalTo(user.getEmail());
         query.addValueEventListener(new ValueEventListener() {
@@ -136,8 +137,11 @@ public class NF extends Fragment {
 
 
         modelPostList = new ArrayList<>();
-        LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity());
+        LinearLayoutManager layoutManager = new LinearLayoutManager(getContext());
         recyclerView.setLayoutManager(layoutManager);
+
+        adapterNewsFeed = new AdapterNewsFeed(getContext(), modelPostList);
+        recyclerView.setAdapter(adapterNewsFeed);
 
         loadPost();
 
@@ -145,6 +149,7 @@ public class NF extends Fragment {
         pullToRefresh.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
+                user.reload();
                 loadPost();
                 pullToRefresh.setRefreshing(false);
             }
@@ -161,7 +166,7 @@ public class NF extends Fragment {
 
     private void loadPost() {
         FirebaseUser user1 = FirebaseAuth.getInstance().getCurrentUser();
-        reference = database.getReference("Groups");
+        reference = FirebaseDatabase.getInstance().getReference("Groups");
         reference.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
@@ -179,7 +184,7 @@ public class NF extends Fragment {
                                 }
                             });
                         }
-                        adapterNewsFeed = new AdapterNewsFeed(getActivity(), modelPostList);
+                        adapterNewsFeed = new AdapterNewsFeed(getContext(), modelPostList);
                         recyclerView.setAdapter(adapterNewsFeed);
                     }
                 }
