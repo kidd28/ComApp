@@ -46,8 +46,7 @@ public class NF extends Fragment {
     TextView uname;
     EditText writePost;
     ImageView udp;
-
-
+    
     SwipeRefreshLayout pullToRefresh;
 
     // TODO: Rename parameter arguments, choose names that match
@@ -107,7 +106,6 @@ public class NF extends Fragment {
         writePost = v.findViewById(R.id.writePost);
         udp = v.findViewById(R.id.U_dp);
 
-
         DatabaseReference ref1 = database.getReference("Users");
         Query query = ref1.orderByChild("email").equalTo(user.getEmail());
         query.addValueEventListener(new ValueEventListener() {
@@ -135,16 +133,11 @@ public class NF extends Fragment {
             }
         });
 
-
         modelPostList = new ArrayList<>();
         LinearLayoutManager layoutManager = new LinearLayoutManager(getContext());
         recyclerView.setLayoutManager(layoutManager);
-
-        adapterNewsFeed = new AdapterNewsFeed(getContext(), modelPostList);
+        adapterNewsFeed = new AdapterNewsFeed(getActivity(), modelPostList);
         recyclerView.setAdapter(adapterNewsFeed);
-
-        loadPost();
-
         pullToRefresh = v.findViewById(R.id.pullToRefresh);
         pullToRefresh.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
@@ -154,20 +147,19 @@ public class NF extends Fragment {
                 pullToRefresh.setRefreshing(false);
             }
         });
-
         writePost.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 startActivity(new Intent(getActivity(), WritePost.class));
             }
         });
+        loadPost();
         return v;
     }
-
     private void loadPost() {
         FirebaseUser user1 = FirebaseAuth.getInstance().getCurrentUser();
-        reference = FirebaseDatabase.getInstance().getReference("Groups");
-        reference.addValueEventListener(new ValueEventListener() {
+        DatabaseReference reference1 = FirebaseDatabase.getInstance().getReference("Groups");
+        reference1.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 modelPostList.clear();
@@ -184,10 +176,9 @@ public class NF extends Fragment {
                                 }
                             });
                         }
-                        adapterNewsFeed = new AdapterNewsFeed(getContext(), modelPostList);
-                        recyclerView.setAdapter(adapterNewsFeed);
                     }
-                }
+                }adapterNewsFeed = new AdapterNewsFeed(getActivity(), modelPostList);
+                recyclerView.setAdapter(adapterNewsFeed);
             }
 
             @Override

@@ -44,7 +44,6 @@ public class AdapterPost extends RecyclerView.Adapter<AdapterPost.MyHolder> {
     Boolean likeProcess = false;
     ImagePopup imagePopup;
    private DatabaseReference ref;
-    private DatabaseReference ref1;
     FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
 
 
@@ -80,6 +79,7 @@ public class AdapterPost extends RecyclerView.Adapter<AdapterPost.MyHolder> {
         String ShareDp = postList.get(i).getShareDp();
         String ShareTime = postList.get(i).getShareTime();
         String pComment = postList.get(i).getpComment();
+        String ShareUid = postList.get(i).getShareUid();
 
 
         holder.pLike.setText(likes + " Likes");
@@ -98,6 +98,7 @@ public class AdapterPost extends RecyclerView.Adapter<AdapterPost.MyHolder> {
         holder.uName.setText(uName);
         holder.pCaption.setText(pCaption);
         holder.pTime.setText(pTime);
+        holder.groupName.setText(postList.get(i).getGroupTitle());
         Glide
                 .with(context)
                 .load(uDp)
@@ -128,6 +129,7 @@ public class AdapterPost extends RecyclerView.Adapter<AdapterPost.MyHolder> {
             holder.sdp.setVisibility(View.GONE);
             holder.arrow.setVisibility(View.GONE);
             holder.view.setVisibility(View.GONE);
+            holder.groupName.setVisibility(View.GONE);
             holder.ShareMore.setVisibility(View.GONE);
         }else if (Shared.equals("true")){
             holder.grShareName.setText(ShareTo);
@@ -147,10 +149,21 @@ public class AdapterPost extends RecyclerView.Adapter<AdapterPost.MyHolder> {
                 imagePopup.viewPopup();
             }
         });
+        holder.groupName.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(context, GroupUi.class);
+                intent.putExtra("grName", groupTitle);
+                intent.putExtra("grIcon", grIcon);
+                intent.putExtra("grId", groupId);
+                intent.putExtra("grTime", groupTime);
+                context.startActivity(intent);
+            }
+        });
         holder.ShareMore.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                SharemoreOption(holder.ShareMore, uid, user.getUid(), groupId, pId, pImage);
+                SharemoreOption(ShareUid,holder.ShareMore, uid, user.getUid(), groupId, pId, pImage);
             }
         });
         holder.pCaption.setOnClickListener(new View.OnClickListener() {
@@ -229,15 +242,14 @@ public class AdapterPost extends RecyclerView.Adapter<AdapterPost.MyHolder> {
             }
         });
     }
-    private void SharemoreOption(TextView moreBtn, String uid, String uid1, String groupId, String pId, String pImage) {
+    private void SharemoreOption(String ShareUid,TextView moreBtn, String uid, String uid1, String groupId, String pId, String pImage) {
         PopupMenu menu = new PopupMenu(context, moreBtn, Gravity.END);
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
         builder.setTitle("Delete Posts");
         builder.setMessage("Are you sure you want to Delete this Post?");
-
-        if (uid.equals(user.getUid())) {
+        FirebaseUser user3 = FirebaseAuth.getInstance().getCurrentUser();
+        if (ShareUid.equals(user3.getUid())) {
             menu.getMenu().add(Menu.NONE, 0, 0, "Delete");
-            menu.getMenu().add(Menu.NONE, 1, 2, "Edit");
         }
         menu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
             @Override
@@ -273,7 +285,7 @@ public class AdapterPost extends RecyclerView.Adapter<AdapterPost.MyHolder> {
         intent.putExtra("groupTitle", groupTitle);
         intent.putExtra("groupTime", groupTime);
         intent.putExtra("pTime", pTime);
-        intent.putExtra("pTitle", pCaption);
+        intent.putExtra("pCaption", pCaption);
         intent.putExtra("uDp", uDp);
         intent.putExtra("pImage", pImage);
         intent.putExtra("uName", uName);
@@ -403,22 +415,23 @@ public class AdapterPost extends RecyclerView.Adapter<AdapterPost.MyHolder> {
 
     class MyHolder  extends RecyclerView.ViewHolder{
 
-        ImageView pdp, pImg,sdp,arrow;
-        TextView ShareMore,CommentCount,shareName,grShareName,uName, pTime, pCaption, pLike, likeBtn, commentBtn, shareBtn, groupName, moreBtn,shareTime;
+        ImageView pdp, pImg, sdp, arrow;
+        TextView ShareMore, CommentCount, shareName, grShareName, uName, pTime, pCaption, pLike, likeBtn, commentBtn, shareBtn, groupName, moreBtn, shareTime;
         View view;
         public MyHolder(@NonNull View itemView) {
             super(itemView);
 
-            pdp= itemView.findViewById(R.id.dp);
-            pImg= itemView.findViewById(R.id.ImageV);
-            uName= itemView.findViewById(R.id.name);
-            pTime= itemView.findViewById(R.id.time);
-            pCaption= itemView.findViewById(R.id.pCaption);
-            pLike= itemView.findViewById(R.id.pLike);
-            moreBtn= itemView.findViewById(R.id.more);
-            likeBtn= itemView.findViewById(R.id.likebtn);
-            commentBtn= itemView.findViewById(R.id.commentbtn);
-            shareBtn= itemView.findViewById(R.id.sharebtn);
+            pdp = itemView.findViewById(R.id.dp);
+            pImg = itemView.findViewById(R.id.ImageV);
+            uName = itemView.findViewById(R.id.name);
+            pTime = itemView.findViewById(R.id.time);
+            pCaption = itemView.findViewById(R.id.pCaption);
+            pLike = itemView.findViewById(R.id.pLike);
+            moreBtn = itemView.findViewById(R.id.more);
+            likeBtn = itemView.findViewById(R.id.likebtn);
+            commentBtn = itemView.findViewById(R.id.commentbtn);
+            shareBtn = itemView.findViewById(R.id.sharebtn);
+            groupName = itemView.findViewById(R.id.group_Name);
             shareName = itemView.findViewById(R.id.shareName);
             grShareName = itemView.findViewById(R.id.grShareName);
             shareTime = itemView.findViewById(R.id.shareTime);

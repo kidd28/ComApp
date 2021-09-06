@@ -129,7 +129,6 @@ public class AdapterShare extends RecyclerView.Adapter<AdapterShare.HolderGroupL
                     hashMap.put("ShareEmail",user.getEmail());
                     hashMap.put("ShareUid",user.getUid());
 
-
                     DatabaseReference reference1 = FirebaseDatabase.getInstance().getReference("Groups");
                     reference1.child(groupId).child("Posts").child(postId).setValue(hashMap)
                             .addOnSuccessListener(new OnSuccessListener<Void>() {

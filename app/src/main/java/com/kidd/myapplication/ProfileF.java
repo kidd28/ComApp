@@ -3,6 +3,7 @@ package com.kidd.myapplication;
 
 import android.Manifest;
 import android.app.ProgressDialog;
+import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
@@ -69,8 +70,11 @@ public class ProfileF extends Fragment {
     private static final int IMAGE_GALLERY_PICK_CODE = 300;
     private static final int IMAGE_CAMERA_PICK_CODE = 400;
 
+
     String cameraPermission[];
     String storagePermission[];
+
+    Bitmap bitmap;
 
     Uri image_uri = null;
     String CoverOrProfile;
@@ -133,6 +137,7 @@ public class ProfileF extends Fragment {
         cameraPermission = new String[]{Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE};
         storagePermission = new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE};
         avatar = v.findViewById(R.id.avatar);
+
         cover = v.findViewById(R.id.cover);
         name = v.findViewById(R.id.name);
         email = v.findViewById(R.id.email);
@@ -140,6 +145,7 @@ public class ProfileF extends Fragment {
         address = v.findViewById(R.id.addresss);
         bio = v.findViewById(R.id.bio);
         birthdate = v.findViewById(R.id.birthday);
+
 
         ImagePopup avatarPop = new ImagePopup(getContext());
         ImagePopup coverPop = new ImagePopup(getContext());
@@ -223,6 +229,7 @@ public class ProfileF extends Fragment {
                                 .centerCrop()
                                 .placeholder(R.drawable.ic_def_cover)
                                 .into(cover);
+
                     }
                     pullToRefresh.setRefreshing(false);
 
@@ -236,7 +243,9 @@ public class ProfileF extends Fragment {
 
 
 
-        loadPost();
+
+
+    loadPost();
         return v;
     }
 

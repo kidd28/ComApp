@@ -82,10 +82,13 @@ public class GroupUi extends AppCompatActivity {
                 .placeholder(R.drawable.ic_group)
                 .into(avatar);
         firebaseAuth = FirebaseAuth.getInstance();
+
         recyclerView = findViewById(R.id.groupRv);
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);
         recyclerView.setLayoutManager(layoutManager);
+
         modelPostList = new ArrayList<>();
+
         FirebaseApp.initializeApp(this);
         pullToRefresh = findViewById(R.id.pullToRefresh);
         pullToRefresh.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
@@ -128,11 +131,13 @@ public class GroupUi extends AppCompatActivity {
                     }
                 }
             }
+
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
             }
         });
     }
+
     private void loadPost() {
         DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Groups").child(grtime);
         DatabaseReference reference1 = reference.child("Posts");
@@ -146,23 +151,26 @@ public class GroupUi extends AppCompatActivity {
                     Collections.sort(modelPostList, new Comparator<ModelPost>() {
                         @Override
                         public int compare(ModelPost o1, ModelPost o2) {
-                            return Float.compare(Float.parseFloat(o2.getpId()),Float.parseFloat(o1.getpId()));
+                            return Float.compare(Float.parseFloat(o2.getpId()), Float.parseFloat(o1.getpId()));
                         }
                     });
                 }
                 adapterPost = new AdapterPost(GroupUi.this, modelPostList);
                 recyclerView.setAdapter(adapterPost);
             }
+
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
             }
         });
     }
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.gmenu, menu);
         return true;
     }
+
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
@@ -177,6 +185,7 @@ public class GroupUi extends AppCompatActivity {
         }
         return super.onOptionsItemSelected(item);
     }
+
     private void leaveGroup() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle("Leave Group");

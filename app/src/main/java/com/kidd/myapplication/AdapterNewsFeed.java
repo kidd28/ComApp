@@ -276,7 +276,6 @@ public class AdapterNewsFeed extends RecyclerView.Adapter<AdapterNewsFeed.MyHold
         });
         menu.show();
     }
-
     private void shareWimage(String likes, String uid, String uEmail, String pId, String groupId, String grIcon, String groupTitle, String groupTime, String pTime, String pCaption, String uDp, String pImage, String uName) {
         Intent intent = new Intent(context, SharePost.class);
         intent.putExtra("likes", likes);
@@ -294,7 +293,6 @@ public class AdapterNewsFeed extends RecyclerView.Adapter<AdapterNewsFeed.MyHold
         intent.putExtra("uName", uName);
         context.startActivity(intent);
     }
-
     private void PostLike(String likes, String groupId, String pId) {
         likeProcess = true;
         FirebaseUser user4 = FirebaseAuth.getInstance().getCurrentUser();
@@ -321,7 +319,6 @@ public class AdapterNewsFeed extends RecyclerView.Adapter<AdapterNewsFeed.MyHold
         });
 
     }
-
     private void moreOption(String ShareUid, String Shared, TextView morebtn, String uid, String myUid, String grId, String pId, String pImage) {
         PopupMenu menu = new PopupMenu(context, morebtn, Gravity.END);
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
@@ -329,9 +326,9 @@ public class AdapterNewsFeed extends RecyclerView.Adapter<AdapterNewsFeed.MyHold
         builder.setMessage("Are you sure you want to Delete this Post?");
         FirebaseUser user6 = FirebaseAuth.getInstance().getCurrentUser();
 
-            if (uid.equals(user6.getUid())) {
-                menu.getMenu().add(Menu.NONE, 0, 0, "Delete");
-                menu.getMenu().add(Menu.NONE, 1, 2, "Edit");
+        if (uid.equals(user6.getUid())) {
+            menu.getMenu().add(Menu.NONE, 0, 0, "Delete");
+            menu.getMenu().add(Menu.NONE, 1, 2, "Edit");
         }
 
         menu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
@@ -357,7 +354,6 @@ public class AdapterNewsFeed extends RecyclerView.Adapter<AdapterNewsFeed.MyHold
         });
         menu.show();
     }
-
     private void deletePosts(String pId, String grId, @NotNull String pImg) {
         if (pImg.equals("noImage")) {
             deletePost(pId, grId);
@@ -365,7 +361,6 @@ public class AdapterNewsFeed extends RecyclerView.Adapter<AdapterNewsFeed.MyHold
             deletePostWithImage(pId, grId, pImg);
         }
     }
-
     private void deletePost(String pId, String grId) {
         DatabaseReference ref4 = FirebaseDatabase.getInstance().getReference("Groups")
                 .child(grId).child("Posts");
@@ -376,7 +371,6 @@ public class AdapterNewsFeed extends RecyclerView.Adapter<AdapterNewsFeed.MyHold
             }
         });
     }
-
     private void deletePostWithImage(String pId, String grId, String pImg) {
         StorageReference imgRef = FirebaseStorage.getInstance().getReferenceFromUrl(pImg);
         imgRef.delete().addOnSuccessListener(new OnSuccessListener<Void>() {
@@ -399,7 +393,6 @@ public class AdapterNewsFeed extends RecyclerView.Adapter<AdapterNewsFeed.MyHold
             }
         });
     }
-
     private void setLikes(MyHolder holder, String pId, String grId) {
         FirebaseUser user5 = FirebaseAuth.getInstance().getCurrentUser();
         DatabaseReference ref6 = FirebaseDatabase.getInstance().getReference("Groups").child(grId).child("Posts").child(pId);
