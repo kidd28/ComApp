@@ -25,7 +25,7 @@
             <com.blogspot.atifsoftwares.circularimageview.CircularImageView
                 android:id="@+id/sdp"
                 android:layout_width="50dp"
-                android:layout_height="match_parent"
+                android:layout_height="50dp"
                 android:scaleType="centerCrop"
                 android:src="@drawable/ic_def_img" />
 
@@ -102,7 +102,7 @@
                 <com.blogspot.atifsoftwares.circularimageview.CircularImageView
                     android:id="@+id/dp"
                     android:layout_width="50dp"
-                    android:layout_height="match_parent"
+                    android:layout_height="50dp"
                     android:scaleType="centerCrop"
                     android:src="@drawable/ic_def_img" />
 

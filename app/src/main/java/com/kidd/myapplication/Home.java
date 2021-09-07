@@ -120,6 +120,7 @@ public class Home extends AppCompatActivity {
                     public void onClick(DialogInterface arg0, int arg1) {
                         Home.super.onBackPressed();
                        finish();
+                       System.exit(0);
                     }
                 }).create().show();
     }

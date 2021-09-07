@@ -241,10 +241,6 @@ public class ProfileF extends Fragment {
             }
         });
 
-
-
-
-
     loadPost();
         return v;
     }
@@ -259,27 +255,40 @@ public class ProfileF extends Fragment {
     }
 
     private void loadPost() {
-        FirebaseUser user1 = FirebaseAuth.getInstance().getCurrentUser();
-        DatabaseReference reference1 = FirebaseDatabase.getInstance().getReference("Groups");
-        reference1.addValueEventListener(new ValueEventListener() {
+        DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Groups");
+        reference.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 modelPostList.clear();
                 for (DataSnapshot gr : snapshot.getChildren()) {
                     DataSnapshot post = gr.child("Posts");
                     for (DataSnapshot posts : post.getChildren()) {
-                        if (posts.child("uid").getValue().equals(user1.getUid())) {
-                            ModelPost modelPost = posts.getValue(ModelPost.class);
-                            modelPostList.add(modelPost);
-                            Collections.sort(modelPostList, new Comparator<ModelPost>() {
-                                @Override
-                                public int compare(ModelPost o2, ModelPost o1) {
-                                    return Float.compare(Float.parseFloat(o1.getpId()), Float.parseFloat(o2.getpId()));
-                                }
-                            });
+                        if (posts.child("Shared").getValue().equals("false")) {
+                            if (posts.child("uid").getValue().equals(user.getUid())) {
+                                ModelPost modelPost = posts.getValue(ModelPost.class);
+                                modelPostList.add(modelPost);
+                                Collections.sort(modelPostList, new Comparator<ModelPost>() {
+                                    @Override
+                                    public int compare(ModelPost o1, ModelPost o2) {
+                                        return Float.compare(Float.parseFloat(o2.getpId()), Float.parseFloat(o1.getpId()));
+                                    }
+                                });
+                            }
+                        }
+                        else if (posts.child("Shared").getValue().equals("true")) {
+                            if (posts.child("ShareUid").getValue().equals(user.getUid())) {
+                                ModelPost modelPost = posts.getValue(ModelPost.class);
+                                modelPostList.add(modelPost);
+                                Collections.sort(modelPostList, new Comparator<ModelPost>() {
+                                    @Override
+                                    public int compare(ModelPost o1, ModelPost o2) {
+                                        return Float.compare(Float.parseFloat(o2.getpId()), Float.parseFloat(o1.getpId()));
+                                    }
+                                });
+                            }
                         }
                     }
-                    adapterNewsFeed = new AdapterNewsFeed(getActivity(), modelPostList);
+                    adapterNewsFeed = new AdapterNewsFeed(getContext(), modelPostList);
                     recyclerView.setAdapter(adapterNewsFeed);
                 }
             }
@@ -288,7 +297,5 @@ public class ProfileF extends Fragment {
             public void onCancelled(@NonNull DatabaseError error) {
             }
         });
-
-
     }
 }

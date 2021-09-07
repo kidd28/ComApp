@@ -12,6 +12,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.bumptech.glide.Glide;
 import com.ceylonlabs.imageviewpopup.ImagePopup;
@@ -29,35 +30,36 @@ import java.util.Comparator;
 
 public class OtherProfile extends AppCompatActivity {
 
-   ProgressDialog progress;
-   DatabaseReference reference;
+    ProgressDialog progress;
+    DatabaseReference reference;
     FirebaseDatabase database;
     FirebaseAuth mAuth;
+
     ImageView avatar, cover;
-    TextView name, email,phone, address,bio, birthdate;
+    TextView name, email, phone, address, bio, birthdate;
 
     RecyclerView recyclerView;
     ArrayList<ModelPost> modelPostList;
     AdapterNewsFeed adapterNewsFeed;
-    String umail,uid;
+    String umail, uid;
+    SwipeRefreshLayout pullToRefresh;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_other_profile);
-        email=findViewById(R.id.email);
+        email = findViewById(R.id.email);
         umail = getIntent().getStringExtra("email");
-
-
         String uname = getIntent().getStringExtra("name");
 
         avatar = findViewById(R.id.avatar);
-        cover =findViewById(R.id.cover);
-        name=findViewById(R.id.name);
+        cover = findViewById(R.id.cover);
+        name = findViewById(R.id.name);
         email = findViewById(R.id.email);
         phone = findViewById(R.id.phone);
-        address=findViewById(R.id.addresss);
+        address = findViewById(R.id.addresss);
         bio = findViewById(R.id.bio);
-        birthdate=findViewById(R.id.birthday);
+        birthdate = findViewById(R.id.birthday);
         mAuth = FirebaseAuth.getInstance();
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -85,29 +87,31 @@ public class OtherProfile extends AppCompatActivity {
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);
         recyclerView.setLayoutManager(layoutManager);
 
-        adapterNewsFeed = new AdapterNewsFeed(this,modelPostList);
+        adapterNewsFeed = new AdapterNewsFeed(this, modelPostList);
         recyclerView.setAdapter(adapterNewsFeed);
 
-        database= FirebaseDatabase.getInstance();
-        reference=database.getReference("Users");
+        database = FirebaseDatabase.getInstance();
+        mAuth = FirebaseAuth.getInstance();
+
+        reference = FirebaseDatabase.getInstance().getReference("Users");
         toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        progress=new ProgressDialog(this);
+        progress = new ProgressDialog(this);
 
         Query query = reference.orderByChild("email").equalTo(umail);
         query.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
-                for (DataSnapshot ds : snapshot.getChildren()){
-                    String dname=""+ds.child("name").getValue();
-                    String demail=""+ds.child("email").getValue();
-                    String dphone=""+ds.child("phone").getValue();
-                    String daddress=""+ds.child("Address").getValue();
-                    String dimg=""+ds.child("image").getValue();
-                    String dbio=""+ds.child("bio").getValue();
-                    String dbday=""+ds.child("Birthday").getValue();
-                    String dcover=""+ds.child("cover").getValue();
-                    uid=""+ds.child("uid").getValue();
+                for (DataSnapshot ds : snapshot.getChildren()) {
+                    String dname = "" + ds.child("name").getValue();
+                    String demail = "" + ds.child("email").getValue();
+                    String dphone = "" + ds.child("phone").getValue();
+                    String daddress = "" + ds.child("Address").getValue();
+                    String dimg = "" + ds.child("image").getValue();
+                    String dbio = "" + ds.child("bio").getValue();
+                    String dbday = "" + ds.child("Birthday").getValue();
+                    String dcover = "" + ds.child("cover").getValue();
+                    uid = "" + ds.child("uid").getValue();
 
                     name.setText(dname);
                     email.setText(demail);
@@ -117,29 +121,34 @@ public class OtherProfile extends AppCompatActivity {
                     birthdate.setText(dbday);
                     coverPop.initiatePopupWithGlide(dcover);
                     avatarPop.initiatePopupWithGlide(dimg);
-try {
+                    loadPost();
+                    try {
 
 
-                    Glide
-                            .with(OtherProfile.this)
-                            .load(dimg)
-                            .centerCrop()
-                            .placeholder(R.drawable.ic_def_img)
-                            .into(avatar);
-                    Glide
-                            .with(OtherProfile.this)
-                            .load(dcover)
-                            .centerCrop()
-                            .placeholder(R.drawable.ic_def_cover)
-                            .into(cover);
-                }catch (Exception e){}
-                }}
+                        Glide
+                                .with(OtherProfile.this)
+                                .load(dimg)
+                                .centerCrop()
+                                .placeholder(R.drawable.ic_def_img)
+                                .into(avatar);
+                        Glide
+                                .with(OtherProfile.this)
+                                .load(dcover)
+                                .centerCrop()
+                                .placeholder(R.drawable.ic_def_cover)
+                                .into(cover);
+                    } catch (Exception e) {
+                    }
+                }
+            }
 
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
             }
         });
-        loadPost();
+
+
+
         avatar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -152,7 +161,17 @@ try {
                 coverPop.viewPopup();
             }
         });
+        pullToRefresh = findViewById(R.id.pullToRefresh);
+        pullToRefresh.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                loadPost();
+                pullToRefresh.setRefreshing(false);
+            }
+        });
+
     }
+
     private void loadPost() {
         DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Groups");
         reference.addValueEventListener(new ValueEventListener() {
@@ -162,18 +181,33 @@ try {
                 for (DataSnapshot gr : snapshot.getChildren()) {
                     DataSnapshot post = gr.child("Posts");
                     for (DataSnapshot posts : post.getChildren()) {
-                        if (posts.child("uid").getValue().equals(uid)) {
-                            ModelPost modelPost = posts.getValue(ModelPost.class);
-                            modelPostList.add(modelPost);
-                            Collections.sort(modelPostList, new Comparator<ModelPost>() {
-                                @Override
-                                public int compare(ModelPost o1, ModelPost o2) {
-                                    return Float.compare(Float.parseFloat(o2.getpId()),Float.parseFloat(o1.getpId()));
-                                }
-                            });
+                        if (posts.child("Shared").getValue().equals("false")) {
+                            if (posts.child("uid").getValue().equals(uid)) {
+                                ModelPost modelPost = posts.getValue(ModelPost.class);
+                                modelPostList.add(modelPost);
+                                Collections.sort(modelPostList, new Comparator<ModelPost>() {
+                                    @Override
+                                    public int compare(ModelPost o1, ModelPost o2) {
+                                        return Float.compare(Float.parseFloat(o2.getpId()), Float.parseFloat(o1.getpId()));
+                                    }
+                                });
+                            }
+                        }
+                        else if (posts.child("Shared").getValue().equals("true")) {
+                            if (posts.child("ShareUid").getValue().equals(uid)) {
+                                ModelPost modelPost = posts.getValue(ModelPost.class);
+                                modelPostList.add(modelPost);
+                                Collections.sort(modelPostList, new Comparator<ModelPost>() {
+                                    @Override
+                                    public int compare(ModelPost o1, ModelPost o2) {
+                                        return Float.compare(Float.parseFloat(o2.getpId()), Float.parseFloat(o1.getpId()));
+                                    }
+                                });
+                            }
                         }
                     }
-                    adapterNewsFeed.notifyDataSetChanged();
+                    adapterNewsFeed = new AdapterNewsFeed(OtherProfile.this, modelPostList);
+                    recyclerView.setAdapter(adapterNewsFeed);
                 }
             }
 
@@ -182,4 +216,5 @@ try {
             }
         });
     }
+
 }
