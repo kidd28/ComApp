@@ -177,7 +177,8 @@ public class NF extends Fragment {
                             });
                         }
                     }
-                }adapterNewsFeed = new AdapterNewsFeed(getActivity(), modelPostList);
+                }
+                adapterNewsFeed = new AdapterNewsFeed(getActivity(), modelPostList);
                 recyclerView.setAdapter(adapterNewsFeed);
             }
 

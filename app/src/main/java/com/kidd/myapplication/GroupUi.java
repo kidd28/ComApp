@@ -46,7 +46,7 @@ public class GroupUi extends AppCompatActivity {
     FirebaseAuth firebaseAuth;
     ArrayList<ModelPost> modelPostList;
     AdapterPost adapterPost;
-    String grId, grtime;
+    String grId;
     SwipeRefreshLayout pullToRefresh;
 
     TextView uname;
@@ -70,7 +70,6 @@ public class GroupUi extends AppCompatActivity {
         String Avatar = getIntent().getStringExtra("grIcon");
         String Title = getIntent().getStringExtra("grName");
         grId = getIntent().getStringExtra("grId");
-        grtime = getIntent().getStringExtra("grTime");
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         this.setTitle("Group");
@@ -139,7 +138,7 @@ public class GroupUi extends AppCompatActivity {
     }
 
     private void loadPost() {
-        DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Groups").child(grtime);
+        DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Groups").child(grId);
         DatabaseReference reference1 = reference.child("Posts");
         reference1.addValueEventListener(new ValueEventListener() {
             @Override

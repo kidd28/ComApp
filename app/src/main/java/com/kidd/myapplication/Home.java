@@ -51,6 +51,7 @@ public class Home extends AppCompatActivity {
         setSupportActionBar(toolbar);
         this.setTitle("Newsfeed");
 
+
         final BubbleNavigationLinearView bubbleNavigationLinearView = findViewById(R.id.bottom_navigation_view_linear);
 
         ViewPagerAdapter adapter = new ViewPagerAdapter(getSupportFragmentManager());

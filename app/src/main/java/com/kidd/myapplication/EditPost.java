@@ -44,25 +44,18 @@ import com.google.firebase.storage.UploadTask;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Locale;
+import java.util.Map;
 
-public class PublishPost extends AppCompatActivity {
+public class EditPost extends AppCompatActivity {
     TextView uName, time;
     ImageView Dp;
-
-    FirebaseAuth firebaseAuth;
-    FirebaseUser user;
-    String groupId;
-
-    DatabaseReference reference;
-
     EditText Caption;
+
     ImageView postImg;
     Button upBtn;
     Uri image_uri = null;
 
-    String groupTitle,groupIcon;
-
-    ProgressDialog progressDialog;
+    FirebaseUser user;
 
     private static final int CAMERA_REQUEST_CODE = 100;
     private static final int STORAGE_REQUEST_CODE = 200;
@@ -70,42 +63,46 @@ public class PublishPost extends AppCompatActivity {
     private static final int IMAGE_CAMERA_PICK_CODE = 400;
     String[] cameraPermission;
     String[] storagePermission;
-    String name, email, uid, dp;
 
+    ProgressDialog progressDialog;
+
+    String name, email, uid, dp;
+    String groupId,groupTitle,groupIcon;
+    String pId,grId,pImage,pCaption;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_publish_post);
+        setContentView(R.layout.activity_edit_post);
 
         Caption = findViewById(R.id.Caption);
         upBtn = findViewById(R.id.uploadbtn);
         postImg = findViewById(R.id.ImageV);
-
         uName = findViewById(R.id.name);
         time = findViewById(R.id.time);
         Dp = findViewById(R.id.dp);
-        loadUserInfo();
+
+        user = FirebaseAuth.getInstance().getCurrentUser();
+
+         pId = getIntent().getStringExtra("pId");
+         grId = getIntent().getStringExtra("grId");
+         pImage = getIntent().getStringExtra("pImage");
+         pCaption = getIntent().getStringExtra("pCaption");
 
         groupId = getIntent().getStringExtra("grId");
         groupTitle = getIntent().getStringExtra("grName");
         groupIcon = getIntent().getStringExtra("grIcon");
 
-        firebaseAuth = FirebaseAuth.getInstance();
-        user = firebaseAuth.getCurrentUser();
-        checkUser();
-
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        this.setTitle("Publish Post");
-
-
-        cameraPermission = new String[]{Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE};
-        storagePermission = new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE};
+        this.setTitle("Edit Post");
 
         progressDialog = new ProgressDialog(this);
 
-        reference = FirebaseDatabase.getInstance().getReference("Users");
-        Query query = reference.orderByChild("email").equalTo(email);
+        LoadUser();
+        LoadPost(pId,grId,pImage,pCaption);
+
+        DatabaseReference usersRef = FirebaseDatabase.getInstance().getReference("Users");
+        Query query = usersRef.orderByChild("email").equalTo(user.getEmail());
         query.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
@@ -115,44 +112,64 @@ public class PublishPost extends AppCompatActivity {
                     dp = "" + ds.child("image").getValue();
                 }
             }
+                @Override
+                public void onCancelled(@NonNull DatabaseError error) {
 
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {
+                }
+            });
 
-            }
-        });
-
-        postImg.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                showImgDialog();
-            }
-        });
         upBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 String caption = Caption.getText().toString().trim();
                 if (TextUtils.isEmpty(caption)) {
-                    Toast.makeText(PublishPost.this, "Please Enter Caption", Toast.LENGTH_SHORT).show();
-                return;
+                    Toast.makeText(EditPost.this, "Please Enter Caption", Toast.LENGTH_SHORT).show();
+                    return;
                 }
-               if (image_uri == null) {
+                if (image_uri == null) {
                     uploadData(caption, "noImage");
                 } else {
                     uploadData(caption, String.valueOf(image_uri));
                 }
             }
         });
+        postImg.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+               showImgDialog();
+            }
+        });
+
     }
-    private void loadUserInfo() {
+
+    private void LoadPost(String pId, String grId, String pImage, String pCaption) {
+        if (pImage.equals("noImage")) {
+            Caption.setText(pCaption);
+            postImg.setVisibility(View.GONE);
+        } else {
+            Caption.setText(pCaption);
+            try {
+                Glide
+                        .with(EditPost.this)
+                        .load(pImage)
+                        .centerCrop()
+                        .placeholder(R.drawable.ic_def_cover)
+                        .into(postImg);
+            } catch (Exception e) {
+
+            }
+        }
+
+    }
+
+    private void LoadUser() {
         String ptime = String.valueOf(System.currentTimeMillis());
-        DatabaseReference ref = FirebaseDatabase.getInstance().getReference("Users");
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-        Query query = ref.orderByChild("email").equalTo(user.getEmail());
+        DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Users");
+        Query query = reference.orderByChild("email").equalTo(user.getEmail());
         query.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
-
                 for (DataSnapshot ds : snapshot.getChildren()) {
                     String myName = "" + ds.child("name").getValue();
                     String myDp = "" + ds.child("image").getValue();
@@ -169,7 +186,7 @@ public class PublishPost extends AppCompatActivity {
                     uName.setText(myName);
                     try {
                         Glide
-                                .with(PublishPost.this)
+                                .with(EditPost.this)
                                 .load(myDp)
                                 .centerCrop()
                                 .placeholder(R.drawable.ic_def_cover)
@@ -183,125 +200,114 @@ public class PublishPost extends AppCompatActivity {
 
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
-
             }
         });
     }
+
     private void uploadData(String caption, String uri) {
+
+                    String timeStamp = String.valueOf(System.currentTimeMillis());
+                    String filePathAndName = "Post/" + "post_" + timeStamp;
+
+                    Calendar calendar = Calendar.getInstance(Locale.getDefault());
+                    try {
+                        calendar.setTimeInMillis(Long.parseLong(timeStamp));
+                    } catch (Exception ex) {
+                        ex.printStackTrace();
+                    }
+                    String pTime = android.text.format.DateFormat.format("dd/MM/yyyy", calendar).toString();
+                    if (!uri.equals("noImage")) {
+                        StorageReference ref = FirebaseStorage.getInstance().getReference().child(filePathAndName);
+                        ref.putFile(Uri.parse(uri))
+                                .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                                    @Override
+                                    public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                                        Task<Uri> uriTask = taskSnapshot.getStorage().getDownloadUrl();
+                                        while (!uriTask.isSuccessful()) ;
+                                        String downloadUri = uriTask.getResult().toString();
+                                        if (uriTask.isSuccessful()) {
+                                            Map<String, Object> hashMap = new HashMap<>();
+                                            hashMap.put("uid", user.getUid());
+                                            hashMap.put("uName", name);
+                                            hashMap.put("uEmail", email);
+                                            hashMap.put("uDp", dp);
+                                            hashMap.put("pId", pId);
+                                            hashMap.put("pCaption", caption);
+                                            hashMap.put("pImage", downloadUri);
+                                            hashMap.put("pTime", pTime);
+                                            hashMap.put("groupId", groupId);
+                                            hashMap.put("groupIcon", groupIcon);
+                                            hashMap.put("groupTitle", groupTitle);
+                                            hashMap.put("Shared", "false");
+                                            DatabaseReference reference1 = FirebaseDatabase.getInstance().getReference("Groups");
+                                            DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Posts");
+                                            reference.child(timeStamp).child("Likes").setValue("0");
+                                            reference1.child(groupId).child("Posts").child(pId).updateChildren(hashMap)
+                                                    .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                        @Override
+                                                        public void onSuccess(Void aVoid) {
+                                                            progressDialog.dismiss();
+                                                            Toast.makeText(EditPost.this, "Post published", Toast.LENGTH_SHORT).show();
+                                                            Caption.setText("");
+                                                            postImg.setImageURI(null);
+                                                            image_uri = null;
+                                                            startActivity(new Intent(EditPost.this, Home.class));
+                                                        }
+                                                    }).addOnFailureListener(new OnFailureListener() {
+                                                @Override
+                                                public void onFailure(@NonNull Exception e) {
+                                                    progressDialog.dismiss();
+                                                    Toast.makeText(EditPost.this, "Publish Failed.." + e.getMessage(), Toast.LENGTH_SHORT).show();
+                                                }
+                                            });
+                                        }
+                                    }
+                                }).addOnFailureListener(new OnFailureListener() {
+                            @Override
+                            public void onFailure(@NonNull Exception e) {
+                                progressDialog.dismiss();
+                                Toast.makeText(EditPost.this, "" + e.getMessage(), Toast.LENGTH_SHORT).show();
+                            }
+                        });
+                    }
+                    else{
+                        Map<String, Object> hashMap = new HashMap<>();
+                        hashMap.put("uid", user.getUid());
+                        hashMap.put("uName", name);
+                        hashMap.put("uEmail", email);
+                        hashMap.put("uDp", dp);
+                        hashMap.put("pId", pId);
+                        hashMap.put("pCaption", caption);
+                        hashMap.put("pImage", pImage);
+                        hashMap.put("pTime", pTime);
+                        hashMap.put("groupId", groupId);
+                        hashMap.put("groupIcon", groupIcon);
+                        hashMap.put("groupTitle", groupTitle);
+                        hashMap.put("Shared", "false");
+                        DatabaseReference reference1 = FirebaseDatabase.getInstance().getReference("Groups");
+                        DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Posts");
+                        reference.child(timeStamp).child("Likes").setValue("0");
+                        reference1.child(groupId).child("Posts").child(pId).updateChildren(hashMap)
+                                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                    @Override
+                                    public void onSuccess(Void aVoid) {
+                                        progressDialog.dismiss();
+                                        Toast.makeText(EditPost.this, "Post published", Toast.LENGTH_SHORT).show();
+                                        Caption.setText("");
+                                        postImg.setImageURI(null);
+                                        image_uri = null;
+                                        startActivity(new Intent(EditPost.this, Home.class));
+                                    }
+                                }).addOnFailureListener(new OnFailureListener() {
+                            @Override
+                            public void onFailure(@NonNull Exception e) {
+                                progressDialog.dismiss();
+                                Toast.makeText(EditPost.this, "Publish Failed.." + e.getMessage(), Toast.LENGTH_SHORT).show();
+                            }
+                        });
+                    }
         progressDialog.setMessage("Publishing Post...");
         progressDialog.show();
-
-        String timeStamp = String.valueOf(System.currentTimeMillis());
-        String filePathAndName = "Post/" + "post_" + timeStamp;
-
-        Calendar calendar = Calendar.getInstance(Locale.getDefault());
-        try {
-            calendar.setTimeInMillis(Long.parseLong(timeStamp));
-        } catch (Exception ex) {
-            ex.printStackTrace();
-        }
-        String pTime = android.text.format.DateFormat.format("dd/MM/yyyy", calendar).toString();
-        if (!uri.equals("noImage")) {
-            StorageReference ref = FirebaseStorage.getInstance().getReference().child(filePathAndName);
-            ref.putFile(Uri.parse(uri))
-                    .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
-                        @Override
-                        public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                            Task<Uri> uriTask = taskSnapshot.getStorage().getDownloadUrl();
-                            while (!uriTask.isSuccessful()) ;
-                            String downloadUri = uriTask.getResult().toString();
-                            if (uriTask.isSuccessful()) {
-                                HashMap<Object, String> hashMap = new HashMap<>();
-                                hashMap.put("uid", uid);
-                                hashMap.put("uName", name);
-                                hashMap.put("uEmail", email);
-                                hashMap.put("uDp", dp);
-                                hashMap.put("pId", timeStamp);
-                                hashMap.put("pCaption", caption);
-                                hashMap.put("pComment", "0");
-                                hashMap.put("pImage", downloadUri);
-                                hashMap.put("pTime", pTime);
-                                hashMap.put("groupId", groupId);
-                                hashMap.put("groupIcon", groupIcon);
-                                hashMap.put("groupTitle", groupTitle);
-                                hashMap.put("Shared", "false");
-                                DatabaseReference reference1 = FirebaseDatabase.getInstance().getReference("Groups");
-                                DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Posts");
-                                reference.child(timeStamp).child("Likes").setValue("0");
-                                reference1.child(groupId).child("Posts").child(timeStamp).setValue(hashMap)
-                                        .addOnSuccessListener(new OnSuccessListener<Void>() {
-                                            @Override
-                                            public void onSuccess(Void aVoid) {
-                                                progressDialog.dismiss();
-                                                Toast.makeText(PublishPost.this, "Post published", Toast.LENGTH_SHORT).show();
-                                                Caption.setText("");
-                                                postImg.setImageURI(null);
-                                                image_uri = null;
-                                                startActivity(new Intent(PublishPost.this, Home.class));
-                                            }
-                                        }).addOnFailureListener(new OnFailureListener() {
-                                    @Override
-                                    public void onFailure(@NonNull Exception e) {
-                                        progressDialog.dismiss();
-                                        Toast.makeText(PublishPost.this, "Publish Failed.." + e.getMessage(), Toast.LENGTH_SHORT).show();
-                                    }
-                                });
-                            }
-                        }
-                    }).addOnFailureListener(new OnFailureListener() {
-                @Override
-                public void onFailure(@NonNull Exception e) {
-                    progressDialog.dismiss();
-                    Toast.makeText(PublishPost.this, "" + e.getMessage(), Toast.LENGTH_SHORT).show();
-                }
-            });
-        }else{
-            HashMap<Object, String> hashMap = new HashMap<>();
-            hashMap.put("uid", uid);
-            hashMap.put("uName", name);
-            hashMap.put("uEmail", email);
-            hashMap.put("uDp", dp);
-            hashMap.put("pId", timeStamp);
-            hashMap.put("pCaption", caption);
-            hashMap.put("pComment", "0");
-            hashMap.put("pImage", "noImage");
-            hashMap.put("pTime", pTime);
-            hashMap.put("groupId", groupId);
-            hashMap.put("groupIcon", groupIcon);
-            hashMap.put("groupTitle", groupTitle);
-            hashMap.put("Shared", "false");
-            DatabaseReference reference1 = FirebaseDatabase.getInstance().getReference("Groups");
-            DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Posts");
-            reference.child(timeStamp).child("Likes").setValue("0");
-            reference1.child(groupId).child("Posts").child(timeStamp).setValue(hashMap)
-                    .addOnSuccessListener(new OnSuccessListener<Void>() {
-                        @Override
-                        public void onSuccess(Void aVoid) {
-                            progressDialog.dismiss();
-                            Toast.makeText(PublishPost.this, "Post published", Toast.LENGTH_SHORT).show();
-                            Caption.setText("");
-                            postImg.setImageURI(null);
-                            image_uri = null;
-                            startActivity(new Intent(PublishPost.this, Home.class));
-                        }
-                    }).addOnFailureListener(new OnFailureListener() {
-                @Override
-                public void onFailure(@NonNull Exception e) {
-                    progressDialog.dismiss();
-                    Toast.makeText(PublishPost.this, "Publish Failed.." + e.getMessage(), Toast.LENGTH_SHORT).show();
-                }
-            });
-        }
-    }
-    private void checkUser() {
-        if (user != null) {
-            email = user.getEmail();
-            uid = user.getUid();
-        } else {
-            startActivity(new Intent(this, MainActivity.class));
-            finish();
-
-        }
     }
     private void showImgDialog() {
         String option[] = {"Camera", "Gallery"};

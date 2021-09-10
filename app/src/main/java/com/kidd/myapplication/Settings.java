@@ -70,7 +70,6 @@ public class Settings extends AppCompatActivity {
     Boolean change = false;
     Boolean changeComdp = false;
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -147,7 +146,6 @@ public class Settings extends AppCompatActivity {
             }
         });
     }
-
     private boolean checkStoragePermission() {
         boolean result = ActivityCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)
                 == (PackageManager.PERMISSION_GRANTED);
@@ -161,16 +159,13 @@ public class Settings extends AppCompatActivity {
             pickFromGallery();
         }
     }
-
     private boolean checkCameraPermission() {
-
         boolean result = ActivityCompat.checkSelfPermission(this, Manifest.permission.CAMERA)
                 == (PackageManager.PERMISSION_GRANTED);
         boolean result1 = ActivityCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)
                 == (PackageManager.PERMISSION_GRANTED);
         return result && result1;
     }
-
     private void requestCameraPermission() {
         ActivityCompat.requestPermissions(this, cameraPermission, CAMERA_REQUEST_CODE);
         checkCameraPermission();
@@ -444,19 +439,16 @@ public class Settings extends AppCompatActivity {
                                                 ref2.updateChildren(hashMap);
                                             }
                                         }
-
                                     }
                                 }
                             }
                         }
-
                         @Override
                         public void onCancelled(@NonNull DatabaseError error) {
                         }
                     });
                 }
             }
-
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
 
@@ -505,10 +497,7 @@ public class Settings extends AppCompatActivity {
                                     });
                                 }
                             }
-
-
                         }
-
                         @Override
                         public void onCancelled(@NonNull DatabaseError error) {
 

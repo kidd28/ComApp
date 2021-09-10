@@ -20,6 +20,7 @@
         android:layout_height="match_parent"
         android:id="@+id/userRecyclerview"
         android:layout_marginBottom="100dp"
+             tools:listitem="@layout/user_list"
         />
         </ScrollView>
     </LinearLayout>

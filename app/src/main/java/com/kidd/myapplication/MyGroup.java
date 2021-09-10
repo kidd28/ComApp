@@ -71,7 +71,6 @@ public class MyGroup extends Fragment {
         viewPager= v.findViewById(R.id.grouppage);
         final BubbleNavigationLinearView bubbleNavigationLinearView = v.findViewById(R.id.bottom_navigation_view_linear);
 
-
         GroupPageAdapter adapter = new GroupPageAdapter(getChildFragmentManager());
         viewPager.setAdapter(adapter);
 
@@ -82,10 +81,7 @@ public class MyGroup extends Fragment {
             }
             @Override
             public void onPageSelected(int position) {
-
                     bubbleNavigationLinearView.setCurrentActiveItem(position);
-
-
             }
 
             @Override

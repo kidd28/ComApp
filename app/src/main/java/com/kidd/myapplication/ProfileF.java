@@ -194,7 +194,7 @@ public class ProfileF extends Fragment {
         query.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
-                pullToRefresh.setRefreshing(true);
+
                 for (DataSnapshot ds : snapshot.getChildren()) {
                     String dname = "" + ds.child("name").getValue();
                     String demail = "" + ds.child("email").getValue();
@@ -231,7 +231,7 @@ public class ProfileF extends Fragment {
                                 .into(cover);
 
                     }
-                    pullToRefresh.setRefreshing(false);
+
 
                 }
             }

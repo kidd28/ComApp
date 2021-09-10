@@ -55,6 +55,7 @@ public class AdapterWritePost extends RecyclerView.Adapter<AdapterWritePost.Hold
                 Intent intent = new Intent(context, PublishPost.class);
                 intent.putExtra("grId", grId);
                 intent.putExtra("grName", groupTitle);
+                intent.putExtra("grIcon", groupIcon);
                 context.startActivity(intent);
             }
         });

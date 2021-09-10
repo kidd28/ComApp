@@ -14,7 +14,8 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.MyApplication"
         android:usesCleartextTraffic="true">
-        <activity android:name=".JoinGroup"></activity>
+        <activity android:name=".EditPost"></activity>
+        <activity android:name=".JoinGroup" />
         <activity android:name=".WritePost" />
         <activity android:name=".SharePost" />
         <activity android:name=".Settings" />
@@ -31,11 +32,10 @@
         <activity android:name=".MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
-
     </application>
 
 </manifest>

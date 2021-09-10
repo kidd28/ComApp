@@ -59,7 +59,6 @@ public class AdapterNewsFeed extends RecyclerView.Adapter<AdapterNewsFeed.MyHold
 
     @Override
     public void onBindViewHolder(@NonNull MyHolder holder, int i) {
-        String likes = postList.get(i).getpLike();
         String uid = postList.get(i).getUid();
         String uEmail = postList.get(i).getuEmail();
         String pId = postList.get(i).getpId();
@@ -80,7 +79,6 @@ public class AdapterNewsFeed extends RecyclerView.Adapter<AdapterNewsFeed.MyHold
         String pComment = postList.get(i).getpComment();
         String pTime = postList.get(i).getpTime();
         String ShareUid = postList.get(i).getShareUid();
-
         holder.uName.setText(postList.get(i).getuName());
         try {
             Glide
@@ -96,11 +94,9 @@ public class AdapterNewsFeed extends RecyclerView.Adapter<AdapterNewsFeed.MyHold
         holder.pCaption.setText(postList.get(i).getpCaption());
         holder.pTime.setText(postList.get(i).getpTime());
         holder.groupName.setText(postList.get(i).getGroupTitle());
-        holder.pLike.setText(likes + " Likes");
         holder.likeBtn.setText("Like");
         setLikes(holder, pId, groupId);
         holder.CommentCount.setText(pComment + " Comments");
-
 
         if (pImage.equals("noImage")) {
             holder.pImg.setVisibility(View.GONE);
@@ -134,13 +130,12 @@ public class AdapterNewsFeed extends RecyclerView.Adapter<AdapterNewsFeed.MyHold
                     .centerCrop()
                     .placeholder(R.drawable.ic_def_img)
                     .into(holder.sdp);
-
         }
         holder.ShareMore.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 FirebaseUser user1 = FirebaseAuth.getInstance().getCurrentUser();
-                SharemoreOption(ShareUid,holder.ShareMore, uid, user1.getUid(), groupId, pId, pImage);
+                SharemoreOption(ShareUid,holder.ShareMore, uid, user1.getUid(), groupId, pId, pImage,ShareEmail,ShareName,ShareUid);
             }
         });
         holder.pImg.setOnClickListener(new View.OnClickListener() {
@@ -162,7 +157,6 @@ public class AdapterNewsFeed extends RecyclerView.Adapter<AdapterNewsFeed.MyHold
                 Intent intent = new Intent(context, PostDetail.class);
                 intent.putExtra("pId", pId);
                 intent.putExtra("groupID", groupId);
-                intent.putExtra("likes", likes);
                 intent.putExtra("pComment", pComment);
                 intent.putExtra("grName", postList.get(i).getGroupTitle());
                 intent.putExtra("uid", uid);
@@ -189,13 +183,13 @@ public class AdapterNewsFeed extends RecyclerView.Adapter<AdapterNewsFeed.MyHold
             @Override
             public void onClick(View v) {
                 FirebaseUser user2 = FirebaseAuth.getInstance().getCurrentUser();
-                moreOption(ShareUid, Shared, holder.moreBtn, uid, user2.getUid(), groupId, pId, pImage);
+                moreOption(ShareUid, Shared, holder.moreBtn, uid, user2.getUid(), groupId, pId, pImage,pCaption,groupTitle,grIcon,uEmail,postList.get(i).getuName(),postList.get(i).getUid());
             }
         });
         holder.likeBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                PostLike(likes, groupId, pId);
+                PostLike(holder, groupId, pId);
             }
         });
         holder.commentBtn.setOnClickListener(new View.OnClickListener() {
@@ -204,7 +198,6 @@ public class AdapterNewsFeed extends RecyclerView.Adapter<AdapterNewsFeed.MyHold
                 Intent intent = new Intent(context, PostDetail.class);
                 intent.putExtra("pId", pId);
                 intent.putExtra("groupID", groupId);
-                intent.putExtra("likes", likes);
                 intent.putExtra("pComment", pComment);
                 intent.putExtra("grName", postList.get(i).getGroupTitle());
                 intent.putExtra("uid", uid);
@@ -219,6 +212,7 @@ public class AdapterNewsFeed extends RecyclerView.Adapter<AdapterNewsFeed.MyHold
         holder.uName.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
                 Intent intent = new Intent(context, OtherProfile.class);
                 intent.putExtra("email", uEmail);
                 intent.putExtra("name", postList.get(i).getuName());
@@ -233,18 +227,39 @@ public class AdapterNewsFeed extends RecyclerView.Adapter<AdapterNewsFeed.MyHold
                 intent.putExtra("grName", groupTitle);
                 intent.putExtra("grIcon", grIcon);
                 intent.putExtra("grId", groupId);
-                intent.putExtra("grTime", groupTime);
                 context.startActivity(intent);
             }
         });
         holder.shareBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                shareWimage(likes, uid, uEmail, pId, groupId, grIcon, groupTitle, groupTime, pTime, pCaption, uDp, pImage, uName);
+                shareWimage(uid, uEmail, pId, groupId, grIcon, groupTitle, groupTime, pTime, pCaption, uDp, pImage, uName);
             }
         });
+        holder.shareName.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(context, OtherProfile.class);
+                intent.putExtra("email", ShareEmail);
+                intent.putExtra("name", postList.get(i).getShareName());
+                intent.putExtra("uid", postList.get(i).getShareUid());
+                context.startActivity(intent);
+            }
+        });
+        holder.grShareName.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(context, GroupUi.class);
+                intent.putExtra("grName", postList.get(i).getShareTo());
+                intent.putExtra("grId",postList.get(i).getShareGroupId());
+                intent.putExtra("grIcon", postList.get(i).getShareGroupIcon());
+                context.startActivity(intent);
+            }
+        });
+
+
     }
-    private void SharemoreOption(String ShareUid,TextView moreBtn, String uid, String uid1, String groupId, String pId, String pImage) {
+    private void SharemoreOption(String ShareUid,TextView moreBtn, String uid, String uid1, String groupId, String pId, String pImage,String uEmail, String uName, String Uid) {
         PopupMenu menu = new PopupMenu(context, moreBtn, Gravity.END);
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
         builder.setTitle("Delete Posts");
@@ -252,6 +267,9 @@ public class AdapterNewsFeed extends RecyclerView.Adapter<AdapterNewsFeed.MyHold
         FirebaseUser user3 = FirebaseAuth.getInstance().getCurrentUser();
         if (ShareUid.equals(user3.getUid())) {
             menu.getMenu().add(Menu.NONE, 0, 0, "Delete");
+        }else{
+            menu.getMenu().add(Menu.NONE, 3, 3, "See Profile");
+            menu.getMenu().add(Menu.NONE, 4, 4, "See Original Post");
         }
         menu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
             @Override
@@ -271,14 +289,27 @@ public class AdapterNewsFeed extends RecyclerView.Adapter<AdapterNewsFeed.MyHold
                     });
                     builder.create().show();
                 }
+                else if(id==3) {
+                    Intent intent = new Intent(context, OtherProfile.class);
+                    intent.putExtra("email", uEmail);
+                    intent.putExtra("name", uName);
+                    intent.putExtra("uid", Uid);
+                    context.startActivity(intent);
+                }
+                else if(id==4) {
+                    Intent intent = new Intent(context, OtherProfile.class);
+                    intent.putExtra("email", uEmail);
+                    intent.putExtra("name", uName);
+                    intent.putExtra("uid", Uid);
+                    context.startActivity(intent);
+                }
                 return false;
             }
         });
         menu.show();
     }
-    private void shareWimage(String likes, String uid, String uEmail, String pId, String groupId, String grIcon, String groupTitle, String groupTime, String pTime, String pCaption, String uDp, String pImage, String uName) {
+    private void shareWimage( String uid, String uEmail, String pId, String groupId, String grIcon, String groupTitle, String groupTime, String pTime, String pCaption, String uDp, String pImage, String uName) {
         Intent intent = new Intent(context, SharePost.class);
-        intent.putExtra("likes", likes);
         intent.putExtra("uid", uid);
         intent.putExtra("uEmail", uEmail);
         intent.putExtra("pId", pId);
@@ -293,49 +324,72 @@ public class AdapterNewsFeed extends RecyclerView.Adapter<AdapterNewsFeed.MyHold
         intent.putExtra("uName", uName);
         context.startActivity(intent);
     }
-    private void PostLike(String likes, String groupId, String pId) {
+    private void PostLike(MyHolder holder, String groupId, String pId) {
         likeProcess = true;
         FirebaseUser user4 = FirebaseAuth.getInstance().getCurrentUser();
-        DatabaseReference ref3 = FirebaseDatabase.getInstance().getReference("Groups").child(groupId).child("Posts").child(pId);
-        ref3.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
-                if (likeProcess) {
-                    if (snapshot.child("Likes").hasChild(user4.getUid())) {
-                        ref3.child("Likes").child(user4.getUid()).removeValue();
-                        ref3.child("pLike").setValue("" + (Integer.parseInt(likes) - 1));
-                        likeProcess = false;
-                    } else {
-                        ref3.child("Likes").child(user4.getUid()).setValue("liked");
-                        ref3.child("pLike").setValue("" + (Integer.parseInt(likes) + 1));
-                        likeProcess = false;
-                    }
-                }
-            }
+        DatabaseReference UserLike = FirebaseDatabase.getInstance().getReference("Users").child(user4.getUid());
+        DatabaseReference ref3 = FirebaseDatabase.getInstance().getReference("Posts");
+                ref3.addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+                            String counts = "" + snapshot.child(pId).child("Likes").getValue();
+                            holder.pLike.setText(counts + " Likes");
+                            UserLike.addValueEventListener(new ValueEventListener() {
+                                @Override
+                                public void onDataChange(@NonNull DataSnapshot snapshot) {
+                                    if (likeProcess) {
+                                        if (snapshot.child("Liked").hasChild(pId)) {
+                                            ref3.child(pId).child("Likes").setValue("" + (Integer.parseInt(counts) - 1));
+                                            holder.likeBtn.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_liked, 0, 0, 0);
+                                            UserLike.child("Liked").child(pId).removeValue();
+                                            likeProcess = false;
+                                        } else {
+                                            ref3.child(pId).child("Likes").setValue("" + (Integer.parseInt(counts) + 1));
 
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {
-            }
-        });
+                                            holder.likeBtn.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_baseline_thumb_up_24, 0, 0, 0);
+                                            UserLike.child("Liked").child(pId).setValue("Liked");
+                                            likeProcess = false;
+                                        }
+
+                                    }
+                                }
+                                @Override
+                                public void onCancelled(@NonNull DatabaseError error) {
+
+                                }
+                            });
+
+                        }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError error) {
+
+                    }
+                });
+
+
 
     }
-    private void moreOption(String ShareUid, String Shared, TextView morebtn, String uid, String myUid, String grId, String pId, String pImage) {
+    private void moreOption(String ShareUid, String Shared, TextView morebtn, String uid, String myUid, String grId, String pId, String pImage,String pCaption,String grName,String grIcon,String uEmail, String uName, String Uid) {
         PopupMenu menu = new PopupMenu(context, morebtn, Gravity.END);
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
-        builder.setTitle("Delete Posts");
-        builder.setMessage("Are you sure you want to Delete this Post?");
+
         FirebaseUser user6 = FirebaseAuth.getInstance().getCurrentUser();
 
         if (uid.equals(user6.getUid())) {
             menu.getMenu().add(Menu.NONE, 0, 0, "Delete");
             menu.getMenu().add(Menu.NONE, 1, 2, "Edit");
+        }else{
+            menu.getMenu().add(Menu.NONE, 3, 3, "See Profile");
         }
 
         menu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
             @Override
             public boolean onMenuItemClick(MenuItem item) {
                 int id = item.getItemId();
-                if (id == 0) {
+                if(id==0) {
+                    builder.setTitle("Delete Posts");
+                    builder.setMessage("Are you sure you want to Delete this Post?");
                     builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
@@ -349,11 +403,53 @@ public class AdapterNewsFeed extends RecyclerView.Adapter<AdapterNewsFeed.MyHold
                     });
                     builder.create().show();
                 }
+                else if(id==1) {
+                                editPost(pId, grId, pImage, pCaption,grName,grIcon);
+                }
+                else if(id==3) {
+                    Intent intent = new Intent(context, OtherProfile.class);
+                    intent.putExtra("email", uEmail);
+                    intent.putExtra("name", uName);
+                    intent.putExtra("uid", Uid);
+                    context.startActivity(intent);
+                }
+
                 return false;
             }
         });
         menu.show();
     }
+
+    private void editPost(String pId, String grId, String pImage,String pCaption,String grName,String grIcon) {
+        if (pImage.equals("noImage")) {
+            EditPostText(pId, grId,pCaption,grName,grIcon);
+        } else {
+            EditPostWithImage(pId, grId, pImage,pCaption,grName,grIcon);
+        }
+    }
+    private void EditPostText(String pId, String grId,String pCaption,String grName,String grIcon) {
+        Intent intent = new Intent(context, EditPost.class);
+        intent.putExtra("pId",pId);
+        intent.putExtra("grId",grId);
+        intent.putExtra("pImage","noImage");
+        intent.putExtra("pCaption",pCaption);
+        intent.putExtra("grName",grName);
+        intent.putExtra("grIcon",grIcon);
+
+        context.startActivity(intent);
+    }
+    private void EditPostWithImage(String pId, String grId, String pImage, String pCaption,String grName,String grIcon) {
+        Intent intent = new Intent(context, EditPost.class);
+        intent.putExtra("pId",pId);
+        intent.putExtra("grId",grId);
+        intent.putExtra("pImage",pImage);
+        intent.putExtra("pCaption",pCaption);
+        intent.putExtra("grName",grName);
+        intent.putExtra("grIcon",grIcon);
+        context.startActivity(intent);
+
+    }
+
     private void deletePosts(String pId, String grId, @NotNull String pImg) {
         if (pImg.equals("noImage")) {
             deletePost(pId, grId);
@@ -395,22 +491,36 @@ public class AdapterNewsFeed extends RecyclerView.Adapter<AdapterNewsFeed.MyHold
     }
     private void setLikes(MyHolder holder, String pId, String grId) {
         FirebaseUser user5 = FirebaseAuth.getInstance().getCurrentUser();
-        DatabaseReference ref6 = FirebaseDatabase.getInstance().getReference("Groups").child(grId).child("Posts").child(pId);
-        ref6.addListenerForSingleValueEvent(new ValueEventListener() {
+        DatabaseReference ref6 = FirebaseDatabase.getInstance().getReference("Users").child(user5.getUid());
+        DatabaseReference ref3 = FirebaseDatabase.getInstance().getReference("Posts");
+        ref3.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
-                if (snapshot.child("Likes").hasChild(user5.getUid())) {
-                    holder.likeBtn.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_baseline_thumb_up_24, 0, 0, 0);
-                } else {
-                    holder.likeBtn.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_liked, 0, 0, 0);
-                }
+                String counts = "" + snapshot.child(pId).child("Likes").getValue();
+                holder.pLike.setText(counts + " Likes");
+                ref6.addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+                        if (snapshot.child("Liked").hasChild(pId)) {
+                            holder.likeBtn.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_baseline_thumb_up_24, 0, 0, 0);
+                        } else {
+                            holder.likeBtn.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_liked, 0, 0, 0);
+                        }
 
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError error) {
+                    }
+                });
             }
 
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
+
             }
         });
+
     }
 
     @Override

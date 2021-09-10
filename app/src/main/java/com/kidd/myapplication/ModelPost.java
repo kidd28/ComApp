@@ -2,7 +2,7 @@ package com.kidd.myapplication;
 
 public class ModelPost {
 
-String ShareUid,ShareEmail,ShareTime,pComment,pId, pCaption,pTime, uid, uName,uEmail,pImage,uDp,groupId,groupTitle,groupIcon,pLike,Shared,ShareTo,ShareName,ShareDp;
+String ShareGroupIcon,ShareGroupId,ShareUid,ShareEmail,ShareTime,pComment,pId, pCaption,pTime, uid, uName,uEmail,pImage,uDp,groupId,groupTitle,groupIcon,pLike,Shared,ShareTo,ShareName,ShareDp;
 
     public ModelPost() {
     }
@@ -10,7 +10,8 @@ String ShareUid,ShareEmail,ShareTime,pComment,pId, pCaption,pTime, uid, uName,uE
     public ModelPost(String pId, String pCaption, String pTime,
                      String uid, String uName, String uEmail, String pImage, String uDp,
                      String groupId, String groupTitle, String groupIcon,String pLike,String Shared,
-                     String ShareTo, String ShareName,String ShareDp,String pComment,String ShareTime,String ShareEmail,String ShareUid) {
+                     String ShareTo, String ShareName,String ShareDp,String pComment,String ShareTime,
+                     String ShareEmail,String ShareUid,String ShareGroupId,String ShareGroupIcon) {
         this.pId = pId;
         this.pCaption = pCaption;
         this.pTime = pTime;
@@ -30,6 +31,24 @@ String ShareUid,ShareEmail,ShareTime,pComment,pId, pCaption,pTime, uid, uName,uE
         this.ShareTime = ShareTime;
         this.ShareEmail = ShareEmail;
         this.ShareUid = ShareUid;
+        this.ShareGroupId = ShareGroupId;
+        this.ShareGroupIcon = ShareGroupIcon;
+    }
+
+    public String getShareGroupIcon() {
+        return ShareGroupIcon;
+    }
+
+    public void setShareGroupIcon(String shareGroupIcon) {
+        ShareGroupIcon = shareGroupIcon;
+    }
+
+    public String getShareGroupId() {
+        return ShareGroupId;
+    }
+
+    public void setShareGroupId(String shareGroupId) {
+        ShareGroupId = shareGroupId;
     }
 
     public String getShareUid() {

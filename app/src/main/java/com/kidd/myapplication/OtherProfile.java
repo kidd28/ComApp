@@ -6,16 +6,19 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
+import androidx.appcompat.widget.Toolbar;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
+import androidx.appcompat.app.AppCompatDelegate;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
+import androidx.viewpager.widget.ViewPager;
 
 import com.bumptech.glide.Glide;
 import com.ceylonlabs.imageviewpopup.ImagePopup;
+import com.gauravk.bubblenavigation.BubbleNavigationLinearView;
+import com.gauravk.bubblenavigation.listener.BubbleNavigationChangeListener;
+import com.google.android.material.appbar.CollapsingToolbarLayout;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -24,47 +27,46 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-
 public class OtherProfile extends AppCompatActivity {
 
     ProgressDialog progress;
     DatabaseReference reference;
-    FirebaseDatabase database;
     FirebaseAuth mAuth;
 
     ImageView avatar, cover;
-    TextView name, email, phone, address, bio, birthdate;
+    TextView  email, phone, address, bio, birthdate;
 
-    RecyclerView recyclerView;
-    ArrayList<ModelPost> modelPostList;
-    AdapterNewsFeed adapterNewsFeed;
+
     String umail, uid;
     SwipeRefreshLayout pullToRefresh;
+    ViewPager viewPager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_other_profile);
+        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
         email = findViewById(R.id.email);
         umail = getIntent().getStringExtra("email");
         String uname = getIntent().getStringExtra("name");
 
         avatar = findViewById(R.id.avatar);
         cover = findViewById(R.id.cover);
-        name = findViewById(R.id.name);
+
         email = findViewById(R.id.email);
         phone = findViewById(R.id.phone);
         address = findViewById(R.id.addresss);
         bio = findViewById(R.id.bio);
         birthdate = findViewById(R.id.birthday);
         mAuth = FirebaseAuth.getInstance();
+        viewPager = findViewById(R.id.otherPage);
 
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        CollapsingToolbarLayout Ctoolbar = findViewById(R.id.collapse);
+        Ctoolbar.setTitle(uname);
+
+        Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        this.setTitle(uname);
+
 
 
         ImagePopup avatarPop = new ImagePopup(this);
@@ -82,20 +84,7 @@ public class OtherProfile extends AppCompatActivity {
         coverPop.setHideCloseIcon(true);
         coverPop.setImageOnClickClose(true);
 
-        recyclerView = findViewById(R.id.postRv);
-        modelPostList = new ArrayList<>();
-        LinearLayoutManager layoutManager = new LinearLayoutManager(this);
-        recyclerView.setLayoutManager(layoutManager);
-
-        adapterNewsFeed = new AdapterNewsFeed(this, modelPostList);
-        recyclerView.setAdapter(adapterNewsFeed);
-
-        database = FirebaseDatabase.getInstance();
-        mAuth = FirebaseAuth.getInstance();
-
         reference = FirebaseDatabase.getInstance().getReference("Users");
-        toolbar = findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
         progress = new ProgressDialog(this);
 
         Query query = reference.orderByChild("email").equalTo(umail);
@@ -113,7 +102,7 @@ public class OtherProfile extends AppCompatActivity {
                     String dcover = "" + ds.child("cover").getValue();
                     uid = "" + ds.child("uid").getValue();
 
-                    name.setText(dname);
+
                     email.setText(demail);
                     phone.setText(dphone);
                     address.setText(daddress);
@@ -121,7 +110,7 @@ public class OtherProfile extends AppCompatActivity {
                     birthdate.setText(dbday);
                     coverPop.initiatePopupWithGlide(dcover);
                     avatarPop.initiatePopupWithGlide(dimg);
-                    loadPost();
+
                     try {
 
 
@@ -147,8 +136,6 @@ public class OtherProfile extends AppCompatActivity {
             }
         });
 
-
-
         avatar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -161,58 +148,31 @@ public class OtherProfile extends AppCompatActivity {
                 coverPop.viewPopup();
             }
         });
-        pullToRefresh = findViewById(R.id.pullToRefresh);
-        pullToRefresh.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+
+
+        final BubbleNavigationLinearView bubbleNavigationLinearView = findViewById(R.id.Other_bottom_navigation_view_linear);
+
+        AdapterOtherProfile adapter = new AdapterOtherProfile(getSupportFragmentManager());
+        viewPager.setAdapter(adapter);
+
+        viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
-            public void onRefresh() {
-                loadPost();
-                pullToRefresh.setRefreshing(false);
+            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+            }
+
+            @Override
+            public void onPageSelected(int position) {
+                bubbleNavigationLinearView.setCurrentActiveItem(position);
+            }
+
+            @Override
+            public void onPageScrollStateChanged(int state) {
             }
         });
-
-    }
-
-    private void loadPost() {
-        DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Groups");
-        reference.addValueEventListener(new ValueEventListener() {
+        bubbleNavigationLinearView.setNavigationChangeListener(new BubbleNavigationChangeListener() {
             @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
-                modelPostList.clear();
-                for (DataSnapshot gr : snapshot.getChildren()) {
-                    DataSnapshot post = gr.child("Posts");
-                    for (DataSnapshot posts : post.getChildren()) {
-                        if (posts.child("Shared").getValue().equals("false")) {
-                            if (posts.child("uid").getValue().equals(uid)) {
-                                ModelPost modelPost = posts.getValue(ModelPost.class);
-                                modelPostList.add(modelPost);
-                                Collections.sort(modelPostList, new Comparator<ModelPost>() {
-                                    @Override
-                                    public int compare(ModelPost o1, ModelPost o2) {
-                                        return Float.compare(Float.parseFloat(o2.getpId()), Float.parseFloat(o1.getpId()));
-                                    }
-                                });
-                            }
-                        }
-                        else if (posts.child("Shared").getValue().equals("true")) {
-                            if (posts.child("ShareUid").getValue().equals(uid)) {
-                                ModelPost modelPost = posts.getValue(ModelPost.class);
-                                modelPostList.add(modelPost);
-                                Collections.sort(modelPostList, new Comparator<ModelPost>() {
-                                    @Override
-                                    public int compare(ModelPost o1, ModelPost o2) {
-                                        return Float.compare(Float.parseFloat(o2.getpId()), Float.parseFloat(o1.getpId()));
-                                    }
-                                });
-                            }
-                        }
-                    }
-                    adapterNewsFeed = new AdapterNewsFeed(OtherProfile.this, modelPostList);
-                    recyclerView.setAdapter(adapterNewsFeed);
-                }
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {
+            public void onNavigationChanged(View view, int position) {
+                viewPager.setCurrentItem(position, true);
             }
         });
     }

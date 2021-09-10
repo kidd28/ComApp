@@ -75,6 +75,7 @@ public class PostDetail extends AppCompatActivity {
     Toolbar toolbar;
 
     Boolean postLike = false;
+    String pCaption;
 
 
     @Override
@@ -128,6 +129,9 @@ public class PostDetail extends AppCompatActivity {
         udp = getIntent().getStringExtra("uDp");
         pComment = getIntent().getStringExtra("pComment");
 
+
+
+
         imagePopup = new ImagePopup(this);
         imagePopup.setWindowHeight(1000);
         imagePopup.setWindowWidth(1000);
@@ -143,7 +147,7 @@ public class PostDetail extends AppCompatActivity {
         String uid = getIntent().getStringExtra("uid");
         String uEmail = getIntent().getStringExtra("uEmail");
         String pTime = getIntent().getStringExtra("pTime");
-        String pTitle = getIntent().getStringExtra("pCaption");
+         pCaption = getIntent().getStringExtra("pCaption");
         String uDp = getIntent().getStringExtra("uDp");
         String pImage = getIntent().getStringExtra("pImage");
         String Name = getIntent().getStringExtra("uName");
@@ -152,6 +156,7 @@ public class PostDetail extends AppCompatActivity {
         PostInfo();
         LoaduserInfo();
         LoadComment();
+        setLike(pId);
 
         toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -165,7 +170,7 @@ public class PostDetail extends AppCompatActivity {
         likeBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                PostLike(likes, groupId, pId);
+                PostLike(groupId, pId);
             }
         });
         moreBtn.setOnClickListener(new View.OnClickListener() {
@@ -197,7 +202,7 @@ public class PostDetail extends AppCompatActivity {
         shareBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                shareWimage(likes, uid, uEmail, pId, groupId, groupIcon, grName, groupTime, pTime, pTitle, uDp, pImage, Name);
+                shareWimage(likes, uid, uEmail, pId, groupId, groupIcon, grName, groupTime, pTime, pCaption, uDp, pImage, Name);
             }
         });
         pImg.setOnClickListener(new View.OnClickListener() {
@@ -213,6 +218,11 @@ public class PostDetail extends AppCompatActivity {
             }
         });
     }
+
+    private void setLike(String postId) {
+
+    }
+
     private void SharemoreOption(TextView moreBtn, String uid, String uid1, String groupId, String pId, String pImage) {
         PopupMenu menu = new PopupMenu(this, moreBtn, Gravity.END);
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
@@ -264,31 +274,52 @@ public class PostDetail extends AppCompatActivity {
         startActivity(intent);
     }
 
-    private void PostLike(String likes, String groupId, String postId) {
+    private void PostLike( String groupId, String pId) {
         postLike = true;
-        ref = FirebaseDatabase.getInstance().getReference("Groups")
-                .child(groupId).child("Posts").child(postId);
-        ref.addListenerForSingleValueEvent(new ValueEventListener() {
+        FirebaseUser user4 = FirebaseAuth.getInstance().getCurrentUser();
+        DatabaseReference UserLike = FirebaseDatabase.getInstance().getReference("Users").child(user4.getUid());
+        DatabaseReference ref3 = FirebaseDatabase.getInstance().getReference("Posts");
+        ref3.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
-                if (postLike) {
-                    if (snapshot.child("Likes").hasChild(user.getUid())) {
-                        ref.child("Likes").child(user.getUid()).removeValue();
-                        ref.child("pLike").setValue("" + (Integer.parseInt(likes) - 1));
-                        postLike = false;
-                    } else {
-                        ref.child("Likes").child(user.getUid()).setValue("liked");
-                        ref.child("pLike").setValue("" + (Integer.parseInt(likes) + 1));
-                        postLike = false;
+                String counts = "" + snapshot.child(pId).child("Likes").getValue();
+                pLike.setText(counts + " Likes");
+                UserLike.addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+                        if (postLike) {
+                            if (snapshot.child("Liked").hasChild(pId)) {
+                                ref3.child(pId).child("Likes").setValue("" + (Integer.parseInt(counts) - 1));
+                               likeBtn.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_liked, 0, 0, 0);
+                                UserLike.child("Liked").child(pId).removeValue();
+                                postLike = false;
+                            } else {
+                                ref3.child(pId).child("Likes").setValue("" + (Integer.parseInt(counts) + 1));
+                                likeBtn.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_baseline_thumb_up_24, 0, 0, 0);
+                                UserLike.child("Liked").child(pId).setValue("Liked");
+                                postLike = false;
+                            }
+
+                        }
                     }
-                }
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError error) {
+
+                    }
+                });
+
             }
 
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
+
             }
         });
+
+
+
     }
+
 
     private void moreOption(TextView moreBtn, String pUid, String uid, String groupId, String postId, String pImage) {
         PopupMenu menu = new PopupMenu(this, moreBtn, Gravity.END);
@@ -317,13 +348,42 @@ public class PostDetail extends AppCompatActivity {
                         }
                     });
                     builder.create().show();
+                }else if(id == 1) {
+                    editPost(pId, groupId, pImage, pCaption,grName,groupIcon);
                 }
                 return false;
             }
         });
         menu.show();
     }
+    private void editPost(String pId, String grId, String pImage,String pCaption,String grName,String grIcon) {
+        if (pImage.equals("noImage")) {
+            EditPostText(pId, grId,pCaption,grName,grIcon);
+        } else {
+            EditPostWithImage(pId, grId, pImage,pCaption,grName,grIcon);
+        }
+    }
+    private void EditPostText(String pId, String grId,String pCaption,String grName,String grIcon) {
+        Intent intent = new Intent(PostDetail.this, EditPost.class);
+        intent.putExtra("pId",pId);
+        intent.putExtra("grId",grId);
+        intent.putExtra("pImage","noImage");
+        intent.putExtra("pCaption",pCaption);
+        intent.putExtra("grName",grName);
+        intent.putExtra("grIcon",grIcon);
+       startActivity(intent);
+    }
+    private void EditPostWithImage(String pId, String grId, String pImage, String pCaption,String grName,String grIcon) {
+        Intent intent = new Intent(PostDetail.this, EditPost.class);
+        intent.putExtra("pId",pId);
+        intent.putExtra("grId",grId);
+        intent.putExtra("pImage",pImage);
+        intent.putExtra("pCaption",pCaption);
+        intent.putExtra("grName",grName);
+        intent.putExtra("grIcon",grIcon);
+       startActivity(intent);
 
+    }
     private void deletePosts(String postId, String groupId, String pImage) {
         if (pImage.equals("noImage")) {
             deletePost(postId, groupId);
@@ -472,6 +532,24 @@ public class PostDetail extends AppCompatActivity {
                     } catch (Exception e) {
 
                     }
+                    if (ds.child("Liked").hasChild(pId) ){
+                        likeBtn.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_baseline_thumb_up_24, 0, 0, 0);
+                    } else {
+                        likeBtn.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_liked, 0, 0, 0);
+                    }
+
+                    DatabaseReference ref3 = FirebaseDatabase.getInstance().getReference("Posts");
+                    ref3.addValueEventListener(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(@NonNull DataSnapshot snapshot) {
+                            String counts = "" + snapshot.child(pId).child("Likes").getValue();
+                            pLike.setText(counts + " Likes");
+                        }
+                        @Override
+                        public void onCancelled(@NonNull DatabaseError error) {
+                        }
+                    });
+
                 }
 
             }
@@ -481,6 +559,7 @@ public class PostDetail extends AppCompatActivity {
 
             }
         });
+
     }
 
     private void PostInfo() {
@@ -499,7 +578,6 @@ public class PostDetail extends AppCompatActivity {
                             String uid = "" + postinfo.child("uid").getValue();
                             uEmail = "" + postinfo.child("uEmail").getValue();
                             hisName = "" + postinfo.child("uName").getValue();
-                            likes = "" + postinfo.child("pLike").getValue();
                             pComment = "" + postinfo.child("pComment").getValue();
                             imagePopup.initiatePopupWithGlide(pImge);
                             Calendar calendar = Calendar.getInstance(Locale.getDefault());
@@ -510,30 +588,14 @@ public class PostDetail extends AppCompatActivity {
                             }
                             String p_Time = android.text.format.DateFormat.format("dd/MM/yyyy", calendar).toString();
 
-                            pLike.setText(likes + " Likes");
+
                             CommentCount.setText(pComment + " Comments");
                             pTitle.setText(p_Title);
                             pTime.setText(p_Time);
                             uName.setText(hisName);
                             groupName.setText(grName);
                             likeBtn.setText("Like");
-                            ref = FirebaseDatabase.getInstance().getReference("Groups")
-                                    .child(groupId).child("Posts").child(pId).child("Likes");
-                            ref.addValueEventListener(new ValueEventListener() {
-                                @Override
-                                public void onDataChange(@NonNull DataSnapshot snapshot) {
-                                    if (snapshot.hasChild(user.getUid())) {
-                                        likeBtn.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_baseline_thumb_up_24, 0, 0, 0);
-                                    } else {
-                                        likeBtn.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_liked, 0, 0, 0);
-                                    }
 
-                                }
-
-                                @Override
-                                public void onCancelled(@NonNull DatabaseError error) {
-                                }
-                            });
                             try {
                                 Glide
                                         .with(PostDetail.this)
@@ -582,6 +644,7 @@ public class PostDetail extends AppCompatActivity {
                                 }
 
 
+
                             }
                         }
                     }
@@ -594,5 +657,10 @@ public class PostDetail extends AppCompatActivity {
 
             }
         });
+
+
     }
+
+
+
 }
