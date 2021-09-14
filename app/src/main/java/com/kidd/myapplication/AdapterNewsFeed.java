@@ -79,6 +79,7 @@ public class AdapterNewsFeed extends RecyclerView.Adapter<AdapterNewsFeed.MyHold
         String pComment = postList.get(i).getpComment();
         String pTime = postList.get(i).getpTime();
         String ShareUid = postList.get(i).getShareUid();
+        String OrigPid = postList.get(i).getOrigPid();
         holder.uName.setText(postList.get(i).getuName());
         try {
             Glide
@@ -135,7 +136,10 @@ public class AdapterNewsFeed extends RecyclerView.Adapter<AdapterNewsFeed.MyHold
             @Override
             public void onClick(View v) {
                 FirebaseUser user1 = FirebaseAuth.getInstance().getCurrentUser();
-                SharemoreOption(ShareUid,holder.ShareMore, uid, user1.getUid(), groupId, pId, pImage,ShareEmail,ShareName,ShareUid);
+                SharemoreOption(ShareUid,holder.ShareMore, uid, user1.getUid(),
+                        groupId, pId, pImage,ShareEmail,ShareName,ShareUid,pComment,
+                        grIcon,groupTitle,groupTime,pTime,pCaption,uDp,Shared,ShareTo,
+                        ShareName,ShareDp,OrigPid);
             }
         });
         holder.pImg.setOnClickListener(new View.OnClickListener() {
@@ -183,7 +187,9 @@ public class AdapterNewsFeed extends RecyclerView.Adapter<AdapterNewsFeed.MyHold
             @Override
             public void onClick(View v) {
                 FirebaseUser user2 = FirebaseAuth.getInstance().getCurrentUser();
-                moreOption(ShareUid, Shared, holder.moreBtn, uid, user2.getUid(), groupId, pId, pImage,pCaption,groupTitle,grIcon,uEmail,postList.get(i).getuName(),postList.get(i).getUid());
+                moreOption(ShareUid, Shared, holder.moreBtn, uid, user2.getUid(),
+                        groupId, pId, pImage,pCaption,groupTitle,grIcon,uEmail,
+                        postList.get(i).getuName(),postList.get(i).getUid());
             }
         });
         holder.likeBtn.setOnClickListener(new View.OnClickListener() {
@@ -259,7 +265,12 @@ public class AdapterNewsFeed extends RecyclerView.Adapter<AdapterNewsFeed.MyHold
 
 
     }
-    private void SharemoreOption(String ShareUid,TextView moreBtn, String uid, String uid1, String groupId, String pId, String pImage,String uEmail, String uName, String Uid) {
+    private void SharemoreOption(String ShareUid,TextView moreBtn, String uid,
+                                 String uid1, String groupId, String pId, String pImage,
+                                 String uEmail, String uName, String Uid,String pComment,
+                                 String grIcon, String groupTitle, String groupTime, String pTime,
+                                 String pCaption, String uDp, String Shared ,String ShareTo , String ShareName,
+                                 String ShareDp,String OrigPid  ) {
         PopupMenu menu = new PopupMenu(context, moreBtn, Gravity.END);
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
         builder.setTitle("Delete Posts");
@@ -267,6 +278,7 @@ public class AdapterNewsFeed extends RecyclerView.Adapter<AdapterNewsFeed.MyHold
         FirebaseUser user3 = FirebaseAuth.getInstance().getCurrentUser();
         if (ShareUid.equals(user3.getUid())) {
             menu.getMenu().add(Menu.NONE, 0, 0, "Delete");
+            menu.getMenu().add(Menu.NONE, 4, 4, "See Original Post");
         }else{
             menu.getMenu().add(Menu.NONE, 3, 3, "See Profile");
             menu.getMenu().add(Menu.NONE, 4, 4, "See Original Post");
@@ -297,10 +309,23 @@ public class AdapterNewsFeed extends RecyclerView.Adapter<AdapterNewsFeed.MyHold
                     context.startActivity(intent);
                 }
                 else if(id==4) {
-                    Intent intent = new Intent(context, OtherProfile.class);
-                    intent.putExtra("email", uEmail);
-                    intent.putExtra("name", uName);
-                    intent.putExtra("uid", Uid);
+                    Intent intent = new Intent(context, PostDetail.class);
+                    intent.putExtra("pId", OrigPid);
+                    intent.putExtra("groupID", groupId);
+                    intent.putExtra("pComment", pComment);
+                    intent.putExtra("grName", groupTitle);
+                    intent.putExtra("uid", uid);
+                    intent.putExtra("grIcon", grIcon);
+                    intent.putExtra("pImage", pImage);
+                    intent.putExtra("uEmail", uEmail);
+                    intent.putExtra("groupTitle", groupTitle);
+                    intent.putExtra("groupTime", groupTime);
+                    intent.putExtra("pTime", pTime);
+                    intent.putExtra("pCaption", pCaption);
+                    intent.putExtra("uDp", uDp);
+                    intent.putExtra("pImage", pImage);
+                    intent.putExtra("uName", uName);
+                    intent.putExtra("Shared", "false");
                     context.startActivity(intent);
                 }
                 return false;
@@ -345,7 +370,6 @@ public class AdapterNewsFeed extends RecyclerView.Adapter<AdapterNewsFeed.MyHold
                                             likeProcess = false;
                                         } else {
                                             ref3.child(pId).child("Likes").setValue("" + (Integer.parseInt(counts) + 1));
-
                                             holder.likeBtn.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_baseline_thumb_up_24, 0, 0, 0);
                                             UserLike.child("Liked").child(pId).setValue("Liked");
                                             likeProcess = false;
@@ -419,7 +443,6 @@ public class AdapterNewsFeed extends RecyclerView.Adapter<AdapterNewsFeed.MyHold
         });
         menu.show();
     }
-
     private void editPost(String pId, String grId, String pImage,String pCaption,String grName,String grIcon) {
         if (pImage.equals("noImage")) {
             EditPostText(pId, grId,pCaption,grName,grIcon);
@@ -449,7 +472,6 @@ public class AdapterNewsFeed extends RecyclerView.Adapter<AdapterNewsFeed.MyHold
         context.startActivity(intent);
 
     }
-
     private void deletePosts(String pId, String grId, @NotNull String pImg) {
         if (pImg.equals("noImage")) {
             deletePost(pId, grId);

@@ -156,7 +156,6 @@ public class PostDetail extends AppCompatActivity {
         PostInfo();
         LoaduserInfo();
         LoadComment();
-        setLike(pId);
 
         toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -219,9 +218,7 @@ public class PostDetail extends AppCompatActivity {
         });
     }
 
-    private void setLike(String postId) {
 
-    }
 
     private void SharemoreOption(TextView moreBtn, String uid, String uid1, String groupId, String pId, String pImage) {
         PopupMenu menu = new PopupMenu(this, moreBtn, Gravity.END);
@@ -391,7 +388,6 @@ public class PostDetail extends AppCompatActivity {
             deletePostWithImage(postId, groupId, pImage);
         }
     }
-
     private void deletePostWithImage(String postId, String groupId, String pImg) {
         StorageReference imgRef = FirebaseStorage.getInstance().getReferenceFromUrl(pImg);
         imgRef.delete().addOnSuccessListener(new OnSuccessListener<Void>() {
@@ -414,7 +410,6 @@ public class PostDetail extends AppCompatActivity {
             }
         });
     }
-
     private void deletePost(String postId, String groupId) {
         DatabaseReference ref = FirebaseDatabase.getInstance().getReference("Groups")
                 .child(groupId).child("Posts");
@@ -426,7 +421,6 @@ public class PostDetail extends AppCompatActivity {
             }
         });
     }
-
     private void LoadComment() {
         reference = database.getReference("Groups");
         reference.addValueEventListener(new ValueEventListener() {
@@ -456,7 +450,6 @@ public class PostDetail extends AppCompatActivity {
             }
         });
     }
-
     private void postComment() {
         progress = new ProgressDialog(this);
         progress.setMessage("Uploading comment..");
@@ -509,7 +502,6 @@ public class PostDetail extends AppCompatActivity {
 
 
     }
-
     private void LoaduserInfo() {
         DatabaseReference ref = FirebaseDatabase.getInstance().getReference("Users");
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
@@ -561,7 +553,6 @@ public class PostDetail extends AppCompatActivity {
         });
 
     }
-
     private void PostInfo() {
         DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Groups");
         reference.addValueEventListener(new ValueEventListener() {

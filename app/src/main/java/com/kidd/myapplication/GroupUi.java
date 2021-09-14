@@ -182,14 +182,65 @@ public class GroupUi extends AppCompatActivity {
         if (id == R.id.LeaveGroup) {
             leaveGroup();
         }
+        if (id == R.id.DeleteGroup) {
+            DeleteGroup();
+        }
         return super.onOptionsItemSelected(item);
+    }
+
+    private void DeleteGroup() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("Delete Group");
+        builder.setMessage("Are you sure you want to Delete Group?");
+        builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                    FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+                    DatabaseReference ref = FirebaseDatabase.getInstance().getReference("Groups").child(grId);
+                    DatabaseReference ref1 = ref.child("Members");
+                    Query query = ref1.orderByChild("email").equalTo(user.getEmail());
+                    query.addValueEventListener(new
+                    ValueEventListener() {
+                        @Override
+                        public void onDataChange (@NonNull DataSnapshot snapshot){
+                            for (DataSnapshot ds : snapshot.getChildren()) {
+                                if (ds.child("role").getValue().equals("creator")) {
+                                    ref.removeValue().addOnSuccessListener(new OnSuccessListener<Void>() {
+                                        @Override
+                                        public void onSuccess(Void aVoid) {
+                                            Toast.makeText(GroupUi.this, "Group deleted successfully", Toast.LENGTH_SHORT).show();
+                                            startActivity(new Intent(GroupUi.this, Home.class));
+                                        }
+                                    });
+                                }
+                                else{
+                                    Toast.makeText(GroupUi.this, "You don't have admin access to delete this group", Toast.LENGTH_SHORT).show();
+                                }
+                            }
+                        }
+
+                        @Override
+                        public void onCancelled (@NonNull DatabaseError error){
+
+                        }
+                    });
+
+
+            }
+        });
+        builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+
+            }
+        });
+        builder.create().show();
     }
 
     private void leaveGroup() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle("Leave Group");
         builder.setMessage("Are you sure you want to leave?");
-
         builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
@@ -209,7 +260,6 @@ public class GroupUi extends AppCompatActivity {
         builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-
             }
         });
         builder.create().show();

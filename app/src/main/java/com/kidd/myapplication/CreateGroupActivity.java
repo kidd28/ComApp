@@ -56,7 +56,7 @@ public class CreateGroupActivity extends AppCompatActivity {
     DatabaseReference reference;
     String email;
 
-    String name;
+    String name,image;
     TextView textView;
 
 
@@ -96,6 +96,7 @@ public class CreateGroupActivity extends AppCompatActivity {
                 for (DataSnapshot ds : snapshot.getChildren()){
                     name = ""+ds.child("name").getValue();
                     email = ""+ds.child("email").getValue();
+                    image = ""+ds.child("image").getValue();
                 }
             }
             @Override
@@ -191,6 +192,7 @@ public class CreateGroupActivity extends AppCompatActivity {
                         hashMap1.put("role","creator");
                         hashMap1.put("timestamp",gr_timeStamp);
                         hashMap1.put("name",name);
+                        hashMap1.put("image",image);
                         DatabaseReference reference1 = FirebaseDatabase.getInstance().getReference("Groups");
                         reference1.child(gr_timeStamp).child("Members").child(firebaseAuth.getUid()).setValue(hashMap1)
                          .addOnSuccessListener(new OnSuccessListener<Void>() {

@@ -373,7 +373,6 @@ public class Settings extends AppCompatActivity {
                                             updateCommentDp();
                                             progress.dismiss();
                                             Toast.makeText(Settings.this, "Image Updated..", Toast.LENGTH_SHORT).show();
-
                                         }
                                     })
                                     .addOnFailureListener(new OnFailureListener() {

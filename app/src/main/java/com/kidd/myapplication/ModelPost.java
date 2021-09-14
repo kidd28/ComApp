@@ -2,7 +2,7 @@ package com.kidd.myapplication;
 
 public class ModelPost {
 
-String ShareGroupIcon,ShareGroupId,ShareUid,ShareEmail,ShareTime,pComment,pId, pCaption,pTime, uid, uName,uEmail,pImage,uDp,groupId,groupTitle,groupIcon,pLike,Shared,ShareTo,ShareName,ShareDp;
+String OrigPid,ShareGroupIcon,ShareGroupId,ShareUid,ShareEmail,ShareTime,pComment,pId, pCaption,pTime, uid, uName,uEmail,pImage,uDp,groupId,groupTitle,groupIcon,pLike,Shared,ShareTo,ShareName,ShareDp;
 
     public ModelPost() {
     }
@@ -11,7 +11,7 @@ String ShareGroupIcon,ShareGroupId,ShareUid,ShareEmail,ShareTime,pComment,pId, p
                      String uid, String uName, String uEmail, String pImage, String uDp,
                      String groupId, String groupTitle, String groupIcon,String pLike,String Shared,
                      String ShareTo, String ShareName,String ShareDp,String pComment,String ShareTime,
-                     String ShareEmail,String ShareUid,String ShareGroupId,String ShareGroupIcon) {
+                     String ShareEmail,String ShareUid,String ShareGroupId,String ShareGroupIcon,String OrigPid) {
         this.pId = pId;
         this.pCaption = pCaption;
         this.pTime = pTime;
@@ -33,6 +33,15 @@ String ShareGroupIcon,ShareGroupId,ShareUid,ShareEmail,ShareTime,pComment,pId, p
         this.ShareUid = ShareUid;
         this.ShareGroupId = ShareGroupId;
         this.ShareGroupIcon = ShareGroupIcon;
+        this.OrigPid = OrigPid;
+    }
+
+    public String getOrigPid() {
+        return OrigPid;
+    }
+
+    public void setOrigPid(String origPid) {
+        OrigPid = origPid;
     }
 
     public String getShareGroupIcon() {

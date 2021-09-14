@@ -78,6 +78,8 @@ public class AdapterPost extends RecyclerView.Adapter<AdapterPost.MyHolder> {
         String ShareTime = postList.get(i).getShareTime();
         String pComment = postList.get(i).getpComment();
         String ShareUid = postList.get(i).getShareUid();
+        String ShareEmail = postList.get(i).getShareEmail();
+        String OrigPid = postList.get(i).getOrigPid();
 
 
         holder.pLike.setText(likes + " Likes");
@@ -162,7 +164,11 @@ public class AdapterPost extends RecyclerView.Adapter<AdapterPost.MyHolder> {
         holder.ShareMore.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                SharemoreOption(ShareUid,holder.ShareMore, uid, user.getUid(), groupId, pId, pImage);
+                FirebaseUser user1 = FirebaseAuth.getInstance().getCurrentUser();
+                SharemoreOption(ShareUid,holder.ShareMore, uid, user1.getUid(),
+                        groupId, pId, pImage,ShareEmail,ShareName,ShareUid,pComment,
+                        grIcon,groupTitle,groupTime,pTime,pCaption,uDp,Shared,ShareTo,
+                        ShareName,ShareDp,OrigPid);
             }
         });
         holder.pCaption.setOnClickListener(new View.OnClickListener() {
@@ -197,7 +203,10 @@ public class AdapterPost extends RecyclerView.Adapter<AdapterPost.MyHolder> {
         holder.moreBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                moreOption(holder.moreBtn, uid,user.getUid(), groupId, pId,pImage,pCaption,groupTitle,grIcon);
+                FirebaseUser user2 = FirebaseAuth.getInstance().getCurrentUser();
+                moreOption(ShareUid, Shared, holder.moreBtn, uid, user2.getUid(),
+                        groupId, pId, pImage,pCaption,groupTitle,grIcon,uEmail,
+                        postList.get(i).getuName(),postList.get(i).getUid());
             }
         });
         holder.likeBtn.setOnClickListener(new View.OnClickListener() {
@@ -241,7 +250,12 @@ public class AdapterPost extends RecyclerView.Adapter<AdapterPost.MyHolder> {
             }
         });
     }
-    private void SharemoreOption(String ShareUid,TextView moreBtn, String uid, String uid1, String groupId, String pId, String pImage) {
+    private void SharemoreOption(String ShareUid,TextView moreBtn, String uid,
+                                 String uid1, String groupId, String pId, String pImage,
+                                 String uEmail, String uName, String Uid,String pComment,
+                                 String grIcon, String groupTitle, String groupTime, String pTime,
+                                 String pCaption, String uDp, String Shared ,String ShareTo , String ShareName,
+                                 String ShareDp,String OrigPid  ) {
         PopupMenu menu = new PopupMenu(context, moreBtn, Gravity.END);
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
         builder.setTitle("Delete Posts");
@@ -249,6 +263,10 @@ public class AdapterPost extends RecyclerView.Adapter<AdapterPost.MyHolder> {
         FirebaseUser user3 = FirebaseAuth.getInstance().getCurrentUser();
         if (ShareUid.equals(user3.getUid())) {
             menu.getMenu().add(Menu.NONE, 0, 0, "Delete");
+            menu.getMenu().add(Menu.NONE, 4, 4, "See Original Post");
+        }else{
+            menu.getMenu().add(Menu.NONE, 3, 3, "See Profile");
+            menu.getMenu().add(Menu.NONE, 4, 4, "See Original Post");
         }
         menu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
             @Override
@@ -267,6 +285,33 @@ public class AdapterPost extends RecyclerView.Adapter<AdapterPost.MyHolder> {
                         }
                     });
                     builder.create().show();
+                }
+                else if(id==3) {
+                    Intent intent = new Intent(context, OtherProfile.class);
+                    intent.putExtra("email", uEmail);
+                    intent.putExtra("name", uName);
+                    intent.putExtra("uid", Uid);
+                    context.startActivity(intent);
+                }
+                else if(id==4) {
+                    Intent intent = new Intent(context, PostDetail.class);
+                    intent.putExtra("pId", OrigPid);
+                    intent.putExtra("groupID", groupId);
+                    intent.putExtra("pComment", pComment);
+                    intent.putExtra("grName", groupTitle);
+                    intent.putExtra("uid", uid);
+                    intent.putExtra("grIcon", grIcon);
+                    intent.putExtra("pImage", pImage);
+                    intent.putExtra("uEmail", uEmail);
+                    intent.putExtra("groupTitle", groupTitle);
+                    intent.putExtra("groupTime", groupTime);
+                    intent.putExtra("pTime", pTime);
+                    intent.putExtra("pCaption", pCaption);
+                    intent.putExtra("uDp", uDp);
+                    intent.putExtra("pImage", pImage);
+                    intent.putExtra("uName", uName);
+                    intent.putExtra("Shared", "false");
+                    context.startActivity(intent);
                 }
                 return false;
             }
@@ -290,16 +335,20 @@ public class AdapterPost extends RecyclerView.Adapter<AdapterPost.MyHolder> {
         intent.putExtra("uName", uName);
         context.startActivity(intent);
     }
-    private void moreOption(TextView morebtn, String uid, String myUid, String grId,String pId,String pImage,String pCaption,String grName,String grIcon) {
+    private void moreOption(String ShareUid, String Shared, TextView morebtn, String uid, String myUid, String grId, String pId, String pImage,String pCaption,String grName,String grIcon,String uEmail, String uName, String Uid) {
         PopupMenu menu = new PopupMenu(context, morebtn, Gravity.END);
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
-        builder.setTitle("Delete Posts");
-        builder.setMessage("Are you sure you want to Delete this Post?");
 
-        if (uid.equals(myUid)) {
+
+        FirebaseUser user6 = FirebaseAuth.getInstance().getCurrentUser();
+
+        if (uid.equals(user6.getUid())) {
             menu.getMenu().add(Menu.NONE, 0, 0, "Delete");
             menu.getMenu().add(Menu.NONE, 1, 2, "Edit");
+        }else{
+            menu.getMenu().add(Menu.NONE, 3, 3, "See Profile");
         }
+
         menu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
             @Override
             public boolean onMenuItemClick(MenuItem item) {
@@ -323,13 +372,19 @@ public class AdapterPost extends RecyclerView.Adapter<AdapterPost.MyHolder> {
                 else if(id==1) {
                     editPost(pId, grId, pImage, pCaption,grName,grIcon);
                 }
+                else if(id==3) {
+                    Intent intent = new Intent(context, OtherProfile.class);
+                    intent.putExtra("email", uEmail);
+                    intent.putExtra("name", uName);
+                    intent.putExtra("uid", Uid);
+                    context.startActivity(intent);
+                }
 
                 return false;
             }
         });
         menu.show();
-    }
-    private void editPost(String pId, String grId, String pImage,String pCaption,String grName,String grIcon) {
+    }    private void editPost(String pId, String grId, String pImage,String pCaption,String grName,String grIcon) {
         if (pImage.equals("noImage")) {
             EditPostText(pId, grId,pCaption,grName,grIcon);
         } else {

@@ -144,6 +144,7 @@ public class AdapterShare extends RecyclerView.Adapter<AdapterShare.HolderGroupL
         hashMap.put("ShareGroupId", ShareGroupId);
         hashMap.put("ShareGroupIcon", ShareGroupIcon);
 
+
         DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Posts");
         reference.child(postId).child("Likes").setValue("0");
         DatabaseReference reference1 = FirebaseDatabase.getInstance().getReference("Groups");

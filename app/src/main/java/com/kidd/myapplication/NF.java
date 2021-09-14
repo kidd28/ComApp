@@ -181,7 +181,6 @@ public class NF extends Fragment {
                 adapterNewsFeed = new AdapterNewsFeed(getActivity(), modelPostList);
                 recyclerView.setAdapter(adapterNewsFeed);
             }
-
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
             }

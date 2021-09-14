@@ -9,5 +9,10 @@
         android:title="Leave Group"
         android:icon="@drawable/ic_create"
         app:showAsAction="collapseActionView"/>
+    <item
+        android:id="@+id/DeleteGroup"
+        android:title="Delete Group"
+        android:icon="@drawable/ic_create"
+        app:showAsAction="collapseActionView"/>
 
 </menu>
