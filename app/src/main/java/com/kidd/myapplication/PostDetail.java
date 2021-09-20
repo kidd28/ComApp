@@ -45,20 +45,22 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Locale;
+import java.util.Objects;
 
 public class PostDetail extends AppCompatActivity {
 
 
-    String myUid, myEmail, myName, myDp, pId, hisDp, hisName, groupId, likes,pComment, grName, pUid, pImage, uEmail, groupIcon, groupTime, udp;
+    String myUid, myEmail, myName, myDp, pId, hisDp, hisName, groupId, likes, pComment, grName, pUid, pImage, uEmail, groupIcon, groupTime, udp, UserName, ShareUserName, OrigPid;
     String Shared, ShareTo, ShareName, ShareDp;
     ImageView pdp, pImg, arrow, sdp;
-    TextView ShareMore,uName, pTime, pTitle, pLike, likeBtn, commentBtn, shareBtn, groupName, moreBtn, shareName, grShareName, shareTime, CommentCount;
+    TextView ShareMore, uName, pTime, pTitle, pLike, groupName, moreBtn, shareName, grShareName, shareTime, CommentCount, username, shareusername;
     View view;
     EditText comment;
     ImageButton sendbtn;
     ImageView mAvatar;
     ImagePopup imagePopup;
     ProgressDialog progress;
+    ImageView likeBtn, commentBtn, shareBtn;
 
     RecyclerView recyclerView;
     ArrayList<ModelComment> modelComments;
@@ -96,6 +98,8 @@ public class PostDetail extends AppCompatActivity {
         groupName = findViewById(R.id.group_Name);
         CommentCount = findViewById(R.id.commenCount);
         ShareMore = findViewById(R.id.ShareMore);
+        username = findViewById(R.id.username);
+        shareusername = findViewById(R.id.ShareUserName);
 
 
         shareName = findViewById(R.id.shareName);
@@ -128,8 +132,9 @@ public class PostDetail extends AppCompatActivity {
         groupIcon = getIntent().getStringExtra("grIcon");
         udp = getIntent().getStringExtra("uDp");
         pComment = getIntent().getStringExtra("pComment");
-
-
+        UserName = getIntent().getStringExtra("UserName");
+        ShareUserName = getIntent().getStringExtra("ShareUserName");
+        OrigPid = getIntent().getStringExtra("OrigPid");
 
 
         imagePopup = new ImagePopup(this);
@@ -147,12 +152,11 @@ public class PostDetail extends AppCompatActivity {
         String uid = getIntent().getStringExtra("uid");
         String uEmail = getIntent().getStringExtra("uEmail");
         String pTime = getIntent().getStringExtra("pTime");
-         pCaption = getIntent().getStringExtra("pCaption");
+        pCaption = getIntent().getStringExtra("pCaption");
         String uDp = getIntent().getStringExtra("uDp");
         String pImage = getIntent().getStringExtra("pImage");
         String Name = getIntent().getStringExtra("uName");
 
-        commentBtn.setVisibility(View.GONE);
         PostInfo();
         LoaduserInfo();
         LoadComment();
@@ -201,7 +205,11 @@ public class PostDetail extends AppCompatActivity {
         shareBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                shareWimage(likes, uid, uEmail, pId, groupId, groupIcon, grName, groupTime, pTime, pCaption, uDp, pImage, Name);
+                if (Shared.equals("false")) {
+                    shareOrig(uid, uEmail, pId, groupId, groupIcon, grName, groupTime, pTime, pCaption, uDp, pImage, Name, OrigPid, UserName);
+                } else {
+                    shareagain(uid, uEmail, pId, groupId, groupIcon, grName, groupTime, pTime, pCaption, uDp, pImage, Name, OrigPid, UserName);
+                }
             }
         });
         pImg.setOnClickListener(new View.OnClickListener() {
@@ -217,7 +225,6 @@ public class PostDetail extends AppCompatActivity {
             }
         });
     }
-
 
 
     private void SharemoreOption(TextView moreBtn, String uid, String uid1, String groupId, String pId, String pImage) {
@@ -253,25 +260,47 @@ public class PostDetail extends AppCompatActivity {
         });
         menu.show();
     }
-    private void shareWimage(String likes, String uid, String uEmail, String pId, String groupId, String groupIcon, String grName, String groupTime, String pTime, String pTitle, String uDp, String pImage, String name) {
-        Intent intent = new Intent(this, SharePost.class);
-        intent.putExtra("likes", likes);
+
+    private void shareagain(String uid, String uEmail, String pId, String groupId, String grIcon, String groupTitle, String groupTime,
+                            String pTime, String pCaption, String uDp, String pImage, String uName, String OrigPid, String UserName) {
+        Intent intent = new Intent(PostDetail.this, SharePost.class);
         intent.putExtra("uid", uid);
         intent.putExtra("uEmail", uEmail);
         intent.putExtra("pId", pId);
+        intent.putExtra("OrigPid", OrigPid);
         intent.putExtra("groupId", groupId);
-        intent.putExtra("grIcon", groupIcon);
-        intent.putExtra("groupTitle", grName);
+        intent.putExtra("grIcon", grIcon);
+        intent.putExtra("groupTitle", groupTitle);
         intent.putExtra("groupTime", groupTime);
         intent.putExtra("pTime", pTime);
-        intent.putExtra("pCaption", pTitle);
+        intent.putExtra("pCaption", pCaption);
         intent.putExtra("uDp", uDp);
         intent.putExtra("pImage", pImage);
-        intent.putExtra("uName", name);
+        intent.putExtra("uName", uName);
+        intent.putExtra("UserName", UserName);
         startActivity(intent);
     }
 
-    private void PostLike( String groupId, String pId) {
+    private void shareOrig(String uid, String uEmail, String pId, String groupId, String grIcon, String groupTitle, String groupTime, String pTime, String pCaption, String uDp, String pImage, String uName, String OrigPid, String UserName) {
+        Intent intent = new Intent(PostDetail.this, SharePost.class);
+        intent.putExtra("uid", uid);
+        intent.putExtra("uEmail", uEmail);
+        intent.putExtra("pId", pId);
+        intent.putExtra("OrigPid", pId);
+        intent.putExtra("groupId", groupId);
+        intent.putExtra("grIcon", grIcon);
+        intent.putExtra("groupTitle", groupTitle);
+        intent.putExtra("groupTime", groupTime);
+        intent.putExtra("pTime", pTime);
+        intent.putExtra("pCaption", pCaption);
+        intent.putExtra("uDp", uDp);
+        intent.putExtra("pImage", pImage);
+        intent.putExtra("uName", uName);
+        intent.putExtra("UserName", UserName);
+        startActivity(intent);
+    }
+
+    private void PostLike(String groupId, String pId) {
         postLike = true;
         FirebaseUser user4 = FirebaseAuth.getInstance().getCurrentUser();
         DatabaseReference UserLike = FirebaseDatabase.getInstance().getReference("Users").child(user4.getUid());
@@ -280,25 +309,36 @@ public class PostDetail extends AppCompatActivity {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 String counts = "" + snapshot.child(pId).child("Likes").getValue();
-                pLike.setText(counts + " Likes");
+                pLike.setText(counts);
                 UserLike.addValueEventListener(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot snapshot) {
                         if (postLike) {
                             if (snapshot.child("Liked").hasChild(pId)) {
                                 ref3.child(pId).child("Likes").setValue("" + (Integer.parseInt(counts) - 1));
-                               likeBtn.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_liked, 0, 0, 0);
+                                Glide
+                                        .with(PostDetail.this)
+                                        .load(R.drawable.heart__red)
+                                        .centerCrop()
+                                        .placeholder(R.drawable.ic_def_img)
+                                        .into(likeBtn);
                                 UserLike.child("Liked").child(pId).removeValue();
                                 postLike = false;
                             } else {
                                 ref3.child(pId).child("Likes").setValue("" + (Integer.parseInt(counts) + 1));
-                                likeBtn.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_baseline_thumb_up_24, 0, 0, 0);
+                                Glide
+                                        .with(PostDetail.this)
+                                        .load(R.drawable.heart)
+                                        .centerCrop()
+                                        .placeholder(R.drawable.ic_def_img)
+                                        .into(likeBtn);
                                 UserLike.child("Liked").child(pId).setValue("Liked");
                                 postLike = false;
                             }
 
                         }
                     }
+
                     @Override
                     public void onCancelled(@NonNull DatabaseError error) {
 
@@ -312,7 +352,6 @@ public class PostDetail extends AppCompatActivity {
 
             }
         });
-
 
 
     }
@@ -345,42 +384,46 @@ public class PostDetail extends AppCompatActivity {
                         }
                     });
                     builder.create().show();
-                }else if(id == 1) {
-                    editPost(pId, groupId, pImage, pCaption,grName,groupIcon);
+                } else if (id == 1) {
+                    editPost(pId, groupId, pImage, pCaption, grName, groupIcon);
                 }
                 return false;
             }
         });
         menu.show();
     }
-    private void editPost(String pId, String grId, String pImage,String pCaption,String grName,String grIcon) {
+
+    private void editPost(String pId, String grId, String pImage, String pCaption, String grName, String grIcon) {
         if (pImage.equals("noImage")) {
-            EditPostText(pId, grId,pCaption,grName,grIcon);
+            EditPostText(pId, grId, pCaption, grName, grIcon);
         } else {
-            EditPostWithImage(pId, grId, pImage,pCaption,grName,grIcon);
+            EditPostWithImage(pId, grId, pImage, pCaption, grName, grIcon);
         }
     }
-    private void EditPostText(String pId, String grId,String pCaption,String grName,String grIcon) {
+
+    private void EditPostText(String pId, String grId, String pCaption, String grName, String grIcon) {
         Intent intent = new Intent(PostDetail.this, EditPost.class);
-        intent.putExtra("pId",pId);
-        intent.putExtra("grId",grId);
-        intent.putExtra("pImage","noImage");
-        intent.putExtra("pCaption",pCaption);
-        intent.putExtra("grName",grName);
-        intent.putExtra("grIcon",grIcon);
-       startActivity(intent);
+        intent.putExtra("pId", pId);
+        intent.putExtra("grId", grId);
+        intent.putExtra("pImage", "noImage");
+        intent.putExtra("pCaption", pCaption);
+        intent.putExtra("grName", grName);
+        intent.putExtra("grIcon", grIcon);
+        startActivity(intent);
     }
-    private void EditPostWithImage(String pId, String grId, String pImage, String pCaption,String grName,String grIcon) {
+
+    private void EditPostWithImage(String pId, String grId, String pImage, String pCaption, String grName, String grIcon) {
         Intent intent = new Intent(PostDetail.this, EditPost.class);
-        intent.putExtra("pId",pId);
-        intent.putExtra("grId",grId);
-        intent.putExtra("pImage",pImage);
-        intent.putExtra("pCaption",pCaption);
-        intent.putExtra("grName",grName);
-        intent.putExtra("grIcon",grIcon);
-       startActivity(intent);
+        intent.putExtra("pId", pId);
+        intent.putExtra("grId", grId);
+        intent.putExtra("pImage", pImage);
+        intent.putExtra("pCaption", pCaption);
+        intent.putExtra("grName", grName);
+        intent.putExtra("grIcon", grIcon);
+        startActivity(intent);
 
     }
+
     private void deletePosts(String postId, String groupId, String pImage) {
         if (pImage.equals("noImage")) {
             deletePost(postId, groupId);
@@ -388,6 +431,7 @@ public class PostDetail extends AppCompatActivity {
             deletePostWithImage(postId, groupId, pImage);
         }
     }
+
     private void deletePostWithImage(String postId, String groupId, String pImg) {
         StorageReference imgRef = FirebaseStorage.getInstance().getReferenceFromUrl(pImg);
         imgRef.delete().addOnSuccessListener(new OnSuccessListener<Void>() {
@@ -410,6 +454,7 @@ public class PostDetail extends AppCompatActivity {
             }
         });
     }
+
     private void deletePost(String postId, String groupId) {
         DatabaseReference ref = FirebaseDatabase.getInstance().getReference("Groups")
                 .child(groupId).child("Posts");
@@ -421,6 +466,7 @@ public class PostDetail extends AppCompatActivity {
             }
         });
     }
+
     private void LoadComment() {
         reference = database.getReference("Groups");
         reference.addValueEventListener(new ValueEventListener() {
@@ -450,6 +496,7 @@ public class PostDetail extends AppCompatActivity {
             }
         });
     }
+
     private void postComment() {
         progress = new ProgressDialog(this);
         progress.setMessage("Uploading comment..");
@@ -499,9 +546,8 @@ public class PostDetail extends AppCompatActivity {
                 }
             });
         }
-
-
     }
+
     private void LoaduserInfo() {
         DatabaseReference ref = FirebaseDatabase.getInstance().getReference("Users");
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
@@ -524,10 +570,29 @@ public class PostDetail extends AppCompatActivity {
                     } catch (Exception e) {
 
                     }
-                    if (ds.child("Liked").hasChild(pId) ){
-                        likeBtn.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_baseline_thumb_up_24, 0, 0, 0);
+                    if (ds.child("Liked").hasChild(pId)) {
+                        try {
+                            Glide
+                                    .with(PostDetail.this)
+                                    .load(R.drawable.heart)
+                                    .centerCrop()
+                                    .placeholder(R.drawable.ic_def_img)
+                                    .into(likeBtn);
+                        } catch (Exception e) {
+                        }
+
                     } else {
-                        likeBtn.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_liked, 0, 0, 0);
+                        try {
+                            Glide
+                                    .with(PostDetail.this)
+                                    .load(R.drawable.heart__red)
+                                    .centerCrop()
+                                    .placeholder(R.drawable.ic_def_img)
+                                    .into(likeBtn);
+                        } catch (Exception e) {
+                        }
+
+
                     }
 
                     DatabaseReference ref3 = FirebaseDatabase.getInstance().getReference("Posts");
@@ -535,8 +600,9 @@ public class PostDetail extends AppCompatActivity {
                         @Override
                         public void onDataChange(@NonNull DataSnapshot snapshot) {
                             String counts = "" + snapshot.child(pId).child("Likes").getValue();
-                            pLike.setText(counts + " Likes");
+                            pLike.setText(counts);
                         }
+
                         @Override
                         public void onCancelled(@NonNull DatabaseError error) {
                         }
@@ -553,6 +619,7 @@ public class PostDetail extends AppCompatActivity {
         });
 
     }
+
     private void PostInfo() {
         DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Groups");
         reference.addValueEventListener(new ValueEventListener() {
@@ -561,7 +628,7 @@ public class PostDetail extends AppCompatActivity {
                 for (DataSnapshot gr : snapshot.getChildren()) {
                     DataSnapshot post = gr.child("Posts");
                     for (DataSnapshot postinfo : post.getChildren()) {
-                        if (postinfo.child("pId").getValue().equals(pId)) {
+                        if (Objects.equals(postinfo.child("pId").getValue(), pId)) {
                             String p_Title = "" + postinfo.child("pCaption").getValue();
                             String pTimestamp = "" + postinfo.child("pTime").getValue();
                             String pImge = "" + postinfo.child("pImage").getValue();
@@ -580,12 +647,14 @@ public class PostDetail extends AppCompatActivity {
                             String p_Time = android.text.format.DateFormat.format("dd/MM/yyyy", calendar).toString();
 
 
-                            CommentCount.setText(pComment + " Comments");
+                            CommentCount.setText(pComment);
                             pTitle.setText(p_Title);
                             pTime.setText(p_Time);
                             uName.setText(hisName);
                             groupName.setText(grName);
-                            likeBtn.setText("Like");
+                            username.setText(UserName);
+                            shareusername.setText(ShareUserName);
+
 
                             try {
                                 Glide
@@ -635,7 +704,6 @@ public class PostDetail extends AppCompatActivity {
                                 }
 
 
-
                             }
                         }
                     }
@@ -651,7 +719,6 @@ public class PostDetail extends AppCompatActivity {
 
 
     }
-
 
 
 }

@@ -8,6 +8,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.AppCompatDelegate;
 import androidx.appcompat.widget.Toolbar;
@@ -18,8 +19,12 @@ import com.gauravk.bubblenavigation.listener.BubbleNavigationChangeListener;
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
+import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
@@ -31,8 +36,8 @@ public class Home extends AppCompatActivity {
     StorageReference storageReference;
     ViewPager viewPager;
     Toolbar toolbar;
-
-
+    DatabaseReference reference;
+    String username;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -46,10 +51,30 @@ public class Home extends AppCompatActivity {
         storageReference = FirebaseStorage.getInstance().getReference();
         FirebaseApp.initializeApp(Home.this);
         viewPager = findViewById(R.id.vp);
+        this.setTitle("Newsfeed");
+        reference = database.getReference("Users");
 
         toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        this.setTitle("Newsfeed");
+
+        Query query = reference.orderByChild("email").equalTo(user.getEmail());
+        query.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+
+                for (DataSnapshot ds : snapshot.getChildren()) {
+                     username = "" + ds.child("UserName").getValue();
+
+
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+            }
+        });
+
+
 
 
         final BubbleNavigationLinearView bubbleNavigationLinearView = findViewById(R.id.bottom_navigation_view_linear);
@@ -72,7 +97,7 @@ public class Home extends AppCompatActivity {
                         toolbar.setTitle("Groups");
                         break;
                     case 2:
-                        toolbar.setTitle("Profile");
+                        toolbar.setTitle(username);
                         break;
                 }
             }

@@ -14,21 +14,33 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
+<LinearLayout
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:layout_marginBottom="50dp"
+    android:background="@drawable/login_shape">
+    <TextView
+        android:layout_marginTop="200dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:text=" Welcome"
+        android:textColor="@color/white"
+        android:textStyle="bold"
+        android:textSize="48sp" />
 
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="200dp"
-            android:gravity="center"
-            android:text=" Welcome new user!!"
-            android:textSize="48sp" />
+    <TextView
+        android:id="@+id/Name"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:text="Username"
+        android:textColor="@color/white"
+        android:textSize="30sp"
+        android:layout_marginBottom="30dp"/>
+</LinearLayout>
 
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="center"
-            android:text="Please choose what you want to do..."
-            android:textSize="18sp" />
 
         <Button
             android:id="@+id/create_group"

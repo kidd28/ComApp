@@ -142,7 +142,6 @@ public class Settings extends AppCompatActivity {
                                 finish();
                             }
                         }).create().show();
-
             }
         });
     }
@@ -151,7 +150,6 @@ public class Settings extends AppCompatActivity {
                 == (PackageManager.PERMISSION_GRANTED);
         return result;
     }
-
     private void requestStoragePermission() {
         ActivityCompat.requestPermissions(this, storagePermission, STORAGE_REQUEST_CODE);
         checkStoragePermission();
@@ -175,11 +173,8 @@ public class Settings extends AppCompatActivity {
             pickFromCamera();
         }
     }
-
-
     private void showEditProfileDialog() {
         String option[] = {"Edit Profile Picture", "Edit Cover", "Edit Name", "Edit Phone", "Edit Address", "Edit Bio", "Edit Birthday"};
-
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle("Choose Action");
         builder.setItems(option, new DialogInterface.OnClickListener() {
@@ -213,17 +208,13 @@ public class Settings extends AppCompatActivity {
         });
         builder.create().show();
     }
-
     private void showNamePhoneUpdateDialog(String key) {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle("Update " + key);
-
         LinearLayout linearLayout = new LinearLayout(this);
         linearLayout.setOrientation(LinearLayout.VERTICAL);
         linearLayout.setPadding(10, 10, 10, 10);
-
         EditText editText = new EditText(this);
-
         if (key == "Birthday") {
             editText.setHint("Month/Day/Year ");
             linearLayout.addView(editText);
@@ -231,7 +222,6 @@ public class Settings extends AppCompatActivity {
             editText.setHint("Enter " + key);
             linearLayout.addView(editText);
         }
-
         builder.setView(linearLayout);
         builder.setPositiveButton("Update", new DialogInterface.OnClickListener() {
             @Override
@@ -265,13 +255,10 @@ public class Settings extends AppCompatActivity {
         builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-
             }
         });
-
         builder.create().show();
     }
-
     private void showImgDialog() {
         String option[] = {"Camera", "Gallery"};
 
@@ -297,9 +284,7 @@ public class Settings extends AppCompatActivity {
             }
         });
         builder.create().show();
-
     }
-
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);

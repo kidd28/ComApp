@@ -18,12 +18,9 @@
             <androidx.cardview.widget.CardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_margin="5dp"
-                android:layout_marginBottom="20dp"
-                app:cardCornerRadius="5dp"
-                app:cardElevation="3dp"
+                app:cardElevation="2dp"
                 app:cardUseCompatPadding="true"
-                app:contentPadding="10dp">
+                android:layout_margin="10dp">
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -48,19 +45,21 @@
                             android:orientation="vertical">
 
                             <TextView
+                                android:textColor="@color/black"
                                 android:id="@+id/shareName"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:text="Name"
                                 android:textStyle="bold"
                                 android:textSize="15sp" />
-
                             <TextView
-                                android:id="@+id/shareTime"
+                                android:id="@+id/ShareUserName"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:textSize="12sp"
-                                android:text="20 min" />
+                                android:text="Name"
+                                android:textColor="@color/black"
+                                android:textSize="13sp" />
+
                         </LinearLayout>
 
                         <ImageView
@@ -70,6 +69,8 @@
                             android:src="@drawable/ic_baseline_play_arrow_24" />
 
                         <TextView
+                            android:textColor="@color/black"
+
                             android:id="@+id/grShareName"
                             android:layout_weight="1"
                             android:layout_height="wrap_content"
@@ -78,6 +79,13 @@
                             android:textSize="15sp"
                             android:textStyle="bold"
                             android:layout_width="0dp" />
+                        <TextView
+                            android:id="@+id/shareTime"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="20 min"
+                            android:layout_marginEnd="10dp"
+                            android:textSize="12sp" />
                         <TextView
                             android:id="@+id/ShareMore"
                             android:layout_width="wrap_content"
@@ -96,6 +104,8 @@
                         android:layout_height="wrap_content"
                         android:layout_gravity="center"
                         android:text="Name"
+                        android:textColor="@color/black"
+
                         android:textStyle="bold"
                         android:textSize="15sp" />
 
@@ -121,13 +131,16 @@
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:text="Name"
+                                android:textColor="@color/black"
                                 android:textSize="15sp"
                                 android:textStyle="bold" />
                             <TextView
-                                android:id="@+id/time"
+                                android:id="@+id/username"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:text="20 min" />
+                                android:text="Name"
+                                android:textColor="@color/black"
+                                android:textSize="13sp" />
                         </LinearLayout>
 
                         <TextView
@@ -142,10 +155,11 @@
                         android:id="@+id/pTitle"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:layout_margin="10dp"
                         android:layout_marginTop="5dp"
                         android:text="Title"
-                        android:textSize="20sp"
-                        />
+                        android:textColor="@color/black"
+                        android:textSize="15sp" />
                     <ImageView
                         android:id="@+id/ImageV"
                         android:layout_width="match_parent"
@@ -156,59 +170,58 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:orientation="horizontal">
+
+                        <ImageView
+                            android:layout_marginStart="15dp"
+                            android:id="@+id/likebtn"
+                            android:layout_width="20dp"
+                            android:layout_height="20dp"
+                            android:gravity="center_vertical"
+                            android:textSize="12sp"
+                            android:src="@drawable/heart__red"
+                            tools:ignore="RtlSymmetry"
+                            android:layout_marginTop="5dp"
+                            android:layout_marginEnd="5dp"
+                            android:layout_marginBottom="5dp"/>
+
                         <TextView
                             android:id="@+id/pLike"
+                            android:layout_gravity="center_vertical"
                             android:layout_width="wrap_content"
-                            android:layout_weight="1"
                             android:layout_height="wrap_content"
-                            android:text="0 Likes" />
+                            android:text="0" />
+
+                        <ImageView
+                            android:id="@+id/commentbtn"
+                            android:layout_width="20dp"
+                            android:layout_height="20dp"
+                            android:src="@drawable/comment"
+                            android:gravity="fill_vertical"
+                            android:layout_marginStart="30dp"
+                            android:layout_gravity="center_vertical"
+                            android:layout_marginEnd="5dp"/>
                         <TextView
-                            android:layout_gravity="right"
                             android:id="@+id/commenCount"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="0 Comments" />
-                    </LinearLayout>
-
-                    <View
-                        android:layout_width="match_parent"
-                        android:layout_height="1dp"
-                        android:background="#f5f0f0" />
-
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:gravity="center"
-                        android:orientation="horizontal">
-
-                        <TextView
-                            android:id="@+id/likebtn"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="@integer/material_motion_duration_long_1"
-                            android:drawableLeft="@drawable/ic_liked"
-                            android:gravity="fill_vertical"
-                            android:paddingLeft="20dp"
-                            android:text="Like" />
-
-                        <TextView
-                            android:id="@+id/commentbtn"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="@integer/material_motion_duration_long_1"
-                            android:drawableLeft="@drawable/ic_comment"
-                            android:gravity="fill_vertical"
-                            android:text="Comment" />
-
-                        <TextView
+                            android:layout_gravity="center_vertical"
+                            android:text="0"/>
+                        <ImageView
                             android:id="@+id/sharebtn"
+                            android:layout_width="20dp"
+                            android:layout_height="20dp"
+                            android:src="@drawable/share"
+                            android:layout_marginEnd="5dp"
+                            android:layout_gravity="center_vertical"
+                            android:layout_marginStart="30dp" />
+                        <TextView
+                            android:id="@+id/time"
                             android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="@integer/material_motion_duration_long_1"
-                            android:drawableStart="@drawable/ic_share"
-                            android:gravity="fill_vertical"
-                            android:text="share" />
-
+                            android:layout_height="match_parent"
+                            android:layout_weight="1"
+                            android:gravity="center_vertical|right"
+                            android:text="dd/mm/yyy"
+                            android:textSize="12sp" />
                     </LinearLayout>
 
                 </LinearLayout>

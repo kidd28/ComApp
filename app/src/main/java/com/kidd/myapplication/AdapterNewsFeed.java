@@ -80,6 +80,11 @@ public class AdapterNewsFeed extends RecyclerView.Adapter<AdapterNewsFeed.MyHold
         String pTime = postList.get(i).getpTime();
         String ShareUid = postList.get(i).getShareUid();
         String OrigPid = postList.get(i).getOrigPid();
+        String ShareGroupId = postList.get(i).getShareGroupId();
+        String UserName = postList.get(i).getUserName();
+        String ShareUserName = postList.get(i).getShareUserName();
+
+        holder.UserName.setText(UserName);
         holder.uName.setText(postList.get(i).getuName());
         try {
             Glide
@@ -95,9 +100,8 @@ public class AdapterNewsFeed extends RecyclerView.Adapter<AdapterNewsFeed.MyHold
         holder.pCaption.setText(postList.get(i).getpCaption());
         holder.pTime.setText(postList.get(i).getpTime());
         holder.groupName.setText(postList.get(i).getGroupTitle());
-        holder.likeBtn.setText("Like");
         setLikes(holder, pId, groupId);
-        holder.CommentCount.setText(pComment + " Comments");
+        holder.CommentCount.setText(pComment );
 
         if (pImage.equals("noImage")) {
             holder.pImg.setVisibility(View.GONE);
@@ -117,12 +121,13 @@ public class AdapterNewsFeed extends RecyclerView.Adapter<AdapterNewsFeed.MyHold
             holder.shareTime.setVisibility(View.GONE);
             holder.sdp.setVisibility(View.GONE);
             holder.arrow.setVisibility(View.GONE);
+            holder.ShareUserName.setVisibility(View.GONE);
             holder.view.setVisibility(View.GONE);
             holder.ShareMore.setVisibility(View.GONE);
         } else if (Shared.equals("true")) {
             holder.grShareName.setText(ShareTo);
             holder.shareTime.setText(ShareTime);
-            holder.shareTime.setText(ShareTime);
+            holder.ShareUserName.setText(ShareUserName);
             holder.moreBtn.setVisibility(View.GONE);
             holder.shareName.setText(ShareName);
             Glide
@@ -158,29 +163,39 @@ public class AdapterNewsFeed extends RecyclerView.Adapter<AdapterNewsFeed.MyHold
         holder.pCaption.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(context, PostDetail.class);
-                intent.putExtra("pId", pId);
-                intent.putExtra("groupID", groupId);
-                intent.putExtra("pComment", pComment);
-                intent.putExtra("grName", postList.get(i).getGroupTitle());
-                intent.putExtra("uid", uid);
-                intent.putExtra("grIcon", grIcon);
-                intent.putExtra("pImage", pImage);
-                intent.putExtra("uEmail", uEmail);
-                intent.putExtra("grIcon", grIcon);
-                intent.putExtra("groupTitle", groupTitle);
-                intent.putExtra("groupTime", groupTime);
-                intent.putExtra("pTime", pTime);
-                intent.putExtra("pCaption", pCaption);
-                intent.putExtra("pComment", pComment);
-                intent.putExtra("uDp", uDp);
-                intent.putExtra("pImage", pImage);
-                intent.putExtra("uName", uName);
-                intent.putExtra("Shared", Shared);
-                intent.putExtra("ShareTo", ShareTo);
-                intent.putExtra("ShareName", ShareName);
-                intent.putExtra("ShareDp", ShareDp);
-                context.startActivity(intent);
+                if(Shared.equals("false")){
+                    Intent intent = new Intent(context, PostDetail.class);
+                    intent.putExtra("pId", pId);
+                    intent.putExtra("groupID", groupId);
+                    intent.putExtra("pComment", pComment);
+                    intent.putExtra("grName", postList.get(i).getGroupTitle());
+                    intent.putExtra("uid", uid);
+                    intent.putExtra("pImage", pImage);
+                    intent.putExtra("Shared", Shared);
+                    intent.putExtra("ShareTo", ShareTo);
+                    intent.putExtra("ShareName", ShareName);
+                    intent.putExtra("ShareDp", ShareDp);
+                    intent.putExtra("UserName", UserName);
+                    intent.putExtra("OrigPid", OrigPid);
+
+                    context.startActivity(intent);}
+                else if(Shared.equals("true")){
+                    Intent intent = new Intent(context, PostDetail.class);
+                    intent.putExtra("pId", pId);
+                    intent.putExtra("groupID", ShareGroupId);
+                    intent.putExtra("pComment", pComment);
+                    intent.putExtra("grName", postList.get(i).getGroupTitle());
+                    intent.putExtra("uid", uid);
+                    intent.putExtra("pImage", pImage);
+                    intent.putExtra("Shared", Shared);
+                    intent.putExtra("ShareTo", ShareTo);
+                    intent.putExtra("ShareName", ShareName);
+                    intent.putExtra("ShareDp", ShareDp);
+                    intent.putExtra("UserName", UserName);
+                    intent.putExtra("ShareUserName", ShareUserName);
+                    intent.putExtra("OrigPid", OrigPid);
+                    context.startActivity(intent);}
+
             }
         });
         holder.moreBtn.setOnClickListener(new View.OnClickListener() {
@@ -201,6 +216,7 @@ public class AdapterNewsFeed extends RecyclerView.Adapter<AdapterNewsFeed.MyHold
         holder.commentBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                if(Shared.equals("false")){
                 Intent intent = new Intent(context, PostDetail.class);
                 intent.putExtra("pId", pId);
                 intent.putExtra("groupID", groupId);
@@ -212,7 +228,28 @@ public class AdapterNewsFeed extends RecyclerView.Adapter<AdapterNewsFeed.MyHold
                 intent.putExtra("ShareTo", ShareTo);
                 intent.putExtra("ShareName", ShareName);
                 intent.putExtra("ShareDp", ShareDp);
-                context.startActivity(intent);
+                intent.putExtra("UserName", UserName);
+                intent.putExtra("OrigPid", OrigPid);
+
+                context.startActivity(intent);}
+                else if(Shared.equals("true")){
+                    Intent intent = new Intent(context, PostDetail.class);
+                    intent.putExtra("pId", pId);
+                    intent.putExtra("groupID", ShareGroupId);
+                    intent.putExtra("pComment", pComment);
+                    intent.putExtra("grName", postList.get(i).getGroupTitle());
+                    intent.putExtra("uid", uid);
+                    intent.putExtra("pImage", pImage);
+                    intent.putExtra("Shared", Shared);
+                    intent.putExtra("ShareTo", ShareTo);
+                    intent.putExtra("ShareName", ShareName);
+                    intent.putExtra("ShareDp", ShareDp);
+                    intent.putExtra("UserName", UserName);
+                    intent.putExtra("ShareUserName", ShareUserName);
+                    intent.putExtra("OrigPid", OrigPid);
+                    context.startActivity(intent);}
+
+
             }
         });
         holder.uName.setOnClickListener(new View.OnClickListener() {
@@ -239,7 +276,11 @@ public class AdapterNewsFeed extends RecyclerView.Adapter<AdapterNewsFeed.MyHold
         holder.shareBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                shareWimage(uid, uEmail, pId, groupId, grIcon, groupTitle, groupTime, pTime, pCaption, uDp, pImage, uName);
+                if (Shared.equals("false")) {
+                shareOrig(uid, uEmail, pId, groupId, grIcon, groupTitle, groupTime, pTime, pCaption, uDp, pImage, uName,OrigPid,UserName);}
+                else{
+                  shareagain(uid, uEmail, pId, groupId, grIcon, groupTitle, groupTime, pTime, pCaption, uDp, pImage, uName,OrigPid,UserName);
+                }
             }
         });
         holder.shareName.setOnClickListener(new View.OnClickListener() {
@@ -264,6 +305,44 @@ public class AdapterNewsFeed extends RecyclerView.Adapter<AdapterNewsFeed.MyHold
         });
 
 
+    }
+
+    private void shareagain(String uid, String uEmail, String pId, String groupId, String grIcon, String groupTitle, String groupTime,
+                            String pTime, String pCaption, String uDp, String pImage, String uName, String OrigPid,String UserName) {
+        Intent intent = new Intent(context, SharePost.class);
+        intent.putExtra("uid", uid);
+        intent.putExtra("uEmail", uEmail);
+        intent.putExtra("pId", pId);
+        intent.putExtra("OrigPid", OrigPid);
+        intent.putExtra("groupId", groupId);
+        intent.putExtra("grIcon", grIcon);
+        intent.putExtra("groupTitle", groupTitle);
+        intent.putExtra("groupTime", groupTime);
+        intent.putExtra("pTime", pTime);
+        intent.putExtra("pCaption", pCaption);
+        intent.putExtra("uDp", uDp);
+        intent.putExtra("pImage", pImage);
+        intent.putExtra("uName", uName);
+        intent.putExtra("UserName", UserName);
+        context.startActivity(intent);
+    }
+    private void shareOrig( String uid, String uEmail, String pId, String groupId, String grIcon, String groupTitle, String groupTime, String pTime, String pCaption, String uDp, String pImage, String uName,String OrigPid,String UserName) {
+        Intent intent = new Intent(context, SharePost.class);
+        intent.putExtra("uid", uid);
+        intent.putExtra("uEmail", uEmail);
+        intent.putExtra("pId", pId);
+        intent.putExtra("OrigPid", pId);
+        intent.putExtra("groupId", groupId);
+        intent.putExtra("grIcon", grIcon);
+        intent.putExtra("groupTitle", groupTitle);
+        intent.putExtra("groupTime", groupTime);
+        intent.putExtra("pTime", pTime);
+        intent.putExtra("pCaption", pCaption);
+        intent.putExtra("uDp", uDp);
+        intent.putExtra("pImage", pImage);
+        intent.putExtra("uName", uName);
+        intent.putExtra("UserName", UserName);
+        context.startActivity(intent);
     }
     private void SharemoreOption(String ShareUid,TextView moreBtn, String uid,
                                  String uid1, String groupId, String pId, String pImage,
@@ -333,22 +412,6 @@ public class AdapterNewsFeed extends RecyclerView.Adapter<AdapterNewsFeed.MyHold
         });
         menu.show();
     }
-    private void shareWimage( String uid, String uEmail, String pId, String groupId, String grIcon, String groupTitle, String groupTime, String pTime, String pCaption, String uDp, String pImage, String uName) {
-        Intent intent = new Intent(context, SharePost.class);
-        intent.putExtra("uid", uid);
-        intent.putExtra("uEmail", uEmail);
-        intent.putExtra("pId", pId);
-        intent.putExtra("groupId", groupId);
-        intent.putExtra("grIcon", grIcon);
-        intent.putExtra("groupTitle", groupTitle);
-        intent.putExtra("groupTime", groupTime);
-        intent.putExtra("pTime", pTime);
-        intent.putExtra("pCaption", pCaption);
-        intent.putExtra("uDp", uDp);
-        intent.putExtra("pImage", pImage);
-        intent.putExtra("uName", uName);
-        context.startActivity(intent);
-    }
     private void PostLike(MyHolder holder, String groupId, String pId) {
         likeProcess = true;
         FirebaseUser user4 = FirebaseAuth.getInstance().getCurrentUser();
@@ -358,25 +421,35 @@ public class AdapterNewsFeed extends RecyclerView.Adapter<AdapterNewsFeed.MyHold
                     @Override
                     public void onDataChange(@NonNull DataSnapshot snapshot) {
                             String counts = "" + snapshot.child(pId).child("Likes").getValue();
-                            holder.pLike.setText(counts + " Likes");
+                            holder.pLike.setText(counts );
                             UserLike.addValueEventListener(new ValueEventListener() {
                                 @Override
                                 public void onDataChange(@NonNull DataSnapshot snapshot) {
                                     if (likeProcess) {
                                         if (snapshot.child("Liked").hasChild(pId)) {
-                                            ref3.child(pId).child("Likes").setValue("" + (Integer.parseInt(counts) - 1));
-                                            holder.likeBtn.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_liked, 0, 0, 0);
-                                            UserLike.child("Liked").child(pId).removeValue();
-                                            likeProcess = false;
-                                        } else {
-                                            ref3.child(pId).child("Likes").setValue("" + (Integer.parseInt(counts) + 1));
-                                            holder.likeBtn.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_baseline_thumb_up_24, 0, 0, 0);
-                                            UserLike.child("Liked").child(pId).setValue("Liked");
-                                            likeProcess = false;
-                                        }
+                                        ref3.child(pId).child("Likes").setValue("" + (Integer.parseInt(counts) - 1));
+                                        UserLike.child("Liked").child(pId).removeValue();
+                                        Glide
+                                                .with(context)
+                                                .load(R.drawable.heart__red)
+                                                .centerCrop()
+                                                .placeholder(R.drawable.ic_def_img)
+                                                .into(holder.likeBtn);
+                                        likeProcess = false;
+                                    } else {
+                                        ref3.child(pId).child("Likes").setValue("" + (Integer.parseInt(counts) + 1));
 
+                                        UserLike.child("Liked").child(pId).setValue("Liked");
+                                        Glide
+                                                .with(context)
+                                                .load(R.drawable.heart)
+                                                .centerCrop()
+                                                .placeholder(R.drawable.ic_def_img)
+                                                .into(holder.likeBtn);
+                                        likeProcess = false;
+                                    }}
                                     }
-                                }
+
                                 @Override
                                 public void onCancelled(@NonNull DatabaseError error) {
 
@@ -519,14 +592,24 @@ public class AdapterNewsFeed extends RecyclerView.Adapter<AdapterNewsFeed.MyHold
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 String counts = "" + snapshot.child(pId).child("Likes").getValue();
-                holder.pLike.setText(counts + " Likes");
+                holder.pLike.setText(counts);
                 ref6.addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot snapshot) {
                         if (snapshot.child("Liked").hasChild(pId)) {
-                            holder.likeBtn.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_baseline_thumb_up_24, 0, 0, 0);
+                            Glide
+                                    .with(context)
+                                    .load(R.drawable.heart)
+                                    .centerCrop()
+                                    .placeholder(R.drawable.ic_def_img)
+                                    .into(holder.likeBtn);
                         } else {
-                            holder.likeBtn.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_liked, 0, 0, 0);
+                            Glide
+                                    .with(context)
+                                    .load(R.drawable.heart__red)
+                                    .centerCrop()
+                                    .placeholder(R.drawable.ic_def_img)
+                                    .into(holder.likeBtn);
                         }
 
                     }
@@ -553,8 +636,9 @@ public class AdapterNewsFeed extends RecyclerView.Adapter<AdapterNewsFeed.MyHold
     class MyHolder extends RecyclerView.ViewHolder {
 
         ImageView pdp, pImg, sdp, arrow;
-        TextView ShareMore, CommentCount, shareName, grShareName, uName, pTime, pCaption, pLike, likeBtn, commentBtn, shareBtn, groupName, moreBtn, shareTime;
+        TextView ShareUserName,UserName,ShareMore, CommentCount, shareName, grShareName, uName, pTime, pCaption, pLike, groupName, moreBtn, shareTime;
         View view;
+        ImageView likeBtn, commentBtn, shareBtn;
 
         public MyHolder(@NonNull View itemView) {
             super(itemView);
@@ -577,6 +661,8 @@ public class AdapterNewsFeed extends RecyclerView.Adapter<AdapterNewsFeed.MyHold
             view = itemView.findViewById(R.id.view);
             CommentCount = itemView.findViewById(R.id.commenCount);
             ShareMore = itemView.findViewById(R.id.ShareMore);
+            UserName = itemView.findViewById(R.id.username);
+            ShareUserName = itemView.findViewById(R.id.ShareUserName);
         }
     }
 }

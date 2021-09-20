@@ -204,6 +204,7 @@ public class ProfileF extends Fragment {
                     String dcover = "" + ds.child("cover").getValue();
                     String dbio = "" + ds.child("bio").getValue();
                     String dbday = "" + ds.child("Birthday").getValue();
+                    String username = "" + ds.child("UserName").getValue();
 
                     name.setText(dname);
                     email.setText(demail);

@@ -66,6 +66,14 @@ dependencies {
     implementation 'com.gauravk.bubblenavigation:bubblenavigation:1.0.7'
     compile 'com.github.chathuralakmal:AndroidImagePopup:1.2.2'
     implementation "androidx.palette:palette:1.0.0"
+    implementation 'com.google.android.material:material:1.4.0'
+    implementation 'com.google.android.gms:play-services-auth:19.2.0'
+    implementation 'com.google.firebase:firebase-auth'
+    implementation platform('com.google.firebase:firebase-bom:28.4.1')
+
+
+
+
 
 
 

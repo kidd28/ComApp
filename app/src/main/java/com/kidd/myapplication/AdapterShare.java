@@ -32,7 +32,7 @@ import java.util.Locale;
 public class AdapterShare extends RecyclerView.Adapter<AdapterShare.HolderGroupList> {
     private Context context;
     private ArrayList<ModelGroup> groupList;
-    String myName, myDp;
+    String myName, myDp,ShareUserName;
 
     public AdapterShare(Context context, ArrayList<ModelGroup> groupList) {
         this.context = context;
@@ -58,17 +58,19 @@ public class AdapterShare extends RecyclerView.Adapter<AdapterShare.HolderGroupL
         String groupTime = model.getTimestamp();
         String ShareGroupId = model.getGroupId();
         String ShareGroupIcon = model.getGroupIcon();
-        String grIcon= intent.getStringExtra("grIcon");
-        String groupId =intent.getStringExtra("groupId");
+        String grIcon = intent.getStringExtra("grIcon");
+        String groupId = intent.getStringExtra("groupId");
         String uid = intent.getStringExtra("uid");
         String uEmail = intent.getStringExtra("uEmail");
         String pId = intent.getStringExtra("pId");
+        String OrigPid = intent.getStringExtra("OrigPid");
         String pTime = intent.getStringExtra("pTime");
         String pCaption = intent.getStringExtra("pCaption");
         String grTitle = intent.getStringExtra("groupTitle");
         String uDp = intent.getStringExtra("uDp");
         String pImage = intent.getStringExtra("pImage");
         String uName = intent.getStringExtra("uName");
+        String UserName = intent.getStringExtra("UserName");
 
         holder.groupName.setText(shareTogroupTitle);
         if (context != null) {
@@ -89,6 +91,8 @@ public class AdapterShare extends RecyclerView.Adapter<AdapterShare.HolderGroupL
                 for (DataSnapshot ds : snapshot.getChildren()) {
                     myName = "" + ds.child("name").getValue();
                     myDp = "" + ds.child("image").getValue();
+                    myDp = "" + ds.child("image").getValue();
+                    ShareUserName = "" + ds.child("UserName").getValue();
                 }
             }
 
@@ -101,15 +105,15 @@ public class AdapterShare extends RecyclerView.Adapter<AdapterShare.HolderGroupL
             @Override
             public void onClick(View v) {
                 if (pImage.equals("noImage")) {
-                    sharePost(ShareGroupIcon,ShareGroupId,myName, myDp, groupId, grIcon, grTitle, shareTogroupTitle, groupTime, uid, uEmail, pId, pTime, pCaption, uDp, uName);
+                    sharePost(ShareGroupIcon, ShareGroupId, myName, myDp, groupId, grIcon, grTitle, shareTogroupTitle, groupTime, uid, uEmail, pId, pTime, pCaption, uDp, uName,OrigPid,UserName,ShareUserName);
                 } else {
-                    sharePostwImage(ShareGroupIcon,ShareGroupId,myName, myDp, groupId, grIcon, grTitle, shareTogroupTitle, groupTime, uid, uEmail, pId, pTime, pCaption, uDp, pImage, uName);
+                    sharePostwImage(ShareGroupIcon, ShareGroupId, myName, myDp, groupId, grIcon, grTitle, shareTogroupTitle, groupTime, uid, uEmail, pId, pTime, pCaption, uDp, pImage, uName,OrigPid,UserName,ShareUserName);
                 }
             }
         });
     }
 
-    private void sharePostwImage(String ShareGroupIcon,String ShareGroupId,String name, String Dp, String groupId, String grIcon, String groupTitle, String shareTogroupTitle, String groupTime, String uid, String uEmail, String pId, String pTime, String pCaption, String uDp, String pImage, String uName) {
+    private void sharePostwImage(String ShareGroupIcon, String ShareGroupId, String name, String Dp, String groupId, String grIcon, String groupTitle, String shareTogroupTitle, String groupTime, String uid, String uEmail, String pId, String pTime, String pCaption, String uDp, String pImage, String uName,String OrigPid,String UserName,String ShareUserName) {
         String postId = String.valueOf(System.currentTimeMillis());
 
         Calendar calendar = Calendar.getInstance(Locale.getDefault());
@@ -124,9 +128,10 @@ public class AdapterShare extends RecyclerView.Adapter<AdapterShare.HolderGroupL
         hashMap.put("uid", uid);
         hashMap.put("uName", uName);
         hashMap.put("uEmail", uEmail);
+        hashMap.put("UserName", UserName);
         hashMap.put("uDp", uDp);
         hashMap.put("pId", postId);
-        hashMap.put("OrigPid", pId);
+        hashMap.put("OrigPid", OrigPid);
         hashMap.put("pCaption", pCaption);
         hashMap.put("pComment", "0");
         hashMap.put("pImage", pImage);
@@ -143,7 +148,7 @@ public class AdapterShare extends RecyclerView.Adapter<AdapterShare.HolderGroupL
         hashMap.put("ShareUid", user1.getUid());
         hashMap.put("ShareGroupId", ShareGroupId);
         hashMap.put("ShareGroupIcon", ShareGroupIcon);
-
+        hashMap.put("ShareUserName", ShareUserName);
 
         DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Posts");
         reference.child(postId).child("Likes").setValue("0");
@@ -161,7 +166,7 @@ public class AdapterShare extends RecyclerView.Adapter<AdapterShare.HolderGroupL
 
     }
 
-    private void sharePost(String ShareGroupIcon, String ShareGroupId,String name, String Dp, String groupId, String grIcon, String groupTitle, String shareTogroupTitle, String groupTime, String uid, String uEmail, String pId, String pTime, String pCaption, String uDp, String uName) {
+    private void sharePost(String ShareGroupIcon, String ShareGroupId, String name, String Dp, String groupId, String grIcon, String groupTitle, String shareTogroupTitle, String groupTime, String uid, String uEmail, String pId, String pTime, String pCaption, String uDp, String uName,String OrigPid,String UserName,String ShareUserName) {
         String postId = String.valueOf(System.currentTimeMillis());
 
         FirebaseUser user1 = FirebaseAuth.getInstance().getCurrentUser();
@@ -176,9 +181,10 @@ public class AdapterShare extends RecyclerView.Adapter<AdapterShare.HolderGroupL
         hashMap.put("uid", uid);
         hashMap.put("uName", uName);
         hashMap.put("uEmail", uEmail);
+        hashMap.put("UserName", UserName);
         hashMap.put("uDp", uDp);
         hashMap.put("pId", postId);
-        hashMap.put("OrigPid", pId);
+        hashMap.put("OrigPid", OrigPid);
         hashMap.put("pComment", "0");
         hashMap.put("pImage", "noImage");
         hashMap.put("pTime", pTime);
@@ -195,6 +201,7 @@ public class AdapterShare extends RecyclerView.Adapter<AdapterShare.HolderGroupL
         hashMap.put("ShareUid", user1.getUid());
         hashMap.put("ShareGroupId", ShareGroupId);
         hashMap.put("ShareGroupIcon", ShareGroupIcon);
+        hashMap.put("ShareUserName", ShareUserName);
         DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Posts");
         reference.child(postId).child("Likes").setValue("0");
         DatabaseReference reference1 = FirebaseDatabase.getInstance().getReference("Groups");
@@ -209,21 +216,20 @@ public class AdapterShare extends RecyclerView.Adapter<AdapterShare.HolderGroupL
     }
 
 
-
     @Override
     public int getItemCount() {
         return groupList.size();
     }
 
 
-class HolderGroupList extends RecyclerView.ViewHolder {
-    private ImageView groupIcon;
-    private TextView groupName;
+    class HolderGroupList extends RecyclerView.ViewHolder {
+        private ImageView groupIcon;
+        private TextView groupName;
 
-    public HolderGroupList(@NonNull View itemView) {
-        super(itemView);
-        groupIcon = itemView.findViewById(R.id.groupIcon);
-        groupName = itemView.findViewById(R.id.mgroupName);
+        public HolderGroupList(@NonNull View itemView) {
+            super(itemView);
+            groupIcon = itemView.findViewById(R.id.groupIcon);
+            groupName = itemView.findViewById(R.id.mgroupName);
+        }
     }
-}
 }

@@ -12,6 +12,7 @@ import android.os.Bundle;
 import android.provider.MediaStore;
 import android.text.TextUtils;
 import android.view.View;
+import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -58,6 +59,7 @@ public class CreateGroupActivity extends AppCompatActivity {
 
     String name,image;
     TextView textView;
+    CheckBox checkBox;
 
 
     private FirebaseAuth firebaseAuth;
@@ -73,6 +75,7 @@ public class CreateGroupActivity extends AppCompatActivity {
         grName=findViewById(R.id.groupname);
         grDesc=findViewById(R.id.groupdesc);
         create=findViewById(R.id.fab);
+        checkBox = findViewById(R.id.checkBox);
         firebaseAuth =FirebaseAuth.getInstance();
         FirebaseUser user = firebaseAuth.getCurrentUser();
         email = user.getEmail();
@@ -133,7 +136,6 @@ public class CreateGroupActivity extends AppCompatActivity {
         String groupTitle = grName.getText().toString().trim();
         String groupdesc = grDesc.getText().toString().trim();
 
-
         if(TextUtils.isEmpty(groupTitle)){
             Toast.makeText(this, "Please enter group Name", Toast.LENGTH_SHORT).show();
             return;
@@ -157,7 +159,11 @@ public class CreateGroupActivity extends AppCompatActivity {
                             while (!p_uriTask.isSuccessful());
                             Uri p_downloadUri =p_uriTask.getResult();
                             if (p_uriTask.isSuccessful()){
-                                createGroup(""+gr_timeStamp,""+groupTitle, ""+groupdesc, ""+p_downloadUri);
+                                if(checkBox.isChecked()) {
+                                    createGroup("" + gr_timeStamp, "" + groupTitle, "" + groupdesc, "" + p_downloadUri);
+                                }else{
+                                    createGroupPrivate("" + gr_timeStamp, "" + groupTitle, "" + groupdesc, "" + p_downloadUri);
+                                }
                             }
                         }
                     }).addOnFailureListener(new OnFailureListener() {
@@ -177,7 +183,7 @@ public class CreateGroupActivity extends AppCompatActivity {
         hashMap.put("groupIcon", groupIcon);
         hashMap.put("timestamp",""+gr_timeStamp);
         hashMap.put("owner",""+ firebaseAuth.getUid());
-
+        hashMap.put("Privacy","Public");
         DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Groups");
         reference.child(gr_timeStamp).setValue(hashMap)
                 .addOnSuccessListener(new OnSuccessListener<Void>() {
@@ -219,7 +225,56 @@ public class CreateGroupActivity extends AppCompatActivity {
         });
 
     }
+    private void createGroupPrivate(String gr_timeStamp,String groupTitle, String groupDesc, String groupIcon ) {
+        HashMap<String, String> hashMap = new HashMap<>();
+        hashMap.put("groupId",""+gr_timeStamp);
+        hashMap.put("groupTitle",""+groupTitle);
+        hashMap.put("groupDesc",""+groupDesc);
+        hashMap.put("groupIcon", groupIcon);
+        hashMap.put("timestamp",""+gr_timeStamp);
+        hashMap.put("owner",""+ firebaseAuth.getUid());
+        hashMap.put("Privacy","Private");
+        DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Groups");
+        reference.child(gr_timeStamp).setValue(hashMap)
+                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void aVoid) {
+                        FirebaseUser user =firebaseAuth.getCurrentUser();
+                        progress.dismiss();
+                        Toast.makeText(CreateGroupActivity.this, "Group created successfully", Toast.LENGTH_SHORT).show();
+                        HashMap<String, String> hashMap1 = new HashMap<>();
+                        hashMap1.put("uid", firebaseAuth.getUid());
+                        hashMap1.put("email",user.getEmail());
+                        hashMap1.put("role","creator");
+                        hashMap1.put("timestamp",gr_timeStamp);
+                        hashMap1.put("name",name);
+                        hashMap1.put("image",image);
+                        DatabaseReference reference1 = FirebaseDatabase.getInstance().getReference("Groups");
+                        reference1.child(gr_timeStamp).child("Members").child(firebaseAuth.getUid()).setValue(hashMap1)
+                                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                    @Override
+                                    public void onSuccess(Void aVoid) {
+                                        progress.dismiss();
+                                        Toast.makeText(CreateGroupActivity.this, "Group Created..", Toast.LENGTH_SHORT).show();
+                                        startActivity(new Intent(CreateGroupActivity.this,Home.class));
+                                    }
+                                }).addOnFailureListener(new OnFailureListener() {
+                            @Override
+                            public void onFailure(@NonNull Exception e) {
+                                progress.dismiss();
+                                Toast.makeText(CreateGroupActivity.this, ""+e.getMessage(), Toast.LENGTH_SHORT).show();
+                            }
+                        });
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Toast.makeText(CreateGroupActivity.this, ""+e.getMessage(), Toast.LENGTH_SHORT).show();
+                    }
+                });
 
+    }
     private void showImgDialog() {
         String option[] = {"Camera","Gallery"};
 

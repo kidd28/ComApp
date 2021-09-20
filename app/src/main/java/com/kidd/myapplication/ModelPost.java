@@ -2,7 +2,7 @@ package com.kidd.myapplication;
 
 public class ModelPost {
 
-String OrigPid,ShareGroupIcon,ShareGroupId,ShareUid,ShareEmail,ShareTime,pComment,pId, pCaption,pTime, uid, uName,uEmail,pImage,uDp,groupId,groupTitle,groupIcon,pLike,Shared,ShareTo,ShareName,ShareDp;
+String ShareUserName,UserName,ShareCount,OrigPid,ShareGroupIcon,ShareGroupId,ShareUid,ShareEmail,ShareTime,pComment,pId, pCaption,pTime, uid, uName,uEmail,pImage,uDp,groupId,groupTitle,groupIcon,pLike,Shared,ShareTo,ShareName,ShareDp;
 
     public ModelPost() {
     }
@@ -11,7 +11,8 @@ String OrigPid,ShareGroupIcon,ShareGroupId,ShareUid,ShareEmail,ShareTime,pCommen
                      String uid, String uName, String uEmail, String pImage, String uDp,
                      String groupId, String groupTitle, String groupIcon,String pLike,String Shared,
                      String ShareTo, String ShareName,String ShareDp,String pComment,String ShareTime,
-                     String ShareEmail,String ShareUid,String ShareGroupId,String ShareGroupIcon,String OrigPid) {
+                     String ShareEmail,String ShareUid,String ShareGroupId,String ShareGroupIcon,
+                     String OrigPid,String ShareCount,String UserName,String ShareUserName) {
         this.pId = pId;
         this.pCaption = pCaption;
         this.pTime = pTime;
@@ -34,6 +35,33 @@ String OrigPid,ShareGroupIcon,ShareGroupId,ShareUid,ShareEmail,ShareTime,pCommen
         this.ShareGroupId = ShareGroupId;
         this.ShareGroupIcon = ShareGroupIcon;
         this.OrigPid = OrigPid;
+        this.ShareCount = ShareCount;
+        this.UserName = UserName;
+        this.ShareUserName=ShareUserName;
+    }
+
+    public String getShareUserName() {
+        return ShareUserName;
+    }
+
+    public void setShareUserName(String shareUserName) {
+        ShareUserName = shareUserName;
+    }
+
+    public String getUserName() {
+        return UserName;
+    }
+
+    public void setUserName(String userName) {
+        UserName = userName;
+    }
+
+    public String getShareCount() {
+        return ShareCount;
+    }
+
+    public void setShareCount(String shareCount) {
+        ShareCount = shareCount;
     }
 
     public String getOrigPid() {

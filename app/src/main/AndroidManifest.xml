@@ -14,7 +14,8 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.MyApplication"
         android:usesCleartextTraffic="true">
-        <activity android:name=".EditPost"></activity>
+        <activity android:name=".Login_new"></activity>
+        <activity android:name=".EditPost" />
         <activity android:name=".JoinGroup" />
         <activity android:name=".WritePost" />
         <activity android:name=".SharePost" />

@@ -60,7 +60,7 @@ public class PublishPost extends AppCompatActivity {
     Button upBtn;
     Uri image_uri = null;
 
-    String groupTitle,groupIcon;
+    String groupTitle,groupIcon,UserName;
 
     ProgressDialog progressDialog;
 
@@ -113,6 +113,8 @@ public class PublishPost extends AppCompatActivity {
                     name = "" + ds.child("name").getValue();
                     email = "" + ds.child("email").getValue();
                     dp = "" + ds.child("image").getValue();
+                    UserName = "" + ds.child("UserName").getValue();
+
                 }
             }
 
@@ -213,6 +215,7 @@ public class PublishPost extends AppCompatActivity {
                             if (uriTask.isSuccessful()) {
                                 HashMap<Object, String> hashMap = new HashMap<>();
                                 hashMap.put("uid", uid);
+                                hashMap.put("UserName", UserName);
                                 hashMap.put("uName", name);
                                 hashMap.put("uEmail", email);
                                 hashMap.put("uDp", dp);
@@ -259,6 +262,7 @@ public class PublishPost extends AppCompatActivity {
             HashMap<Object, String> hashMap = new HashMap<>();
             hashMap.put("uid", uid);
             hashMap.put("uName", name);
+            hashMap.put("UserName", UserName);
             hashMap.put("uEmail", email);
             hashMap.put("uDp", dp);
             hashMap.put("pId", timeStamp);

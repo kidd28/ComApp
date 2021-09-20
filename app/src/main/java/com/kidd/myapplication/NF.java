@@ -97,7 +97,6 @@ public class NF extends Fragment {
         // Inflate the layout for this fragment
         View v = inflater.inflate(R.layout.fragment_n, container, false);
 
-
         firebaseAuth = FirebaseAuth.getInstance();
         recyclerView = v.findViewById(R.id.postRv);
         user = FirebaseAuth.getInstance().getCurrentUser();
