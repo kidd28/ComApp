@@ -652,8 +652,8 @@ public class PostDetail extends AppCompatActivity {
                             pTime.setText(p_Time);
                             uName.setText(hisName);
                             groupName.setText(grName);
-                            username.setText(UserName);
-                            shareusername.setText(ShareUserName);
+                            username.setText("@"+UserName);
+                            shareusername.setText("@"+ShareUserName);
 
 
                             try {

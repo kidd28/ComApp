@@ -67,19 +67,24 @@
                 android:textSize="15sp"
                 android:textStyle="bold"
                 android:layout_width="0dp" />
-            <TextView
-                android:id="@+id/shareTime"
-                android:textSize="12sp"
-                android:textColor="@color/black"
+            <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="dd/mm/yyyy"
-                android:layout_marginEnd="10dp"/>
-            <TextView
-                android:id="@+id/ShareMore"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:drawableRight="@drawable/ic_baseline_more_horiz_24" />
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/ShareMore"
+                    android:layout_gravity="right"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:drawableRight="@drawable/ic_baseline_more_horiz_24" />
+                <TextView
+                    android:id="@+id/shareTime"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="20 min"
+                    android:textSize="12sp" />
+            </LinearLayout>
         </LinearLayout>
         <View
             android:layout_marginTop="10dp"

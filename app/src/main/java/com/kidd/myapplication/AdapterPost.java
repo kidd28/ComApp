@@ -84,7 +84,7 @@ public class AdapterPost extends RecyclerView.Adapter<AdapterPost.MyHolder> {
         String ShareUserName = postList.get(i).getShareUserName();
         String ShareGroupId = postList.get(i).getShareGroupId();
 
-        holder.UserName.setText(UserName);
+        holder.UserName.setText("@"+UserName);
         holder.pLike.setText(likes);
         holder.CommentCount.setText(pComment);
         String grIcon = postList.get(i).getGroupIcon();
@@ -138,7 +138,7 @@ public class AdapterPost extends RecyclerView.Adapter<AdapterPost.MyHolder> {
             holder.ShareMore.setVisibility(View.GONE);
         }else if (Shared.equals("true")){
             holder.grShareName.setText(ShareTo);
-            holder.ShareUserName.setText(ShareUserName);
+            holder.ShareUserName.setText("@"+ShareUserName);
             holder.shareTime.setText(ShareTime);
             holder.moreBtn.setVisibility(View.GONE);
             holder.shareName.setText(ShareName);

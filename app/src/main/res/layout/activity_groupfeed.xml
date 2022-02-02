@@ -34,10 +34,14 @@
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent">
-            <ImageView
-                android:id="@+id/Group_Cover"
+
+            <com.jgabrielfreitas.core.BlurImageView
+                android:id="@+id/GroupCover"
                 android:layout_width="match_parent"
-                android:layout_height="200dp"/>
+                android:layout_height="200dp"
+                android:scaleX="1"
+                android:scaleY="1"
+                app:radius="100" />
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
@@ -53,6 +57,7 @@
                         android:layout_width="120dp"
                         android:layout_height="120dp"
                         app:c_border_color="@color/white"
+                        android:layout_marginTop="100dp"
                         app:c_border_width="5dp"
                         android:layout_gravity="center"
                         android:src="@drawable/ic_def_img" />

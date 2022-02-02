@@ -84,7 +84,7 @@ public class AdapterNewsFeed extends RecyclerView.Adapter<AdapterNewsFeed.MyHold
         String UserName = postList.get(i).getUserName();
         String ShareUserName = postList.get(i).getShareUserName();
 
-        holder.UserName.setText(UserName);
+        holder.UserName.setText("@"+UserName);
         holder.uName.setText(postList.get(i).getuName());
         try {
             Glide
@@ -127,7 +127,7 @@ public class AdapterNewsFeed extends RecyclerView.Adapter<AdapterNewsFeed.MyHold
         } else if (Shared.equals("true")) {
             holder.grShareName.setText(ShareTo);
             holder.shareTime.setText(ShareTime);
-            holder.ShareUserName.setText(ShareUserName);
+            holder.ShareUserName.setText("@"+ShareUserName);
             holder.moreBtn.setVisibility(View.GONE);
             holder.shareName.setText(ShareName);
             Glide

@@ -32,6 +32,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
+import com.jgabrielfreitas.core.BlurImageView;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -52,6 +53,7 @@ public class GroupUi extends AppCompatActivity {
     TextView uname;
     EditText writePost;
     ImageView udp;
+    BlurImageView cover;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -67,6 +69,7 @@ public class GroupUi extends AppCompatActivity {
         uname = findViewById(R.id.U_name);
         writePost = findViewById(R.id.writePost);
         udp = findViewById(R.id.U_dp);
+        cover = findViewById(R.id.GroupCover);
         String Avatar = getIntent().getStringExtra("grIcon");
         String Title = getIntent().getStringExtra("grName");
         grId = getIntent().getStringExtra("grId");
@@ -74,12 +77,20 @@ public class GroupUi extends AppCompatActivity {
         setSupportActionBar(toolbar);
         this.setTitle("Group");
         title.setText(Title);
+
         Glide
                 .with(GroupUi.this)
                 .load(Avatar)
                 .centerCrop()
                 .placeholder(R.drawable.ic_group)
                 .into(avatar);
+        Glide
+                .with(GroupUi.this)
+                .load(Avatar)
+                .centerCrop()
+                .placeholder(R.drawable.ic_group)
+                .into(cover);
+
         firebaseAuth = FirebaseAuth.getInstance();
 
         recyclerView = findViewById(R.id.groupRv);
