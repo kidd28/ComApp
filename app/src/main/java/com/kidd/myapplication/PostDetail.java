@@ -681,6 +681,7 @@ public class PostDetail extends AppCompatActivity {
                                 shareName.setVisibility(View.GONE);
                                 grShareName.setVisibility(View.GONE);
                                 shareTime.setVisibility(View.GONE);
+                                shareusername.setVisibility(View.GONE);
                                 sdp.setVisibility(View.GONE);
                                 arrow.setVisibility(View.GONE);
                                 view.setVisibility(View.GONE);
