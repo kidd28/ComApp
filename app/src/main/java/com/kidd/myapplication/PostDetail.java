@@ -649,7 +649,7 @@ public class PostDetail extends AppCompatActivity {
 
                             CommentCount.setText(pComment);
                             pTitle.setText(p_Title);
-                            pTime.setText(p_Time);
+                            pTime.setText(pTimestamp);
                             uName.setText(hisName);
                             groupName.setText(grName);
                             username.setText("@"+UserName);
