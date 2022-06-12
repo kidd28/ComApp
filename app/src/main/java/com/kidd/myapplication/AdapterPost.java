@@ -100,8 +100,9 @@ public class AdapterPost extends RecyclerView.Adapter<AdapterPost.MyHolder> {
         String pTime = android.text.format.DateFormat.format("dd/MM/yyyy", calendar).toString();
 
         holder.uName.setText(uName);
-        holder.pCaption.setText(pCaption);
-        holder.pTime.setText(pTime);
+
+        holder.pCaption.setText(postList.get(i).getpCaption());
+        holder.pTime.setText(postList.get(i).getpTime());;
         holder.groupName.setText(postList.get(i).getGroupTitle());
         Glide
                 .with(context)
